@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "260796433641",
+    "firebase_url": "https://what-do-you-wanna-watch.firebaseio.com",
+    "project_id": "what-do-you-wanna-watch",
+    "storage_bucket": "what-do-you-wanna-watch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260796433641:android:72d4fe469e163d9aa71c78",
+        "android_client_info": {
+          "package_name": "com.example.whatdoyouwannawatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260796433641-2ajcmuviesqlpge1b1gjkptb7gicojo9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV3CQ0JRRwgAJook5kD3vHoWDtBur26z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260796433641-2ajcmuviesqlpge1b1gjkptb7gicojo9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
