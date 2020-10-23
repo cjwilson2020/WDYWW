@@ -2,6 +2,8 @@ package com.example.whatdoyouwannawatch;
 
 import android.media.Image;
 
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +13,15 @@ public class User {
     private String email;
     private Image userAvatar;
     private boolean isGuest;
-    List<String> genres;
-    List<User> friends;
-    List<Result> history;
+    private List<String> genres;
+    private List<User> friends;
+    private List<Result> history;
+    //TODO List<> preferences, add and remove, getter
 
     //Constructors
     private User(){
         this.isGuest = true;
+        this.genres = new ArrayList<>();
     }
 
     private User(String email, String username){
@@ -25,20 +29,43 @@ public class User {
         this.username = username;
         this.email = email;
         generateUID();
+        this.genres = new ArrayList<>();
+        this.friends = new ArrayList<>();
+        this.history = new ArrayList<>();
     }
 
-    //TODO implement generateUID
+    //Generate a random unique ID
     private void generateUID(){
         this.UID = UUID.randomUUID().toString();
     }
 
+    //TODO implement getMinLength()
+    public Time getMinLength(){return null;}
+
+    //TODO implement getMaxLength()
+    public Time getMaxLength(){return null;}
+
+    //TODO get region
+    public String getRegion(){return null;}
+
+    //TODO get timezone
+    public int getTimezone(){return 0;}
+
+    //add a friend
+    public void addFriend(User f){friends.add(f);}
+
+    //remove a friend
+    public void removeFriend(User f){friends.remove(f);}
+
+    //add history
+    public void addHistory(Result r){history.add(r);}
+
+    //remove a history
+    public void removeHistory(Result r){history.remove(r);}
+
     //Getters and Setters
     public String getUID() {
         return UID;
-    }
-
-    public void setUID(String UID) {
-        this.UID = UID;
     }
 
     public String getUsername() {
@@ -69,10 +96,6 @@ public class User {
         return isGuest;
     }
 
-    public void setGuest(boolean guest) {
-        isGuest = guest;
-    }
-
     public List<String> getGenres() {
         return genres;
     }
@@ -85,17 +108,11 @@ public class User {
         return friends;
     }
 
-    public void setFriends(List<User> friends) {
-        this.friends = friends;
-    }
-
     public List<Result> getHistory() {
         return history;
     }
 
-    public void setHistory(List<Result> history) {
-        this.history = history;
-    }
+    public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //TODO implement toString method
     public String toString(){

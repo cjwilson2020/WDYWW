@@ -25,15 +25,27 @@ public class BackStage {
         Time minTime = new Time(0, 0, 0);
         Time maxTime = new Time(23, 59, 59);
 
+//        for (int i = 0; i < users.size(); i++) {
+//            User u = users.get(i);
+//            if (u.getMinLength() > minTime && u.getMinLength() < maxTime) {
+//                minTime = u.getMinLength();
+//            }
+//            if (u.getMaxLength() < maxTime && u.getMaxLength() > minTime) {
+//                maxTime = u.getMaxLength();
+//            }
+//        }
+
+        //Edited by Yuan, use compareTo() instead of '>', '<'
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);
-            if (u.getMinLength() > minTime && u.getMinLength() < maxTime) {
+            if (u.getMinLength().compareTo(minTime) > 0 && u.getMinLength().compareTo(maxTime) < 0) {
                 minTime = u.getMinLength();
             }
-            if (u.getMaxLength() < maxTime && u.getMaxLength() > minTime) {
+            if (u.getMaxLength().compareTo(maxTime) > 0 && u.getMaxLength().compareTo(minTime) < 0) {
                 maxTime = u.getMaxLength();
             }
         }
+
 
         returnList.add(minTime);
         returnList.add(maxTime);
@@ -47,8 +59,8 @@ public class BackStage {
         HashMap <String, Integer> hashMap = new HashMap<>();
         for(int i= 0; i< users.size(); i++){
             User u= users.get(i);
-            for (int j = 0; j< u.getGenres.size(); j++){
-                String genre = u.getGenres.get(j);
+            for (int j = 0; j< u.getGenres().size(); j++){
+                String genre = u.getGenres().get(j);
                 if(hashMap.containsKey(genre)){
                     hashMap.put(genre, hashMap.get(genre)+1);
                 }
@@ -86,6 +98,8 @@ public class BackStage {
     }
 
     public static Result calcResult(List<Media> choices){
+
+        Result result = new Result();
         List<User> users = theatre.getUsers();
         HashMap hashMap = new HashMap<Media, Integer>();
         for( int i=0; i< choices.size(); i++){
@@ -94,7 +108,7 @@ public class BackStage {
         int majority = (int) (users.size()/2.0) +1;
         int mostPopularCount = 0;
         int round =0;
-
+        return result;
     }
 
 
