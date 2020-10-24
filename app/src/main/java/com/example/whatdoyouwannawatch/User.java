@@ -18,12 +18,13 @@ public class User {
     private List<Result> history;
     //TODO List<> preferences, add and remove, getter
 
-    //Constructors
+    //Constructors for guest
     private User(){
         this.isGuest = true;
         this.genres = new ArrayList<>();
     }
 
+    //Constructor for registered user
     private User(String email, String username){
         this.isGuest = false;
         this.username = username;
