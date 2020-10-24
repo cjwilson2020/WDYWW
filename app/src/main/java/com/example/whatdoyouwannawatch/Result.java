@@ -29,11 +29,8 @@ public class Result {
     //TODO display the media
     public void display(){}
 
-    //TODO rank the movies use ranked choice
-    public void rank(){
-        int candidate1 = 0;
-        int candidate2 = 0;
-        int candidate3 = 0;
+    public void setRecommendation(Media recommendation) {
+        this.recommendation = recommendation;
     }
 
     public Media getRecommendation(){

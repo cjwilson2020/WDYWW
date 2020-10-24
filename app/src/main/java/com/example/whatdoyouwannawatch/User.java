@@ -17,9 +17,10 @@ public class User {
     private List<String> genres;
     private List<User> friends;
     private List<Result> history;
+    private List<String> preferences;
     private List<String> rankings;
-    //TODO vote list
-    //TODO List<> preferences, add and remove, getter
+    private Time minLength;
+    private Time maxLength;
 
     //Constructors for guest
     private User(){
@@ -38,7 +39,6 @@ public class User {
         this.friends = new ArrayList<>();
         this.history = new ArrayList<>();
         this.rankings = new ArrayList<String>();
-
     }
 
     //Generate a random unique ID
@@ -46,19 +46,19 @@ public class User {
         this.UID = UUID.randomUUID().toString();
     }
 
-    //TODO implement getMinLength()
-    public Time getMinLength(){return null;}
+    public List<String> getPreferences() {return this.preferences;}
 
-    //TODO implement getMaxLength()
-    public Time getMaxLength(){return null;}
+    public void addPreference(String tag){this.preferences.add(tag);}
 
-    //TODO get region
-    public String getRegion(){return null;}
+    public void removePreference(String tag){this.preferences.remove(tag);}
 
-    //TODO get timezone
-    public int getTimezone(){return 0;}
+    public void setMinLength(Time minLength) {this.minLength = minLength;}
 
-    //TODO vote
+    public Time getMinLength(){return this.minLength;}
+
+    public void setMaxLength(Time maxLength) {this.maxLength = maxLength;}
+
+    public Time getMaxLength(){return this.maxLength;}
 
     //add a friend
     public void addFriend(User f){friends.add(f);}
@@ -73,67 +73,34 @@ public class User {
     public void removeHistory(Result r){history.remove(r);}
 
     //Getters and Setters
-    public String getUID() {
-        return UID;
-    }
+    public String getUID() {return UID;}
 
-    public String getUsername() {
-        return username;
-    }
+    public String getUsername() {return username;}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public void setUsername(String username) {this.username = username;}
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() {return email;}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public void setEmail(String email) {this.email = email; }
 
-    public Image getUserAvatar() {
-        return userAvatar;
-    }
+    public Image getUserAvatar() {return userAvatar;}
 
-    public void setUserAvatar(Image userAvatar) {
-        this.userAvatar = userAvatar;
-    }
+    public void setUserAvatar(Image userAvatar) {this.userAvatar = userAvatar;}
 
-    public boolean isGuest() {
-        return isGuest;
-    }
+    public boolean isGuest() {return isGuest;}
 
-    public List<String> getGenres() {
-        return genres;
-    }
+    public List<String> getGenres() {return genres;}
 
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
+    public void setGenres(List<String> genres) {this.genres = genres;}
 
-    public List<User> getFriends() {
-        return friends;
-    }
+    public List<User> getFriends() {return friends;}
 
-    public List<Result> getHistory() {
-        return history;
-    }
+    public List<Result> getHistory() {return history;}
 
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
-    //TODO implement toString method
-    public String toString(){
-        return "";
-    }
-
     public List<String> getRankings() {
         return rankings;
-    }
-
-    public void setRankings(List<String> rankings) {
-        this.rankings = rankings;
     }
 
     public void addRankingToEnd(String uid){
@@ -145,5 +112,14 @@ public class User {
     public void removeRanking(String uid){
         this.rankings.remove(uid);
     }
+
+    public void clearRanking(){
+        this.rankings = new ArrayList<>();
+    }
+
+    public String toString(){
+        return "User Name: " + username + "\n";
+    }
+
 
 }

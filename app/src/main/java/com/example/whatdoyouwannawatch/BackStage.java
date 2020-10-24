@@ -26,17 +26,6 @@ public class BackStage {
         Time minTime = new Time(0, 0, 0);
         Time maxTime = new Time(23, 59, 59);
 
-//        for (int i = 0; i < users.size(); i++) {
-//            User u = users.get(i);
-//            if (u.getMinLength() > minTime && u.getMinLength() < maxTime) {
-//                minTime = u.getMinLength();
-//            }
-//            if (u.getMaxLength() < maxTime && u.getMaxLength() > minTime) {
-//                maxTime = u.getMaxLength();
-//            }
-//        }
-
-        //Edited by Yuan, use compareTo() instead of '>', '<'
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);
             if (u.getMinLength().compareTo(minTime) > 0 && u.getMinLength().compareTo(maxTime) < 0) {
@@ -46,7 +35,6 @@ public class BackStage {
                 maxTime = u.getMaxLength();
             }
         }
-
 
         returnList.add(minTime);
         returnList.add(maxTime);
