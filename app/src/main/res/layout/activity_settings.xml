@@ -32,7 +32,7 @@
         android:id="@+id/button8"
         android:layout_width="225dp"
         android:layout_height="47dp"
-        android:text="Time & Location"
+        android:text="Time &amp; Location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
