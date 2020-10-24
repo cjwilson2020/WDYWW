@@ -41,4 +41,44 @@ public class Result {
         this.UID = UUID.randomUUID().toString();
     }
 
+    //getters and setters
+    public Media getFinalDecision() {
+        return finalDecision;
+    }
+
+    public void setFinalDecision(Media finalDecision) {
+        this.finalDecision = finalDecision;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public List<Media> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Media> options) {
+        this.options = options;
+    }
+
+    public Time getDecisionMade() {
+        return decisionMade;
+    }
+
+    public void setDecisionMade(Time decisionMade) {
+        this.decisionMade = decisionMade;
+    }
+
+    public Time getShowTime() {
+        return showTime;
+    }
+
+    public void setShowTime(Time showTime) {
+        this.showTime = showTime;
+    }
 }

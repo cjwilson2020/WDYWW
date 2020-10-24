@@ -17,7 +17,15 @@ public class Media {
     private Image poster;
     private Double rating;
 
-    //constructor, some parameters optional
+    //constructor1
+    public Media(String title, List<String> genres, Time length, Image poster) {
+        this.title = title;
+        this.genres = genres;
+        this.length = length;
+        this.poster = poster;
+    }
+
+    //constructor2, TODO make some parameters optional depends on what info we can get from stream service
     public Media(String id, String title, List<String> genres, List<String> cast, Time length, String director, String writer, String description, Image poster, Double rating) {
         this.id = id;
         this.title = title;
