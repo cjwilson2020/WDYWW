@@ -17,14 +17,15 @@ public class User {
     private List<String> genres;
     private List<User> friends;
     private List<Result> history;
-    private Media[] choices = new Media[3];
+    private List<String> rankings;
     //TODO vote list
     //TODO List<> preferences, add and remove, getter
 
     //Constructors for guest
     private User(){
         this.isGuest = true;
-        this.genres = new ArrayList<>();
+        this.genres = new ArrayList<String>();
+        this.rankings = new ArrayList<String>();
     }
 
     //Constructor for registered user
@@ -36,6 +37,8 @@ public class User {
         this.genres = new ArrayList<>();
         this.friends = new ArrayList<>();
         this.history = new ArrayList<>();
+        this.rankings = new ArrayList<String>();
+
     }
 
     //Generate a random unique ID
@@ -56,10 +59,6 @@ public class User {
     public int getTimezone(){return 0;}
 
     //TODO vote
-    public Media[] vote(ArrayList<String> candidates){
-
-        return this.choices;
-    }
 
     //add a friend
     public void addFriend(User f){friends.add(f);}
@@ -128,4 +127,23 @@ public class User {
     public String toString(){
         return "";
     }
+
+    public List<String> getRankings() {
+        return rankings;
+    }
+
+    public void setRankings(List<String> rankings) {
+        this.rankings = rankings;
+    }
+
+    public void addRankingToEnd(String uid){
+        if(!this.rankings.contains(uid)) {
+            this.rankings.add(uid);
+        }
+    }
+
+    public void removeRanking(String uid){
+        this.rankings.remove(uid);
+    }
+
 }

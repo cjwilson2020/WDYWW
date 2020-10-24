@@ -1,6 +1,7 @@
 package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,20 +11,18 @@ public class Result {
     private List<User> users;
     private List<Media> options;
     private Media recommendation;
-    private Time decisionMade;
-    private Time showTime;
+    private Date decisionMade;
 
     //constructor
     public Result() {
         generateUID();
     }
 
-    public Result(Media finalDecision, List<User> users, List<Media> options, Time decisionMade, Time showTime) {
+    public Result(Media finalDecision, List<User> users, List<Media> options, Date decisionMade) {
         this.finalDecision = finalDecision;
         this.users = users;
         this.options = options;
         this.decisionMade = decisionMade;
-        this.showTime = showTime;
         generateUID();
     }
 
@@ -78,19 +77,11 @@ public class Result {
         this.options = options;
     }
 
-    public Time getDecisionMade() {
+    public Date getDecisionMade() {
         return decisionMade;
     }
 
-    public void setDecisionMade(Time decisionMade) {
+    public void setDecisionMade(Date decisionMade) {
         this.decisionMade = decisionMade;
-    }
-
-    public Time getShowTime() {
-        return showTime;
-    }
-
-    public void setShowTime(Time showTime) {
-        this.showTime = showTime;
     }
 }

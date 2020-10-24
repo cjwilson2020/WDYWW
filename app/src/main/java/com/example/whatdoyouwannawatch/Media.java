@@ -3,6 +3,7 @@ package com.example.whatdoyouwannawatch;
 import android.media.Image;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Media {
@@ -10,6 +11,7 @@ public class Media {
     private String title;
     private List<String> genres;
     private List<String> cast;
+    private List<User> currentVoters;
     private Time length;
     private String director;
     private String writer;
@@ -23,6 +25,7 @@ public class Media {
         this.genres = genres;
         this.length = length;
         this.poster = poster;
+        this.currentVoters = new ArrayList<User>();
     }
 
     //constructor2, TODO make some parameters optional depends on what info we can get from stream service
@@ -37,6 +40,7 @@ public class Media {
         this.description = description;
         this.poster = poster;
         this.rating = rating;
+        this.currentVoters = new ArrayList<User>();
     }
 
     public String getId() {
@@ -118,4 +122,25 @@ public class Media {
     public void setRating(Double rating) {
         this.rating = rating;
     }
+
+    public List<User> getCurrentVoters() {
+        return currentVoters;
+    }
+
+    public void setCurrentVoters(List<User> currentVoters) {
+        this.currentVoters = currentVoters;
+    }
+
+    public void addVoter(User u){
+        this.currentVoters.add(u);
+    }
+    public void removeVoter(User u){
+        this.currentVoters.remove(u);
+    }
+
+    public int getNumVoters(){
+        return this.currentVoters.size();
+    }
+
+
 }
