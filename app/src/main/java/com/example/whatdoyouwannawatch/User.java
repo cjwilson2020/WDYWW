@@ -19,6 +19,7 @@ public class User {
     private List<Result> history;
     private List<String> preferences;
     private List<String> rankings;
+    private List<String> options;
     private Time minLength;
     private Time maxLength;
 
@@ -41,10 +42,26 @@ public class User {
         this.rankings = new ArrayList<String>();
     }
 
+    public List<String> getRankings() {
+        return rankings;
+    }
+
+    public void addRankingToEnd(String uid){
+        if(!this.rankings.contains(uid)) {
+            this.rankings.add(uid);
+        }
+    }
+
+    public void removeRanking(String uid){ this.rankings.remove(uid); }
+
+    public void clearRanking(){ this.rankings = new ArrayList<>(); }
+
     //Generate a random unique ID
     private void generateUID(){
         this.UID = UUID.randomUUID().toString();
     }
+
+    public void setOptions(List<String> options) { this.options = options; }
 
     public List<String> getPreferences() {return this.preferences;}
 
@@ -98,24 +115,6 @@ public class User {
     public List<Result> getHistory() {return history;}
 
     public void clearHistory(){ this.history = new ArrayList<>(); }
-
-    public List<String> getRankings() {
-        return rankings;
-    }
-
-    public void addRankingToEnd(String uid){
-        if(!this.rankings.contains(uid)) {
-            this.rankings.add(uid);
-        }
-    }
-
-    public void removeRanking(String uid){
-        this.rankings.remove(uid);
-    }
-
-    public void clearRanking(){
-        this.rankings = new ArrayList<>();
-    }
 
     public String toString(){
         return "User Name: " + username + "\n";
