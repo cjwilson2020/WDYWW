@@ -9,6 +9,7 @@ public class Result {
     private Media finalDecision;
     private List<User> users;
     private List<Media> options;
+    private Media recommendation;
     private Time decisionMade;
     private Time showTime;
 
@@ -26,8 +27,19 @@ public class Result {
         generateUID();
     }
 
-    //display the media
+    //TODO display the media
     public void display(){}
+
+    //TODO rank the movies use ranked choice
+    public void rank(){
+        int candidate1 = 0;
+        int candidate2 = 0;
+        int candidate3 = 0;
+    }
+
+    public Media getRecommendation(){
+        return this.recommendation;
+    }
 
     //add the media to history
     public void addToHistory(List<User> users){

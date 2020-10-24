@@ -2,6 +2,7 @@ package com.example.whatdoyouwannawatch;
 
 import android.media.Image;
 
+import java.sql.Array;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class User {
     private List<String> genres;
     private List<User> friends;
     private List<Result> history;
+    private Media[] choices = new Media[3];
+    //TODO vote list
     //TODO List<> preferences, add and remove, getter
 
     //Constructors for guest
@@ -51,6 +54,12 @@ public class User {
 
     //TODO get timezone
     public int getTimezone(){return 0;}
+
+    //TODO vote
+    public Media[] vote(ArrayList<String> candidates){
+
+        return this.choices;
+    }
 
     //add a friend
     public void addFriend(User f){friends.add(f);}
