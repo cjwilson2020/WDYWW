@@ -93,7 +93,7 @@ public class BackStage {
         
         for(int i =0; i< users.size(); i++){
             for(int j = 0; j< choices.size(); j++){
-                String firstChoice = users.get(i).getRankings().get(0);
+                Media firstChoice = users.get(i).getRankings().get(0);
                 if(firstChoice.equals(choices.get(j).getId())){
                     choices.get(j).addVoter(users.get(i));
                 }
@@ -125,7 +125,7 @@ public class BackStage {
                 choices.remove(minIndex);
                 for(int j =0; j< voters.size(); j++){
                     voters.get(j).removeRanking(leastPopular.getId());
-                    String newFirstChoice = voters.get(j).getRankings().get(0);
+                    Media newFirstChoice = voters.get(j).getRankings().get(0);
                     for(int k =0; k< choices.size(); k++){
                         if(newFirstChoice.equals(choices.get(k).getId())){
                             choices.get(k).addVoter(voters.get(j));
