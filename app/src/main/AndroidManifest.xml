@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".ResultActivity"></activity>
+        <activity android:name=".MediaRanking" />
+        <activity android:name=".DurationSelection" />
+        <activity android:name=".SettingsActivity" />
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".FriendListActivity" />
         <activity android:name=".UserHomeActivity" />
