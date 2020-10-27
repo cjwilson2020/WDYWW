@@ -45,7 +45,9 @@ public class BackStage {
 
 
     //ranked choice voting
-    private Media vote() {
+    private Result vote() {
+        Result result;
+        Date date = new Date();
         //copy the list of options
         List<Media> vOptions = new ArrayList<>();
         for (Media m: theatre.getOptions()){
@@ -84,7 +86,8 @@ public class BackStage {
             }
         }
         //return the last one as recommendation
-        return vOptions.get(0);
+        result = new Result(vOptions.get(0), theatre.getUsers(), theatre.getOptions(), date);
+        return result;
     }
 
     public static List<String> calcGenre(){
