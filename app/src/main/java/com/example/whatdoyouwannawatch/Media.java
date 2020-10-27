@@ -6,7 +6,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Media {
+public class Media implements Comparable<Media> {
     private String id;
     private String title;
     private List<String> genres;
@@ -142,5 +142,12 @@ public class Media {
         return this.currentVoters.size();
     }
 
+    //TODO equalTo method
+    public boolean equalTo(Media m){ return this.title == m.title; }
 
+    //TODO make it can be sorted
+    @Override
+    public int compareTo(Media m) {
+        return this.currentVoters.size() - m.currentVoters.size();
+    }
 }

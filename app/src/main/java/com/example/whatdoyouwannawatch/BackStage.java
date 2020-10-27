@@ -6,6 +6,9 @@ import androidx.annotation.RequiresApi;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +43,61 @@ public class BackStage {
         returnList.add(maxTime);
 
         return returnList;
+    }
+
+
+    //TODO ranked choice voting
+    private Media vote() {
+        //copy the list of options
+        List<Media> vOptions = new ArrayList<>();
+        for (Media m: theatre.getOptions()){
+            vOptions.add(m);
+        }
+
+        //first round
+        for (int i = 0; i < 5; i++) {
+            for (User u : theatre.getUsers()) {
+                if (u.getRankings().get(i).equals(vOptions.get(0))) {
+                    vOptions.get(0).addVoter(u);
+                } else if (u.getRankings().get(i).equals(vOptions.get(1))) {
+                    vOptions.get(1).addVoter(u);
+                } else if (u.getRankings().get(i).equals(vOptions.get(2))) {
+                    vOptions.get(2).addVoter(u);
+                } else if (u.getRankings().get(i).equals(vOptions.get(3))) {
+                    vOptions.get(3).addVoter(u);
+                } else if (u.getRankings().get(i).equals(vOptions.get(4))) {
+                    vOptions.get(4).addVoter(u);
+                }
+            }
+        }
+
+        //four more rounds to eliminate other options until only one left
+        for (int j = 1; j < 5; j++){
+            //sort options by voter size
+            Collections.sort(vOptions);
+            //remove first option and assign it to removedOption
+            List<User> removedOption = vOptions.remove(0).getCurrentVoters();
+            //choose the jth option in the removed users and cast their vote to the next choice
+            for (User u: removedOption){
+                for (Media m: vOptions) {
+                    u.getRankings().get(j).equalTo(m);
+                    m.addVoter(u);
+                }
+            }
+        }
+        //return the last one as recommendation
+        return vOptions.get(0);
+
+    }
+
+    //vote helper
+    private void voteHelper(ArrayList<Media> options){
+        Collections.sort(options, Collections.<Media>reverseOrder());
+        List<User> removedOption = options.remove(0).getCurrentVoters();
+        for (User u: removedOption){
+
+        }
+
     }
 
     public static List<String> calcGenre(){
