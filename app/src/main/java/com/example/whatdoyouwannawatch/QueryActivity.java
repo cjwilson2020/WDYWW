@@ -70,7 +70,7 @@ public class QueryActivity extends AppCompatActivity {
                         System.out.println("Movie Reslts:\nTitle: " + title);
                         System.out.println("Description: " + description);
 
-                        //Todo: For each result, we want to create it as a Media objecy and display it with the Scrollview
+                        //Todo: For each result, we want to create it as a Media object and display it with the Scrollview
                         // Media( String id, String title, List<String> genres, List<String> cast, Time length, String director, String writer, String description, Image poster, Double rating ) ;
 
                     }
