@@ -6,9 +6,7 @@ import androidx.annotation.RequiresApi;
 
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +44,7 @@ public class BackStage {
     }
 
 
-    //TODO ranked choice voting
+    //ranked choice voting
     private Media vote() {
         //copy the list of options
         List<Media> vOptions = new ArrayList<>();
@@ -87,7 +85,6 @@ public class BackStage {
         }
         //return the last one as recommendation
         return vOptions.get(0);
-
     }
 
     //vote helper
