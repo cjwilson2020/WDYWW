@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickLogIn(View v) {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
         //TODO Implement once FireBase is set up
     }
 
