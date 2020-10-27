@@ -50,4 +50,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
     implementation 'com.google.firebase:firebase-auth:19.4.0'
 
+    // UI elements
+    implementation 'com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.2.0-SNAPSHOT'
+
 }
