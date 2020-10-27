@@ -6,27 +6,21 @@ import android.os.Bundle;
 import android.util.*;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
-import com.google.firebase.storage.StorageException;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,7 +28,6 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -43,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
     // Write info to the Realtime database
     private static final String TAG = "MainActivity";
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference myRef = database.getReference("users");
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    DatabaseReference myRef = database.getReference("users");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +64,22 @@ public class MainActivity extends AppCompatActivity {
         // 4. Look at UserHomeActivity
     }
 
-    static void pullData(final DataCallBack dbc, final String uid) {
+    static void pushData(User user) {
+        // A HashMap is used to upload information to firebase, the String is the location in
+        // firebase and the Object is the SongQueue to be put in firebase
+        HashMap<String, Object> map = new HashMap<>();
+        String folder = "/users/" + user.getUID();
+        map.put(folder, user);
+        myRef.updateChildren(map)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("pushData", "Error Adding User", e);
+                    }
+                });
+    }
+
+    static void pullData(final DataCallback dbc, final String uid) {
         // Somehow this allows the action String to work as intended
         DatabaseReference qReference = database.getReference();
         Log.i("Fetch", qReference.toString());
@@ -92,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         // Use the uID to access the correct user
         //   return null;
     }
-
 
     public void onClickWatchNow(View v) {
         Intent intent = new Intent(MainActivity.this, CreateJoinTheatre.class);

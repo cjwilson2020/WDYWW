@@ -28,11 +28,11 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         qButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Add text to QueryActivity's extras
                 Intent intent = new Intent(TheatreHostLandingPage.this, QueryActivity.class);
                 String q = (String) qTextView.getText().toString();
                 intent.putExtra("KEY", q);
                 startActivity(intent);
-
             }
         });
 

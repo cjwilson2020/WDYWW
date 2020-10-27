@@ -33,11 +33,11 @@ public class User {
     }
 
     //Constructor for registered user
-    private User(String email, String username){
+    User(String email, String username, String uid){
         this.isGuest = false;
         this.username = username;
         this.email = email;
-        generateUID();
+        this.setUID(uid);
         this.friends = new ArrayList<>();
         this.history = new ArrayList<>();
         this.genres = new ArrayList<>();
@@ -97,8 +97,13 @@ public class User {
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID
+
     private void generateUID(){
         this.UID = UUID.randomUUID().toString();
+    }
+    //We generate UIDs from Firebase Auth, I will create a setUID method
+    private void setUID(String u){
+        UID = u;
     }
     public String getUID() {return UID;}
 
