@@ -87,16 +87,6 @@ public class BackStage {
         return vOptions.get(0);
     }
 
-    //vote helper
-    private void voteHelper(ArrayList<Media> options){
-        Collections.sort(options, Collections.<Media>reverseOrder());
-        List<User> removedOption = options.remove(0).getCurrentVoters();
-        for (User u: removedOption){
-
-        }
-
-    }
-
     public static List<String> calcGenre(){
         List <String> returnList = new ArrayList<String>();
         List<User> users = theatre.getUsers();
