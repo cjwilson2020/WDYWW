@@ -3,7 +3,10 @@ package com.example.whatdoyouwannawatch;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 
 public class UserHomeActivity extends AppCompatActivity {
@@ -34,5 +37,25 @@ public class UserHomeActivity extends AppCompatActivity {
         },uid);
 
 
+    }
+
+    public void goToSettingsOnClick(View view) {
+        Intent intent = new Intent(UserHomeActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToCreateJoinTheatreOnClick(View view) {
+        Intent intent = new Intent(UserHomeActivity.this, CreateJoinTheatre.class);
+        startActivity(intent);
+    }
+
+    public void goToFriendsListOnClick(View view) {
+        Intent intent = new Intent(UserHomeActivity.this, FriendListActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToWatchHistoryOnClick(View view) {
+        Intent intent = new Intent(UserHomeActivity.this, WatchHistoryActivity.class);
+        startActivity(intent);
     }
 }
