@@ -1,22 +1,50 @@
 package com.example.whatdoyouwannawatch;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.*;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class MainActivity extends AppCompatActivity {
     // Write info to the Realtime database
-    static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static final String TAG = "MainActivity";
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     DatabaseReference myRef = database.getReference("users");
 
     @Override
@@ -77,5 +105,51 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickSignUp(View v) {
         //TODO Implement once FireBase is set up
+    }
+
+    //This is a method that I am creating to asynchronously call our API and wait for a response
+    //To implement this method, I need to use a callback function
+
+    public static void apiCallSearch(String title, final ApiCallback acb) throws IOException {
+        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
+
+        Request request = new Request.Builder()
+                .url("https:\\\\ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com\\entertainment\\search\\")
+                .get()
+                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+                .addHeader("content-type", "application/json")
+                .addHeader("title", title) //String title
+                .addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Unexpected code " + response);
+                    }
+
+                    Headers responseHeaders = response.headers();
+                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                    }
+                    //Here is where I get the query results
+                    String results = responseBody.string();
+                    try {
+                        acb.onCallback(results);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }
