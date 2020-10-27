@@ -15,13 +15,13 @@
         tools:layout_editor_absoluteX="43dp"
         tools:layout_editor_absoluteY="49dp" />
 
-    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar
-        android:id="@+id/rangeSeekbar"
-        rsb:absoluteMaxValue="100"
-        rsb:absoluteMinValue="0"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="191dp" />
+<!--    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar-->
+<!--        android:id="@+id/rangeSeekbar"-->
+<!--        rsb:absoluteMaxValue="100"-->
+<!--        rsb:absoluteMinValue="0"-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        tools:layout_editor_absoluteX="0dp"-->
+<!--        tools:layout_editor_absoluteY="191dp" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
