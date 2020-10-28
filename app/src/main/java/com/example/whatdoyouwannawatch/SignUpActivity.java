@@ -1,101 +1,83 @@
 package com.example.whatdoyouwannawatch;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Debug;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Objects;
-
-public class LoginActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private InputValidator inputValidator;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        Log.d("login", "LoginActivity");
+        setContentView(R.layout.activity_sign_up);
 
-        // Initialize objects
+        // Initialize
         mAuth = FirebaseAuth.getInstance();
         inputValidator = new InputValidator();
-
-        // If user already logged in redirect to homepage
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
-            startActivity(intent);
-        }
     }
 
-
-    public void onClickLogIn(View view) {
-        EditText editTextEmail = findViewById(R.id.editTextEmailAddressLogin);
-        String email = editTextEmail.getText().toString();
+    public void onClickSignUp(View v) {
+        EditText editTextEmailAddress = findViewById(R.id.editTextEmailAddress);
+        String email = editTextEmailAddress.getText().toString();
         if (!inputValidator.emailIsValid(email)) {
             Toast.makeText(this, "You've entered an invalid email address. " +
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
-        EditText editTextPassword = findViewById(R.id.editTextPasswordLogin);
+        EditText editTextPassword = findViewById(R.id.editTextPassword);
         String password = editTextPassword.getText().toString();
         if (!inputValidator.passwordIsValid(password)) {
             Toast.makeText(this, "You've entered an invalid password. " +
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
-        logInUser(email, password);
+        createUser(email, password);
     }
 
-    private void logInUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
+    private void createUser(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Log in success, update UI with the signed-in user's information
-                            Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
+                            // Sign up success, update UI with the signed-in user's information
+                            Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);
                             startActivity(intent);
                         } else {
-                            // If log in fails, display a message to the user.
+                            // If sign up fails, display a message to the user.
                             try {
                                 throw task.getException();
+                            } catch (FirebaseAuthInvalidUserException e) {
+                                Toast.makeText(SignUpActivity.this, "Log up failed. " +
+                                        "This user does not exist." , Toast.LENGTH_SHORT).show();
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                Toast.makeText(SignUpActivity.this, "Log in failed. " +
+                                        "You have entered invalid credentials.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
-                                Toast.makeText(LoginActivity.this, "Log in failed. " +
+                                Toast.makeText(SignUpActivity.this, "Log in failed. " +
                                         e, Toast.LENGTH_SHORT).show();
                             }
                         }
-
                     }
                 });
     }
-
 
 
 }

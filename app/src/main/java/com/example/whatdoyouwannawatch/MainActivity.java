@@ -110,11 +110,11 @@ public class MainActivity extends AppCompatActivity {
     public void onClickLogIn(View v) {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
-        //TODO Implement once FireBase is set up
     }
 
     public void onClickSignUp(View v) {
-        //TODO Implement once FireBase is set up
+        Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+        startActivity(intent);
     }
 
     //This is a method that I am creating to asynchronously call our API and wait for a response
