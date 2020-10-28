@@ -37,7 +37,7 @@ public class User {
         this.isGuest = false;
         this.username = username;
         this.email = email;
-        this.setUID(uid);
+        this.UID = uid;
         this.friends = new ArrayList<>();
         this.history = new ArrayList<>();
         this.genres = new ArrayList<>();

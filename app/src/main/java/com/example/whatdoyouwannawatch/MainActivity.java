@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Writing to Realtime Database
-        myRef.setValue("123"); //value pair for "key"
+        //myRef.setValue("123"); //value pair for "key"
 
         //We use a callback function if we are in a different Activity class
         //Steps are as follows
