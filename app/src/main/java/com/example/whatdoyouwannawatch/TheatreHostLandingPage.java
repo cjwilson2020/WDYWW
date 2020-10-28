@@ -48,6 +48,10 @@ public class TheatreHostLandingPage extends AppCompatActivity {
 
     }
 
+    public void onClickInviteFriend(View v) {
+
+    }
+
     // TODO: Implement once theatre id generation set up in FireBase
     private int getTheatreID() {
         return theatreID;

@@ -2,6 +2,7 @@ package com.example.whatdoyouwannawatch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ public class JoinTheatre extends AppCompatActivity {
     public void onClickJoinTheatreByCode(View v) {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
         String code = editTextTheatreCode.getText().toString(); // change to int
-        Toast.makeText(this, "Code entered: " + code, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(JoinTheatre.this, ChooseGenresActivity.class);
+        startActivity(intent);
+       // Toast.makeText(this, "Code entered: " + code, Toast.LENGTH_SHORT).show();
     }
 }
