@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 
 public class UserHomeActivity extends AppCompatActivity {
@@ -35,6 +36,8 @@ public class UserHomeActivity extends AppCompatActivity {
                 }
             }
         },uid);
+
+        Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
 
     }

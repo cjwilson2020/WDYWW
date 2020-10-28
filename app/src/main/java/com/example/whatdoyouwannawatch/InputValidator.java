@@ -15,6 +15,10 @@ public class InputValidator {
     public boolean emailIsValid(String email) {
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
+
+    public boolean usernameIsValid(String username) {
+        return (!TextUtils.isEmpty(username));
+    }
 }
 
 

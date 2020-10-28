@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -28,7 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        // Initialize
+        // Initialize objects
         mAuth = FirebaseAuth.getInstance();
         inputValidator = new InputValidator();
     }
@@ -48,18 +49,20 @@ public class SignUpActivity extends AppCompatActivity {
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
-        createUser(email, password);
+        EditText editTextUsername = findViewById(R.id.editText_username);
+        String username = editTextUsername.getText().toString();
+        createUser(email, password, username);
     }
 
-    private void createUser(String email, String password) {
+    private void createUser(String email, String password, final String username) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign up success, update UI with the signed-in user's information
-                            Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);
-                            startActivity(intent);
+                            // Sign up success, update username on new user object
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUsername(user, username);
                         } else {
                             // If sign up fails, display a message to the user.
                             try {
@@ -74,6 +77,23 @@ public class SignUpActivity extends AppCompatActivity {
                                 Toast.makeText(SignUpActivity.this, "Log in failed. " +
                                         e, Toast.LENGTH_SHORT).show();
                             }
+                        }
+                    }
+                });
+    }
+
+    private void updateUsername(FirebaseUser user, String username) {
+        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .build();
+        user.updateProfile(userProfileChangeRequest)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // all fields for new account filled, go to home
+                            Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);
+                            startActivity(intent);
                         }
                     }
                 });
