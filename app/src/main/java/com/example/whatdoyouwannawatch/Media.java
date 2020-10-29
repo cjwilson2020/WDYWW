@@ -19,6 +19,9 @@ public class Media implements Comparable<Media> {
     private Image poster;
     private Double rating;
 
+    //constructor
+    public Media() {}
+
     //constructor1
     public Media(String title, List<String> genres, Time length, Image poster) {
         this.title = title;

@@ -72,6 +72,8 @@ public class User {
     public List<Media> getRankings() {
         return rankings;
     }
+    public int optionSize() {return this.options.size(); }
+    public int rankingsSize() {return this.rankings.size(); }
     //End of voting process
 
 
