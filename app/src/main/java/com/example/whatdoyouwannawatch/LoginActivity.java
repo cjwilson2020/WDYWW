@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUser != null) {
             MainActivity.pullUser(new DataCallback() {
                 @Override
-                public void onCallback(User usr) {
+                public void onCallback(Object usr) {
                     Log.d("login", "user = " + usr);
                     if(usr== null){
                         User newUser = new User(currentUser.getEmail(), currentUser.getDisplayName(), currentUser.getUid());

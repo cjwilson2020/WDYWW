@@ -23,6 +23,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theatre_host_landing_page);
+
         qButton = (Button) findViewById(R.id.query_button);
         qTextView = (TextView) findViewById(R.id.query_editText);
         qButton.setOnClickListener(new View.OnClickListener() {

@@ -93,7 +93,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // all fields for new account filled, go to home
                             MainActivity.pullUser(new DataCallback() {
                                 @Override
-                                public void onCallback(User usr) {
+                                public void onCallback(Object usr) {
                                     if(usr== null){
                                         User newUser = new User(user.getEmail(), user.getDisplayName(), user.getUid());
                                         MainActivity.pushData(newUser);
