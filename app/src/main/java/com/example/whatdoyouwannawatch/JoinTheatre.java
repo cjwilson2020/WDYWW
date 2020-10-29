@@ -20,7 +20,7 @@ public class JoinTheatre extends AppCompatActivity {
     public void onClickJoinTheatreByCode(View v) {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
         String code = editTextTheatreCode.getText().toString(); // change to int
-        Intent intent = new Intent(JoinTheatre.this, ChooseGenresActivity.class);
+        Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
         startActivity(intent);
        // Toast.makeText(this, "Code entered: " + code, Toast.LENGTH_SHORT).show();
     }

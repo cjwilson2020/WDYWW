@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -53,6 +54,9 @@ public class ChooseGenresActivity extends AppCompatActivity {
             genreList += genre + ", ";
         }
         Toast.makeText(this, genreList, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);
+        startActivity(intent);
+
     }
 }
 

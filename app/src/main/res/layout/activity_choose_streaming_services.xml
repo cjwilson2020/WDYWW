@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChooseGenresActivity">
+    tools:context=".ChooseStreamingServicesActivity">
 
     <TextView
-        android:id="@+id/textView_chooseYourFavoriteGenres"
+        android:id="@+id/textView_chooseYourStreamingServices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Your Favorite Genres"
+        android:text="Choose Your Streaming Services"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,21 +18,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.055" />
 
-    <Button
-        android:id="@+id/button_selectGenres"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:onClick="onClickSelectGenres"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.965" />
-
     <ListView
-        android:id="@+id/listView_displayGenres"
+        android:id="@+id/listView_displayStreamingServices"
         android:layout_width="298dp"
         android:layout_height="337dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -42,5 +29,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.469" />
 
-
+    <Button
+        android:id="@+id/button_selectStreamingServices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:onClick="onClickSelectStreamingServices"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.965" />
 </androidx.constraintlayout.widget.ConstraintLayout>

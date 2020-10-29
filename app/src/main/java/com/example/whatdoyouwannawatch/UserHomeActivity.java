@@ -61,4 +61,10 @@ public class UserHomeActivity extends AppCompatActivity {
         Intent intent = new Intent(UserHomeActivity.this, WatchHistoryActivity.class);
         startActivity(intent);
     }
+
+    public void onClickLogOut(View w) {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 }

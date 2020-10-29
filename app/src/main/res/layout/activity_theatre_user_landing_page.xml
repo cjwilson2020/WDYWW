@@ -4,43 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChooseGenresActivity">
+    tools:context=".TheatreUserLandingPage">
 
     <TextView
-        android:id="@+id/textView_chooseYourFavoriteGenres"
+        android:id="@+id/textView_youAreNowInTheatre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Your Favorite Genres"
+        android:text="You Are Now In Theatre #1234"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055" />
+        app:layout_constraintVertical_bias="0.084" />
 
-    <Button
-        android:id="@+id/button_selectGenres"
+    <TextView
+        android:id="@+id/textView_seeWhosHere"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
-        android:onClick="onClickSelectGenres"
+        android:text="See Who's Here:"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.965" />
+        app:layout_constraintVertical_bias="0.178" />
 
     <ListView
-        android:id="@+id/listView_displayGenres"
-        android:layout_width="298dp"
-        android:layout_height="337dp"
+        android:id="@+id/listView_displayUsers"
+        android:layout_width="203dp"
+        android:layout_height="242dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintHorizontal_bias="0.206"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.469" />
+        app:layout_constraintVertical_bias="0.437" />
 
-
+    <Button
+        android:id="@+id/button_imAllSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickImAllSet"
+        android:text="I'm All Set"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.907" />
 </androidx.constraintlayout.widget.ConstraintLayout>
