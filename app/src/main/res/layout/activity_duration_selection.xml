@@ -10,12 +10,15 @@
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="28dp"
         android:text="How long do you want to watch"
         android:textSize="18sp"
-        tools:layout_editor_absoluteX="43dp"
-        tools:layout_editor_absoluteY="49dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar-->
+    <!--    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar-->
 <!--        android:id="@+id/rangeSeekbar"-->
 <!--        rsb:absoluteMaxValue="100"-->
 <!--        rsb:absoluteMinValue="0"-->

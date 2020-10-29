@@ -1,13 +1,14 @@
 package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class Theatre {
 
-    private String uid;
-    private int roomNumber;
+    private String hostID;
+    private String roomNumber;
     private BackStage backstage;
     private List<User> users;
     private List<String> genres;
@@ -25,7 +26,7 @@ public class Theatre {
 
     }
     public Theatre(String uid, int roomNumber, Time timeCreated ){
-        this.uid =uid;
+        this.hostID =uid;
         this.roomNumber =roomNumber;
         this.timeCreated = timeCreated;
         this.backstage = new BackStage();
@@ -34,20 +35,16 @@ public class Theatre {
         this.options = new ArrayList<Media>();
     }
 
-    public String getUID() {
-        return uid;
+    public String getHostID() {
+        return hostID;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setHostID(String uid) {
+        this.hostID = uid;
     }
 
-    public int getRoomNumber() {
+    public String getRoomNumber() {
         return roomNumber;
-    }
-
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
     }
 
     public BackStage getBackstage() {

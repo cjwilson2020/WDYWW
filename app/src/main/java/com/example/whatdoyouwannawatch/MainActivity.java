@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             String folder = ((User)obj).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
-            String folder = ((Theatre)obj).getUID();
+            String folder = ((Theatre)obj).getRoomNumber();
             map.put(folder, obj);
         }
         myRef.updateChildren(map)
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     dbc.onCallback(null);
                 }else {
 //                    Log.d("pullUser", "User pulled: " + user.getUID());
-                    if (theatre.getUID() == null) {
+                    if (theatre.getRoomNumber() == null) {
                         dbc.onCallback(null);
                     } else {
                         dbc.onCallback(theatre);
