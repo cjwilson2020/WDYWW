@@ -26,14 +26,14 @@ android {
 
 dependencies {
     // for v4.x :
-    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
-    implementation 'org.conscrypt:conscrypt-android:2.2.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'org.conscrypt:conscrypt-android:2.5.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-    implementation 'com.google.firebase:firebase-auth:19.4.0'
+    implementation 'com.google.firebase:firebase-auth:20.0.0'
     implementation 'com.google.firebase:firebase-storage'
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -45,13 +45,13 @@ dependencies {
     implementation files('libs\\commons-logging-1.1.3.jar')
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // firebase login UI dependencies
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-    implementation 'com.google.firebase:firebase-auth:19.4.0'
+    implementation 'com.google.firebase:firebase-auth:20.0.0'
 
     // UI elements
 //    implementation 'com.yahoo.mobile.client.android.util.rangeseekbar:rangeseekbar-library:0.2.0-SNAPSHOT'

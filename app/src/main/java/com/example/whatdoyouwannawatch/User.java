@@ -49,7 +49,8 @@ public class User {
 
     //set and get genres
     public List<String> getGenres() {return genres;}
-    public void setGenres(List<String> genres) {this.genres = genres;}
+    public void addGenres(String g) {this.genres.add(g);}
+    public void removeGenres(String g) {this.genres.remove(g);}
 
 
     //Start voting process
@@ -97,13 +98,9 @@ public class User {
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID
-    private void generateUID(){
-        this.UID = UUID.randomUUID().toString();
-    }
+    //private void generateUID(){this.UID = UUID.randomUUID().toString();    }
     //We generate UIDs from Firebase Auth, I will create a setUID method
-    private void setUID(String u){
-        UID = u;
-    }
+    private void setUID(String u){ UID = u; }
     public String getUID() {return UID;}
 
     //setters and getters of user information
