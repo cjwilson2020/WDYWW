@@ -100,7 +100,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         MainActivity.pushData(newUser);
                                     }
                                 }
-                            },user.getUid());
+                            },user.getDisplayName());
 
 
                             Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);

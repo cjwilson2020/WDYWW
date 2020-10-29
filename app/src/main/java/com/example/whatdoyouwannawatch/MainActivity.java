@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
-        // firebase and the Object is the SongQueue to be put in firebase
+        // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
 //      Log.d("login","obj class name: " + obj.getClass().getName());
         if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("pushData", "Error Adding User", e);
+                        Log.w("pushData", "Error Adding User/Theatre", e);
                     }
                 })
                 .addOnSuccessListener(new OnSuccessListener() {
