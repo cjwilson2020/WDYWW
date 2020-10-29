@@ -1,89 +1,169 @@
 package com.example.whatdoyouwannawatch;
 
-import junit.framework.TestCase;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class UserUnitTest extends TestCase {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import static org.junit.Assert.*;
+
+public class UserUnitTest {
+    User guest1 = new User();
+    User user1 = new User("some random email address", "some random username", "some random uid");
 
     @Before
-    public void setUp(){
-        String email = "";
-        String username = "";
-        String uid = "";
+    public void setUp() throws Exception {
         User guest1 = new User();
-        User user1 = new User(email, username, uid);
+        User user1 = new User("some random email address", "some random username", "some random uid");
+    }
+
+    //test basic information
+    @Test
+    public void GuestIsGuest() {
+        assertTrue(guest1.isGuest());
     }
 
     @Test
-    public void testEmail(){
-
+    public void userIsNotGuest() {
+        assertTrue(!user1.isGuest());
     }
 
-    public void testGetMinLength() {
+    @Test
+    public void getUID() {
+        assertEquals("user id", user1.getUID(), "some random uid");
     }
 
-    public void testGetMaxLength() {
+    @Test
+    public void getUsername() {
+        assertEquals("user name", user1.getUsername(), "some random username");
     }
 
-//    public void testGetRegion() {
+    @Test
+    public void setUsername() {
+        user1.setUsername("yc520");
+        assertEquals("user name", user1.getUsername(), "yc520");
+    }
+
+    @Test
+    public void getEmail() {
+        assertEquals("user email", user1.getEmail(), "some random email address");
+    }
+
+    @Test
+    public void setEmail() {
+        user1.setEmail("chenyuan@gmail.com");
+        assertEquals("user email", user1.getEmail(), "chenyuan@gmail.com");
+    }
+
+//    @Test
+//    public void setUserAvatar() {
+//        user1.setUserAvatar();
 //    }
-//
-//    public void testGetTimezone() {
-//    }
 
-    public void testGetUID() {
+    //test preference settings
+    @Test
+    public void guestGetGenres() {
+        assertEquals(guest1.getGenres(), new ArrayList<String>());
     }
 
-    public void testSetUID() {
+    @Test
+    public void userGetGenres() {
+        assertEquals(guest1.getGenres(), new ArrayList<String>());
     }
 
-    public void testGetUsername() {
+    @Test
+    public void guestAddGenres1() {
+        guest1.addGenres("SciFi");
+        assertEquals("Genres", guest1.getGenres().get(0), "SciFi");
     }
 
-    public void testSetUsername() {
+    @Test
+    public void guestAddGenres2() {
+        user1.addGenres("Romance");
+        assertEquals("Genres", guest1.getGenres().get(1), "Romance");
     }
 
-    public void testGetEmail() {
+    @Test
+    public void userAddGenres() {
+        user1.addGenres("Horror");
+        assertEquals("Genres", guest1.getGenres().get(0), "Horror");
     }
 
-    public void testSetEmail() {
+    @Test
+    public void guestRemoveGenres() {
+
     }
 
-    public void testGetUserAvatar() {
+    @Test
+    public void userRemoveGenres() {
+
     }
 
-    public void testSetUserAvatar() {
+    @Test
+    public void setOptions() {
     }
 
-    public void testIsGuest() {
+    @Test
+    public void addRankingToEnd() {
     }
 
-    public void testSetGuest() {
+    @Test
+    public void removeRanking() {
     }
 
-    public void testGetGenres() {
+    @Test
+    public void clearRanking() {
     }
 
-    public void testSetGenres() {
+    @Test
+    public void getRankings() {
     }
 
-    public void testGetFriends() {
+    @Test
+    public void addPreference() {
     }
 
-    public void testSetFriends() {
+    @Test
+    public void removePreference() {
     }
 
-    public void testGetHistory() {
+    @Test
+    public void getPreferences() {
     }
 
-    public void testSetHistory() {
+    //test friend
+    @Test
+    public void addFriend() {
     }
 
-    public void testClearHistory() {
+    @Test
+    public void removeFriend() {
     }
 
-    public void testTestToString() {
+    @Test
+    public void getFriends() {
+    }
+
+    @Test
+    public void addHistory() {
+    }
+
+    @Test
+    public void removeHistory() {
+    }
+
+    @Test
+    public void getHistory() {
+    }
+
+    @Test
+    public void clearHistory() {
     }
 }
