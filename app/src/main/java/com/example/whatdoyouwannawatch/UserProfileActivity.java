@@ -21,22 +21,6 @@ public class UserProfileActivity extends AppCompatActivity {
         final String uid = FBuser.getUid();
         user_id = uid;
 
-        // getting user from Firebase
-        // 4. Use that reference to invoke the callback method.
-
-        //If new user
-        // if new user, push new user data to DB
-
-        MainActivity.pullData(new DataCallback() {
-            @Override
-            public void onCallback(User user) {
-                if(user== null){
-                    User newUser = new User(FBuser.getEmail(), FBuser.getDisplayName(), FBuser.getUid());
-                    MainActivity.pushData(newUser);
-                }
-            }
-        },uid);
-
         // Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
         TextView name = findViewById(R.id.textView_Name);
