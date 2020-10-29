@@ -1,35 +1,20 @@
 package com.example.whatdoyouwannawatch;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -47,8 +32,22 @@ public class LoginActivity extends AppCompatActivity {
         inputValidator = new InputValidator();
 
         // If user already logged in redirect to homepage
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        Log.d("login", currentUser.toString());
+
         if (currentUser != null) {
+            MainActivity.pullUser(new DataCallback() {
+                @Override
+                public void onCallback(User usr) {
+                    Log.d("login", "user = " + usr);
+                    if(usr== null){
+                        User newUser = new User(currentUser.getEmail(), currentUser.getDisplayName(), currentUser.getUid());
+                        Log.d("login", newUser.toString());
+                        MainActivity.pushData(newUser);
+                    }
+                }
+            },currentUser.getUid());
+
             Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
             startActivity(intent);
         }

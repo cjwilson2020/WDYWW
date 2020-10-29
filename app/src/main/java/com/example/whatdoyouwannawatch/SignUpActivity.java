@@ -15,8 +15,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -63,6 +61,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign up success, update username on new user object
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUsername(user, username);
+
                         } else {
                             // If sign up fails, display a message to the user.
                             try {
@@ -82,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void updateUsername(FirebaseUser user, String username) {
+    private void updateUsername(final FirebaseUser user, String username) {
         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
                 .setDisplayName(username)
                 .build();
@@ -92,6 +91,17 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // all fields for new account filled, go to home
+                            MainActivity.pullUser(new DataCallback() {
+                                @Override
+                                public void onCallback(User usr) {
+                                    if(usr== null){
+                                        User newUser = new User(user.getEmail(), user.getDisplayName(), user.getUid());
+                                        MainActivity.pushData(newUser);
+                                    }
+                                }
+                            },user.getUid());
+
+
                             Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);
                             startActivity(intent);
                         }

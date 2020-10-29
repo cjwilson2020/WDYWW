@@ -97,7 +97,6 @@ public class User {
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID
-
     private void generateUID(){
         this.UID = UUID.randomUUID().toString();
     }
@@ -119,7 +118,7 @@ public class User {
     public boolean isGuest() {return isGuest;}
 
     public String toString(){
-        return "User Name: " + username + "\n";
+        return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
     }
 
 

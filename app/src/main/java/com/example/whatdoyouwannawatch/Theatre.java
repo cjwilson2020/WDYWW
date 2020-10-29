@@ -25,7 +25,7 @@ public class Theatre {
         this.timeCreated = timeCreated;
     }
 
-    public String getUid() {
+    public String getUID() {
         return uid;
     }
 

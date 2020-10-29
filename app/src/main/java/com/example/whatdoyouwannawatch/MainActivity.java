@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -64,32 +65,56 @@ public class MainActivity extends AppCompatActivity {
         // 4. Look at UserHomeActivity
     }
 
-    static void pushData(User user) {
+    static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the SongQueue to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
-        String folder = "/users/" + user.getUID();
-        map.put(folder, user);
+//      Log.d("login","obj class name: " + obj.getClass().getName());
+        if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
+            String folder = ((User)obj).getUID();
+            map.put(folder, obj);
+        } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
+            String folder = ((Theatre)obj).getUID();
+            map.put(folder, obj);
+        }
         myRef.updateChildren(map)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("pushData", "Error Adding User", e);
                     }
+                })
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Log.d("pushData", "Successfully added user to firebase");
+                    }
+
                 });
     }
 
-    static void pullData(final DataCallback dbc, final String uid) {
-        // Somehow this allows the action String to work as intended
-        DatabaseReference qReference = database.getReference();
-        Log.i("Fetch", qReference.toString());
+    static void pullUser(final DataCallback dbc, final String uid) {
+        DatabaseReference mRef = database.getReference().child("users").child(uid);
+//        Log.i("pullUser", mRef.toString());
 
-        qReference.child(String.format("users/%s", uid));
-        qReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.child(String.format("/%s", uid));
+//        Log.d("pullUser", "myRef: " + mRef);
+//        Log.d("pullUser", "uid: " + uid);
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                dbc.onCallback(user);
+//                Log.d("pullUser", "user: " + user);
+                if (user == null){
+                    dbc.onCallback(null);
+                }else {
+//                    Log.d("pullUser", "User pulled: " + user.getUID());
+                    if (user.getUID() == null) {
+                        dbc.onCallback(null);
+                    } else {
+                        dbc.onCallback(user);
+                    }
+                }
             }
 
             @Override
