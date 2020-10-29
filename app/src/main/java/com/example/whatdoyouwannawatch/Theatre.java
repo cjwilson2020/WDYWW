@@ -2,11 +2,12 @@ package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
 import java.util.List;
+import java.util.UUID;
 
 public class Theatre {
 
-    private String uid;
-    private int roomNumber;
+    private String hostID;
+    private String roomNumber;
     private BackStage backstage;
     private List<User> users;
     private List<String> genres;
@@ -16,29 +17,32 @@ public class Theatre {
     private Time timeCreated;
     private Result result;
 
-    public Theatre(){
-
-    }
-    public Theatre(String uid, int roomNumber, Time timeCreated ){
-        this.uid =uid;
-        this.roomNumber =roomNumber;
-        this.timeCreated = timeCreated;
+    public Theatre(String uid){
+        this.hostID = uid;
+        this.roomNumber = generateID();
+        this.timeCreated = new Time(System.currentTimeMillis());
     }
 
-    public String getUID() {
-        return uid;
+//    public Theatre(String uid, int roomNumber, Time timeCreated ){
+//        this.hostID =uid;
+//        this.roomNumber = generateID();
+//        this.timeCreated = new Time(System.currentTimeMillis());
+//    }
+
+    private String generateID() {
+        return UUID.randomUUID().toString();
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public String getHostID() {
+        return hostID;
     }
 
-    public int getRoomNumber() {
+    public void setHostID(String uid) {
+        this.hostID = uid;
+    }
+
+    public String getRoomNumber() {
         return roomNumber;
-    }
-
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
     }
 
     public BackStage getBackstage() {

@@ -46,7 +46,8 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
             streamingServiceList += genre + ", ";
         }
         Toast.makeText(this, streamingServiceList, Toast.LENGTH_SHORT).show();
-        //Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);
-        //startActivity(intent);
+
+        Intent intent = new Intent(this, MediaRanking.class);
+        startActivity(intent);
     }
 }
