@@ -3,9 +3,23 @@ package com.example.whatdoyouwannawatch;
 import junit.framework.TestCase;
 
 import org.junit.Before;
+import org.junit.Test;
 
 public class UserUnitTest extends TestCase {
 
+    @Before
+    public void setUp(){
+        String email = "";
+        String username = "";
+        String uid = "";
+        User guest1 = new User();
+        User user1 = new User(email, username, uid);
+    }
+
+    @Test
+    public void testEmail(){
+
+    }
 
     public void testGetMinLength() {
     }
@@ -13,11 +27,11 @@ public class UserUnitTest extends TestCase {
     public void testGetMaxLength() {
     }
 
-    public void testGetRegion() {
-    }
-
-    public void testGetTimezone() {
-    }
+//    public void testGetRegion() {
+//    }
+//
+//    public void testGetTimezone() {
+//    }
 
     public void testGetUID() {
     }

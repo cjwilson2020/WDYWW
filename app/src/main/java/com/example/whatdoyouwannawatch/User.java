@@ -24,7 +24,7 @@ public class User {
     private Time maxLength;
 
     //Constructors for guest
-    private User(){
+    User(){
         this.isGuest = true;
         this.genres = new ArrayList<>();
         this.rankings = new ArrayList<>();

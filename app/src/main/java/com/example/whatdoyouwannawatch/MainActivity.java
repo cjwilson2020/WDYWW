@@ -89,8 +89,41 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(Object o) {
                         Log.d("pushData", "Successfully added user to firebase");
                     }
-
                 });
+    }
+
+    static void pullTheatre(final DataCallback dbc, final String uid) {
+        DatabaseReference mRef = database.getReference().child("theatres").child(uid);
+//        Log.i("pullUser", mRef.toString());
+
+        mRef.child(String.format("/%s", uid));
+//        Log.d("pullUser", "myRef: " + mRef);
+//        Log.d("pullUser", "uid: " + uid);
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Theatre theatre = dataSnapshot.getValue(Theatre.class);
+//                Log.d("pullUser", "user: " + user);
+                if (theatre == null){
+                    dbc.onCallback(null);
+                }else {
+//                    Log.d("pullUser", "User pulled: " + user.getUID());
+                    if (theatre.getUID() == null) {
+                        dbc.onCallback(null);
+                    } else {
+                        dbc.onCallback(theatre);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting User failed, log a message
+                Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
+            }
+        });
+        // Use the uID to access the correct user
+        //   return null;
     }
 
     static void pullUser(final DataCallback dbc, final String uid) {
@@ -147,13 +180,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static void apiCallSearch(String title, final ApiCallback acb) throws IOException {
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
-
+        //Log.d("search", "Title: " + title );
         Request request = new Request.Builder()
-                .url("https:\\\\ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com\\entertainment\\search\\")
+                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/")
                 .get()
                 .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
                 .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
-                .addHeader("content-type", "application/json")
+                .addHeader("content-type", "application\\json")
+                .addHeader("programtype", "Movie,Show") //Program Types
                 .addHeader("title", title) //String title
                 .addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
                 .build();
@@ -174,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Headers responseHeaders = response.headers();
                     for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
                     }
                     //Here is where I get the query results
                     String results = responseBody.string();
@@ -183,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }catch (IOException i){
+                    i.printStackTrace();
                 }
             }
         });

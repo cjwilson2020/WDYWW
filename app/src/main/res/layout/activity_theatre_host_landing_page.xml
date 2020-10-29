@@ -55,7 +55,7 @@
         android:layout_marginRight="164dp"
         android:layout_marginBottom="68dp"
         android:onClick="onClickInviteFriend"
-        android:text="Invite Friend"
+        android:text="Search Movie"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.413"
