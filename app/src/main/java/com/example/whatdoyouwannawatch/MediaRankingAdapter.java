@@ -10,15 +10,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHolder>{
+public class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewHolder>{
 
     private static final String TAG = "RankingAdapter";
 
@@ -26,7 +23,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     private Context context;
 
 
-    public RankingAdapter(ArrayList<String> list, Context con){
+    public MediaRankingAdapter(ArrayList<String> list, Context con){
         mediaList = list;
         context = con;
     }

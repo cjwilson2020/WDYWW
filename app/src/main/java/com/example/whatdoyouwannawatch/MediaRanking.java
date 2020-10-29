@@ -35,7 +35,7 @@ public class MediaRanking extends AppCompatActivity {
         Log.d(TAG, "initRecyclerView. ");
 
         RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
-        RankingAdapter adapter = new RankingAdapter(retrieveData(), this);
+        MediaRankingAdapter adapter = new MediaRankingAdapter(retrieveData(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

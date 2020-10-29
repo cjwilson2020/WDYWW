@@ -2,9 +2,10 @@ package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
 import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 
 public class Theatre {
+    private static int theatreCounter = 0;
 
     private String hostID;
     private String roomNumber;
@@ -19,7 +20,7 @@ public class Theatre {
 
     public Theatre(String uid){
         this.hostID = uid;
-        this.roomNumber = generateID();
+        this.roomNumber = Integer.toString(++theatreCounter);
         this.timeCreated = new Time(System.currentTimeMillis());
     }
 
@@ -29,9 +30,9 @@ public class Theatre {
 //        this.timeCreated = new Time(System.currentTimeMillis());
 //    }
 
-    private String generateID() {
-        return UUID.randomUUID().toString();
-    }
+//    private String generateID() {
+//        return UUID.randomUUID().toString();
+//    }
 
     public String getHostID() {
         return hostID;
