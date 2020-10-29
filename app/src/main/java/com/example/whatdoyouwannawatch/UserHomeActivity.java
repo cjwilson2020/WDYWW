@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -21,8 +22,16 @@ public class UserHomeActivity extends AppCompatActivity {
         final String uid = FBuser.getUid();
         user_id = uid;
 
-        Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
+        TextView welcome = findViewById(R.id.textView_Welcome);
+        welcome.setText("Welcome, " + FBuser.getDisplayName());
+
+    }
+
+    public void goToProfileOnClick(View view) {
+        Intent intent = new Intent(UserHomeActivity.this, UserProfileActivity.class);
+        startActivity(intent);
     }
 
     public void goToSettingsOnClick(View view) {

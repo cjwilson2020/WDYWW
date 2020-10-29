@@ -8,101 +8,98 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textView_Welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="37dp"
         android:layout_marginLeft="37dp"
-        android:layout_marginTop="60dp"
         android:layout_marginEnd="37dp"
         android:layout_marginRight="37dp"
         android:layout_marginBottom="20dp"
-        android:text="Welcome Back, User Name"
-        android:textSize="26dp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        android:textSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.149" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="188dp"
         android:layout_height="56dp"
-        android:layout_marginStart="111dp"
-        android:layout_marginLeft="111dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginRight="112dp"
         android:layout_marginBottom="10dp"
-        android:text="Watch Now"
         android:onClick="goToCreateJoinTheatreOnClick"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:text="Watch Now"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.266" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="188dp"
         android:layout_height="56dp"
-        android:layout_marginStart="111dp"
-        android:layout_marginLeft="111dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginRight="112dp"
-        android:layout_marginBottom="10dp"
-        android:text="Friend List"
         android:onClick="goToFriendsListOnClick"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        android:text="Friend List"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.59000003" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="188dp"
         android:layout_height="56dp"
-        android:layout_marginStart="111dp"
-        android:layout_marginLeft="111dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginRight="112dp"
-        android:layout_marginBottom="10dp"
-        android:text="Watch History"
         android:onClick="goToWatchHistoryOnClick"
-        app:layout_constraintBottom_toTopOf="@+id/button4"
+        android:text="Watch History"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.37" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="188dp"
         android:layout_height="56dp"
-        android:layout_marginStart="111dp"
-        android:layout_marginLeft="111dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="112dp"
-        android:layout_marginRight="112dp"
-        android:layout_marginBottom="273dp"
-        android:text="Settings"
         android:onClick="goToSettingsOnClick"
+        android:text="Settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.456"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
+
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="188dp"
+        android:layout_height="56dp"
+        android:onClick="goToProfileOnClick"
+        android:text="Profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.48000002" />
 
     <Button
         android:id="@+id/button_logout"
         android:layout_width="184dp"
         android:layout_height="56dp"
-        android:text="Log Out"
         android:onClick="onClickLogOut"
+        android:text="Log Out"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.844" />
+        app:layout_constraintVertical_bias="0.85" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
