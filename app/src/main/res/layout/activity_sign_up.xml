@@ -21,10 +21,10 @@
 
     <TextView
         android:id="@+id/textView_promptForPassword"
-        android:layout_width="202dp"
+        android:layout_width="wrap_content"
         android:layout_height="31dp"
-        android:text="Enter Password:"
-        android:textSize="24sp"
+        android:text="Enter Password: (Min 6 Characters)"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.325"

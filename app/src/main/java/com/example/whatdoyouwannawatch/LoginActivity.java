@@ -33,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // If user already logged in redirect to homepage
         final FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.d("login", currentUser.toString());
 
         if (currentUser != null) {
             MainActivity.pullUser(new DataCallback() {

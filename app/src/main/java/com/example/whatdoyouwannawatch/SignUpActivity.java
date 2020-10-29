@@ -67,7 +67,7 @@ public class SignUpActivity extends AppCompatActivity {
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthInvalidUserException e) {
-                                Toast.makeText(SignUpActivity.this, "Log up failed. " +
+                                Toast.makeText(SignUpActivity.this, "Log in failed. " +
                                         "This user does not exist." , Toast.LENGTH_SHORT).show();
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 Toast.makeText(SignUpActivity.this, "Log in failed. " +
