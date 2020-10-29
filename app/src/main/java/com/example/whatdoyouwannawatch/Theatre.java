@@ -25,7 +25,7 @@ public class Theatre {
         this.options = new ArrayList<Media>();
 
     }
-    public Theatre(String uid, int roomNumber, Time timeCreated ){
+    public Theatre(String uid, String roomNumber, Time timeCreated ){
         this.hostID =uid;
         this.roomNumber =roomNumber;
         this.timeCreated = timeCreated;
