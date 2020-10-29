@@ -57,9 +57,10 @@ public class QueryActivity extends AppCompatActivity {
                     // For each result, we are going to extract
                     // String id, String title, List<String> genres, List<String> cast, runtime as Time length, String director, String writer, String description, Image poster, Double rating
                     // To do this, we need to look at the json example at
-                    for (int i = 0; i < hits.length(); i++) {
+                    for (int i = 0; i < hits.length() - hits.length()-1; i++) {
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this movie
-                        Log.d("search", result_info.toString());
+                        if(i == 0)
+                            Log.d("search", result_info.toString());
                         //I will make a HashMap to store key value pairs.
                         HashMap<String, String> info;
                         info = new HashMap<String, String>();

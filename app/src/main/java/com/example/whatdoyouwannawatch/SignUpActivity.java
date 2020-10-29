@@ -91,6 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             // all fields for new account filled, go to home
+
                             MainActivity.pullUser(new DataCallback() {
                                 @Override
                                 public void onCallback(Object usr) {

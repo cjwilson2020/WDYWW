@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, Object> map = new HashMap<>();
 //      Log.d("login","obj class name: " + obj.getClass().getName());
         if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
-            String folder = ((User)obj).getUID();
+            String folder = ((User)obj).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
             String folder = ((Theatre)obj).getUID();
@@ -126,11 +126,11 @@ public class MainActivity extends AppCompatActivity {
         //   return null;
     }
 
-    static void pullUser(final DataCallback dbc, final String uid) {
-        DatabaseReference mRef = database.getReference().child("users").child(uid);
+    static void pullUser(final DataCallback dbc, final String uName) {
+        DatabaseReference mRef = database.getReference().child("users").child(uName);
 //        Log.i("pullUser", mRef.toString());
 
-        mRef.child(String.format("/%s", uid));
+        mRef.child(String.format("/%s", uName ));
 //        Log.d("pullUser", "myRef: " + mRef);
 //        Log.d("pullUser", "uid: " + uid);
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
