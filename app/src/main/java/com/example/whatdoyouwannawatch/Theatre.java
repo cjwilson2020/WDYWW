@@ -23,8 +23,8 @@ public class Theatre {
         this.hostID = uid;
         this.roomNumber = Integer.toString(++theatreCounter);
         this.timeCreated = new Time(System.currentTimeMillis());
-
     }
+
     public Theatre(String uid, String roomNumber, Time timeCreated ){
         this.hostID =uid;
         this.roomNumber =roomNumber;
