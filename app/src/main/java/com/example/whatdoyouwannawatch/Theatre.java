@@ -1,6 +1,7 @@
 package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Theatre {
@@ -17,12 +18,20 @@ public class Theatre {
     private Result result;
 
     public Theatre(){
+        this.backstage = new BackStage();
+        this.users = new ArrayList<User>();
+        this.genres = new ArrayList<String>();
+        this.options = new ArrayList<Media>();
 
     }
     public Theatre(String uid, int roomNumber, Time timeCreated ){
         this.uid =uid;
         this.roomNumber =roomNumber;
         this.timeCreated = timeCreated;
+        this.backstage = new BackStage();
+        this.users = new ArrayList<User>();
+        this.genres = new ArrayList<String>();
+        this.options = new ArrayList<Media>();
     }
 
     public String getUID() {
@@ -104,6 +113,11 @@ public class Theatre {
 
     public Time getMinTime() {
         return minTime;
+    }
+
+    public void setTimes(){
+        setMinTime();
+        setMaxTime();
     }
 
     public void setMinTime() {
