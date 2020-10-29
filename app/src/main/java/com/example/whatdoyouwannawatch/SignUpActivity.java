@@ -34,22 +34,33 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void onClickSignUp(View v) {
         EditText editTextEmailAddress = findViewById(R.id.editTextEmailAddress);
-        String email = editTextEmailAddress.getText().toString();
+        final String email = editTextEmailAddress.getText().toString();
         if (!inputValidator.emailIsValid(email)) {
             Toast.makeText(this, "You've entered an invalid email address. " +
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
         EditText editTextPassword = findViewById(R.id.editTextPassword);
-        String password = editTextPassword.getText().toString();
+        final String password = editTextPassword.getText().toString();
         if (!inputValidator.passwordIsValid(password)) {
             Toast.makeText(this, "You've entered an invalid password. " +
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
         EditText editTextUsername = findViewById(R.id.editText_username);
-        String username = editTextUsername.getText().toString();
-        createUser(email, password, username);
+        final String username = editTextUsername.getText().toString();
+        MainActivity.pullUser(new DataCallback() {
+            @Override
+            public void onCallback(Object usr) {
+                if(usr== null){
+                    createUser(email, password, username);
+                }else{
+                    Toast.makeText(SignUpActivity.this, "Sign up failed. " +
+                            "A user with this username already exists." , Toast.LENGTH_SHORT).show();
+                }
+            }
+        },username);
+
     }
 
     private void createUser(String email, String password, final String username) {

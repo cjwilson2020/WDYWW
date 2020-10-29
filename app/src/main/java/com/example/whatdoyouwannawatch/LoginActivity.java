@@ -33,9 +33,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // If user already logged in redirect to homepage
         final FirebaseUser currentUser = mAuth.getCurrentUser();
-        User newUser = new User(currentUser.getEmail(), currentUser.getDisplayName(), currentUser.getUid());
+
 
         if (currentUser != null) {
+            User newUser = new User(currentUser.getEmail(), currentUser.getDisplayName(), currentUser.getUid());
             MainActivity.pushData(newUser);
             Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
             startActivity(intent);
