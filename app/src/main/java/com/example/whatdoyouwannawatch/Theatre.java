@@ -2,7 +2,8 @@ package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
 import java.util.List;
-//import java.util.UUID;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class Theatre {
     private static int theatreCounter = 0;
@@ -22,17 +23,17 @@ public class Theatre {
         this.hostID = uid;
         this.roomNumber = Integer.toString(++theatreCounter);
         this.timeCreated = new Time(System.currentTimeMillis());
+
     }
-
-//    public Theatre(String uid, int roomNumber, Time timeCreated ){
-//        this.hostID =uid;
-//        this.roomNumber = generateID();
-//        this.timeCreated = new Time(System.currentTimeMillis());
-//    }
-
-//    private String generateID() {
-//        return UUID.randomUUID().toString();
-//    }
+    public Theatre(String uid, String roomNumber, Time timeCreated ){
+        this.hostID =uid;
+        this.roomNumber =roomNumber;
+        this.timeCreated = timeCreated;
+        this.backstage = new BackStage();
+        this.users = new ArrayList<User>();
+        this.genres = new ArrayList<String>();
+        this.options = new ArrayList<Media>();
+    }
 
     public String getHostID() {
         return hostID;
