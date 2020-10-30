@@ -42,7 +42,7 @@ For iteration 1, we have implemented the following functionality:
     
     v) After all data has been collected from all users in the theatre (genres, services, lengths), the BackStage object calls the theatre's helper methods and retrieves a list of 5 media that meet these criteria
     
-    vi) All users rank these media from most desireable to least desireable, and after all users have responded BackStage calls the calcResult() method to determine the final Result
+    vi) All users rank these media from most desireable to least desireable, by long clicking and dragging to rearrange the order. After all users have responded BackStage calls the calcResult() method to determine the final Result
     
     vii) The final Result is displayed to all users, at which point they exit the app to begin watching
   
