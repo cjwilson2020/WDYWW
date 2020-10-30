@@ -22,13 +22,13 @@ For iteration 1, we have implemented the following functionality:
   
     i) Upon clicking "Create Theatre", a Theatre with the user's username will be created in firebase, the user's object will be added to the theatre's list of users
     
-    ii) The user is redirected to the Host Landing Page. From there, they can access the User Landing Page and view all users in the theatre
+    ii) The user is redirected to the Host Landing Page. From there, they can end the Theatre session or access the User Landing Page and view all users in the theatre
   
   b) Join Theatre
   
     i) Upon clicking "Join Theatre", the user will be prompted for a theatre code. If the code provided is valid, the user's object will be added to that theatre's list of users
     
-    ii) The user is redirected to the User Landing Page, where they can view all users in the theatre
+    ii) The user is redirected to the User Landing Page, where they can view all users in the theatre or leave the session
     
   c) Shared functionality between Create/Join Theatre
   
