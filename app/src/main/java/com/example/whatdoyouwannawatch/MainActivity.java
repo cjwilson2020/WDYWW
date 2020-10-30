@@ -47,6 +47,20 @@ MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    static void removeUserFromTheatre(String hostID, final String username){
+        myRef = database.getReference();
+        pullData('t', hostID, new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if(obj != null){
+                 Theatre t = (Theatre) obj;
+                 t.removeUser(username);
+                 pushData(t);
+                }
+            }
+        });
+    }
+
     static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
@@ -57,13 +71,13 @@ MainActivity extends AppCompatActivity {
             String u = "users";
 
             String folder = u + "/" + (tmp).getUsername();
-            map.put(folder, obj);
+            map.put(folder.toLowerCase(), obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
             Theatre tmp = (Theatre) obj;
             String t = "theatres";
 
             String folder = t + "/" + (tmp).getHostID();
-            map.put(folder, obj);
+            map.put(folder.toLowerCase(), obj);
         }
         myRef.updateChildren(map)
                 .addOnFailureListener(new OnFailureListener() {
@@ -83,6 +97,7 @@ MainActivity extends AppCompatActivity {
     static Object pullData(char type, String id, final DataCallback dcb){
         String t = "theatres";
         String u = "users";
+        id = id.toLowerCase();
 
         if (type == 'u'){
             myRef = database.getReference().child(u).child(id);
@@ -163,6 +178,58 @@ MainActivity extends AppCompatActivity {
                 .addHeader("Title", title) //String title
                 .addHeader("Providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
                 //.addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+                .build();
+
+        Log.d("search", request.toString());
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //A Response has a headers and a body
+                //Headers just contain info or metadata about the response like number of calls left for the free trial
+                // or the Access control methods allowed like GET, POST, PUT, etc
+
+                //The body has all of the data about the shows and movies found, if any..
+                try (ResponseBody responseBody = response.body()) {
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Unexpected code " + response);
+                    }
+//                    Headers responseHeaders = response.headers();
+//                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+//                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                    }
+
+                    //Here is where we get the query results
+                    String results = responseBody.string();
+                    try {
+                        acb.onCallback(results);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }catch (IOException i){
+                    i.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public static void apiCallImage(String path , final ApiCallback acb)   throws IOException {
+        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
+        //Log.d("search", "Title: " + title );
+        Request request = new Request.Builder() // This is the query we build
+                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/%7Bfilepath%7D/Redirect?Redirect=false")
+                .get()
+                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+                .addHeader("accept", "application/json")
+                .addHeader("filepath", path) //String title
+                .addHeader("providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
+                .addHeader("expirationminutes", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
                 .build();
 
         Log.d("search", request.toString());

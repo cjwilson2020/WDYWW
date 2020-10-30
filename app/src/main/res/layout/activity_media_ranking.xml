@@ -11,7 +11,7 @@
         android:layout_width="380dp"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
-        android:text="Rank the titles from most to least want to watch"
+        android:text="Hold and drag to rank the titles from most to least want to watch"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

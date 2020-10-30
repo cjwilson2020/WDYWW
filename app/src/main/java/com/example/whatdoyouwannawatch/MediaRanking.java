@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MediaRanking extends AppCompatActivity {
-    private ArrayList<Media> mediaList = new ArrayList<Media>(5);
+    private ArrayList<String> mediaList = retrieveData();
 
     private static final String TAG = "MediaRanking";
 
@@ -38,17 +38,11 @@ public class MediaRanking extends AppCompatActivity {
         initRecyclerView();
     }
 
-    public void onClickRanking(View v){
-        Intent intent = new Intent(this, ResultActivity.class);
-        startActivity(intent);
-    }
-
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView. ");
 
         RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
-        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(retrieveData(), this);
-
+        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
         ItemTouchHelper.Callback callback = new MediaRankingTouchHelper(mediaRankingAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         mediaRankingAdapter.setTouchHelper(itemTouchHelper);
@@ -62,6 +56,14 @@ public class MediaRanking extends AppCompatActivity {
         // TODO Dummy data, needs to be replaced with
         return new ArrayList<String>(
                 Arrays.asList("Kill Bill", "TENET", "Mulan", "Lord of the Rings", "Grand Budapest Hotel"));
+    }
+
+    public void onClickRanking(View v){
+        // TODO push mediaList to Theatre
+        Toast.makeText(MediaRanking.this, ""+mediaList.toString(), Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(this, ResultActivity.class);
+        startActivity(intent);
     }
 
 }
@@ -100,9 +102,12 @@ public class MediaRanking extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: " + mediaList.get(position));
-                Toast.makeText(context, mediaList.get(position), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public ArrayList<String> getMediaList(){
+        return mediaList;
     }
 
     @Override

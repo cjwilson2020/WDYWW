@@ -46,11 +46,24 @@ public class Theatre {
     public void setUsers(List<User> users) { this.users = users; }
 
     public void addUser(User u){
-        if(!this.users.contains(u)) {
+        boolean alreadyIn = false;
+        for(int i = 0; i<this.users.size(); i++){
+            if(users.get(i).getUsername().equals(u.getUsername())){
+                alreadyIn = true;
+            }
+        }
+        if(!alreadyIn) {
             this.users.add(u);
         }
     }
-    public void removeUser(User u){ this.users.remove(u); }
+    public void removeUser(String username){
+        for(int i = 0; i<this.users.size(); i++){
+            if(users.get(i).getUsername().equals(username)){
+                users.remove(i);
+            }
+        }
+
+    }
 
     public List<String> getGenres() { return genres; }
     public void setGenres(List<String> genres) { this.genres = genres; }

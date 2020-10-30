@@ -23,8 +23,6 @@ public class ChooseGenresActivity extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
