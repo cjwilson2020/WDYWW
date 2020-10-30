@@ -43,7 +43,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
             }
         });
 
-       // displayTheatreID();
+        displayTheatreID();
        // displayCode();
 
 
