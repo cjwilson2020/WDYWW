@@ -79,9 +79,16 @@ public class User {
 
 
     //add, remove and get preference
-    public void addPreference(String tag){this.preferences.add(tag);}
+    public void addPreference(String tag){
+        if(!this.preferences.contains(tag)) {
+            this.preferences.add(tag);
+        }
+    }
     public void removePreference(String tag){this.preferences.remove(tag);}
     public List<String> getPreferences() {return this.preferences;}
+    public void setPreferences(List<String> prefs){
+        this.preferences = prefs;
+    }
 
     //set and get length
     public void setMinLength(int t) {this.minLength = t;}

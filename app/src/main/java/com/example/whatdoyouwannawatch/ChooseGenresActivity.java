@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -37,6 +41,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
     }
 
     public void onClickSelectGenres(View v) {
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
         SparseBooleanArray checked = listView.getCheckedItemPositions();
         ArrayList<String> selectedGenres = new ArrayList<String>();
         for (int i = 0; i < checked.size(); i++) {
@@ -46,6 +51,17 @@ public class ChooseGenresActivity extends AppCompatActivity {
                 selectedGenres.add(arrayAdapter.getItem(position));
             }
         }
+        final ArrayList<String> userGenres = selectedGenres;
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if(obj != null){
+                    User u = (User) obj;
+                    u.setPreferences(userGenres);
+                    MainActivity.pushData(u);
+                }
+            }
+        });
 
         String genreList = "";
         for (String genre: selectedGenres) {
