@@ -71,7 +71,6 @@ public class TheatreHostLandingPage extends AppCompatActivity {
 
     // TODO: Figure out how to pull theatre data from FireBase
     public void displayTheatreID() {
-        final String[] theatreID = new String[1];
         MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object theatre) {
