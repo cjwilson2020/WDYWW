@@ -47,34 +47,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Writing to Realtime Database
-        //myRef.setValue("123"); //value pair for "key"
-
-        //We use a callback function if we are in a different Activity class
-        //Steps are as follows
-        /*
-          1. Define the methods in an interface that we want to invoke after callback.
-          2. Define a class that will implement the callback methods of the interface.
-          3. Define a reference in other class to register the callback interface.
-          4. Use that reference to invoke the callback method.
-         */
-        // 1. Look at DataCallback interface class
-        // 2. This is the class that will implement the callback method
-        //     Refer to the pullData function in this class
-        // 3. The reference will be in UserHomeActivity
-        // 4. Look at UserHomeActivity
     }
 
     static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
-//      Log.d("login","obj class name: " + obj.getClass().getName());
+
         if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
-            String folder = "users/" + ((User)obj).getUsername();
+            User tmp = (User)obj;
+            String u = "users";
+            DatabaseReference uRef = myRef.child(u);
+            String folder = ((User)obj).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
-            String folder = "theatres/" + ((Theatre)obj).getRoomNumber();
+            Theatre tmp = (Theatre) obj;
+            String t = "theatres";
+            DatabaseReference uRef = myRef.child(t);
+            String folder = t + "/" + ((Theatre)obj).getRoomNumber();
             map.put(folder, obj);
         }
         myRef.updateChildren(map)
@@ -92,73 +82,61 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    static void pullTheatre(final DataCallback dbc, final String uid) {
-        DatabaseReference mRef = database.getReference().child("theatres").child(uid);
-//        Log.i("pullUser", mRef.toString());
+    static Object pullData(char type, String id, final DataCallback dcb){
+        String t = "theatres/";
+        String u = "users";
 
-        mRef.child(String.format("/%s", uid));
-//        Log.d("pullUser", "myRef: " + mRef);
-//        Log.d("pullUser", "uid: " + uid);
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Theatre theatre = dataSnapshot.getValue(Theatre.class);
-//                Log.d("pullUser", "user: " + user);
-                if (theatre == null){
-                    dbc.onCallback(null);
-                }else {
-//                    Log.d("pullUser", "User pulled: " + user.getUID());
-                    if (theatre.getRoomNumber() == null) {
-                        dbc.onCallback(null);
+        if (type == 'u'){
+            myRef = database.getReference().child(u).child(id);
+            Log.d("pull", myRef.toString());
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user == null) {
+                        dcb.onCallback(null);
                     } else {
-                        dbc.onCallback(theatre);
-
+                        if (user.getUID() == null) {
+                            dcb.onCallback(null);
+                        } else {
+                            dcb.onCallback(user);
+                        }
                     }
                 }
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting User failed, log a message
+                    Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
+                }
+            });
+        } else if (type == 't'){
+            myRef = database.getReference().child(t).child(id);
+            Log.d("pull", myRef.toString());
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d("pull", "theatre datasnapshot: " + dataSnapshot.toString());
+                    Theatre theatre = dataSnapshot.getValue(Theatre.class);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting User failed, log a message
-                Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
-            }
-        });
-        // Use the uID to access the correct user
-        //   return null;
-    }
-
-    static void pullUser(final DataCallback dbc, final String uName) {
-        DatabaseReference mRef = database.getReference().child("users").child(uName);
-//        Log.i("pullUser", mRef.toString());
-
-        mRef.child(String.format("/%s", uName ));
-//        Log.d("pullUser", "myRef: " + mRef);
-//        Log.d("pullUser", "uid: " + uid);
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-//                Log.d("pullUser", "user: " + user);
-                if (user == null){
-                    dbc.onCallback(null);
-                }else {
-//                    Log.d("pullUser", "User pulled: " + user.getUID());
-                    if (user.getUID() == null) {
-                        dbc.onCallback(null);
+                    if (theatre == null) {
+                        dcb.onCallback(null);
                     } else {
-                        dbc.onCallback(user);
+                        if (theatre.getRoomNumber() == null) {
+                            dcb.onCallback(null);
+                        } else {
+                            dcb.onCallback(theatre);
+                        }
                     }
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting User failed, log a message
-                Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
-            }
-        });
-        // Use the uID to access the correct user
-        //   return null;
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting User failed, log a message
+                    Log.i("PullData", "Failed to Load Theatre from Firebase", databaseError.toException());
+                }
+            });
+        }
+        return null;
     }
 
     public void onClickWatchNow(View v) {

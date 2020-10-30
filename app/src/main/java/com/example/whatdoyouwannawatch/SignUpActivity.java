@@ -49,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
         EditText editTextUsername = findViewById(R.id.editText_username);
         final String username = editTextUsername.getText().toString();
-        MainActivity.pullUser(new DataCallback() {
+        MainActivity.pullData( 'u', username, new DataCallback() {
             @Override
             public void onCallback(Object usr) {
                 if(usr== null){
@@ -59,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
                             "A user with this username already exists." , Toast.LENGTH_SHORT).show();
                 }
             }
-        },username);
+        });
 
     }
 
@@ -103,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // all fields for new account filled, go to home
 
-                            MainActivity.pullUser(  new DataCallback() {
+                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {
                                 @Override
                                 public void onCallback(Object usr) {
                                     if(usr== null){
@@ -111,7 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         MainActivity.pushData(newUser);
                                     }
                                 }
-                            },user.getDisplayName());
+                            });
 
 
                             Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);

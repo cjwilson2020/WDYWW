@@ -25,38 +25,15 @@ public class CreateJoinTheatre extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_theatre);
-        String uid = "123";
-
-
-        MainActivity.pullTheatre( new DataCallback() {
-            @Override
-            public void onCallback(Object obj) {
-                Theatre t = (Theatre) obj;
-
-                Log.d("theatre", t.toString());
-
-
-            }
-        } , uid);
 
     }
 
     public void onClickCreateTheatre(View v) {
-        // Dummy Data
-
-        /*
-        User user = new User("jbond@mi6.com","James","007");
-        Theatre theatre = new Theatre(user.getUID());
-
-         */
-
         FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+
         Theatre theatre1 = new Theatre(fbUser.getDisplayName());
 
         MainActivity.pushData(theatre1);
-
-
-
 
         Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
         startActivity(intent);
@@ -66,17 +43,15 @@ public class CreateJoinTheatre extends AppCompatActivity {
 //        Theatre theatre;
         String name;
 
-        MainActivity.pullTheatre(new DataCallback() {
+        MainActivity.pullData('t', "0", new DataCallback() {
             @Override
             public void onCallback(Object obj) {
                 Theatre theatre = (Theatre) obj;
 
-//                public void run(){
-//                    Toast.makeText(this, "hey I'm a message", Toast.LENGTH_SHORT).show();
-//                }
-//                name = theatre.getRoomNumber();
+                Toast.makeText( CreateJoinTheatre.this, "hey I'm a message", Toast.LENGTH_SHORT).show();
+
             }
-        }, "0");
+        });
 
 
     }

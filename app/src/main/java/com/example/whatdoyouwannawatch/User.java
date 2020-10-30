@@ -2,9 +2,13 @@ package com.example.whatdoyouwannawatch;
 
 import android.media.Image;
 
+import com.google.firebase.database.Exclude;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class User {
     private String UID;
@@ -43,7 +47,6 @@ public class User {
         this.preferences = new ArrayList<>();
         this.options = new ArrayList<>();
     }
-
 
     //set and get genres
     public List<String> getGenres() {return genres;}
@@ -118,5 +121,19 @@ public class User {
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
     }
 
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", getUID());
+        result.put("username", getUsername());
+        result.put("email", getEmail());
+        result.put("friends", getFriends());
+        result.put("history", getHistory());
+        result.put("genres", getGenres());
+        result.put("rankings", getRankings());
+        result.put("preferences", getPreferences());
+
+        return result;
+    }
 
 }
