@@ -40,8 +40,9 @@ public class BackStageTest {
         t1.setUsers(users);
 
         //t1.setTimes();
-        t1.setMinTime();
-        t1.setMaxTime();
+        //t1.setMinTime();
+        //t1.setMaxTime();
+        b1.calcLength();
         assertEquals(u1t1, t1.getMinTime());
         assertEquals(u2t2, t1.getMaxTime());
 

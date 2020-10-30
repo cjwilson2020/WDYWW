@@ -1,5 +1,6 @@
 package com.example.whatdoyouwannawatch;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -21,7 +22,9 @@ public class BackStage {
         this.theatre = t;
     }
 
-    public static List<LocalTime> calcLength() {
+    //public static List<LocalTime> calcLength() {
+    @SuppressLint("NewApi")
+    public static void calcLength() {
         List<LocalTime> returnList = new ArrayList<>();
         List<User> users = theatre.getUsers();
         LocalTime minTime = LocalTime.of(0, 0, 0);
@@ -37,10 +40,12 @@ public class BackStage {
             }
         }
 
-        returnList.add(minTime);
-        returnList.add(maxTime);
+        //returnList.add(minTime);
+        //returnList.add(maxTime);
+        theatre.setMinTime(minTime);
+        theatre.setMaxTime(maxTime);
 
-        return returnList;
+        //return returnList;
     }
 
 

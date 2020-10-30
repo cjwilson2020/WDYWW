@@ -16,7 +16,7 @@ public class Theatre {
 
     private String hostID;
     private String roomNumber;
-    private BackStage backstage;
+//    private BackStage backstage;
     private List<User> users;
     private List<String> genres;
     private List<Media> options;
@@ -41,7 +41,7 @@ public class Theatre {
         this.hostID =uid;
         this.roomNumber =roomNumber;
         this.timeCreated = timeCreated;
-        this.backstage = new BackStage();
+//        this.backstage = new BackStage();
         this.users = new ArrayList<User>();
         this.genres = new ArrayList<String>();
         this.options = new ArrayList<Media>();
@@ -53,8 +53,8 @@ public class Theatre {
 
     public String getRoomNumber() { return roomNumber; }
     
-    public BackStage getBackstage() { return backstage; }
-    public void setBackstage() { this.backstage = new BackStage(this); }
+//    public BackStage getBackstage() { return backstage; }
+//    public void setBackstage() { this.backstage = new BackStage(this); }
 
     public List<User> getUsers() { return users; }
     public void setUsers(List<User> users) { this.users = users; }
@@ -89,17 +89,13 @@ public class Theatre {
         return minTime;
     }
 
-    public void setMinTime() {
-        this.minTime = backstage.calcLength().get(0);
-    }
+ //   public void setMinTime() { this.minTime = backstage.calcLength().get(0);    }
+    public void setMinTime(LocalTime t) { this.minTime = t;    }
 
-    public LocalTime getMaxTime() {
-        return maxTime;
-    }
+    public LocalTime getMaxTime() {    return maxTime;    }
 
-    public void setMaxTime() {
-        this.maxTime = backstage.calcLength().get(1);
-    }
+//    public void setMaxTime() {     this.maxTime = backstage.calcLength().get(1);    }
+    public void setMaxTime(LocalTime t) {     this.maxTime = t;    }
 
     public LocalTime getTimeCreated() {
         return timeCreated;
