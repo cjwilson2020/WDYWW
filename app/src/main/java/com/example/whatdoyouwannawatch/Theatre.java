@@ -56,9 +56,9 @@ public class Theatre {
             this.users.add(u);
         }
     }
-    public void removeUser(User u){
+    public void removeUser(String username){
         for(int i = 0; i<this.users.size(); i++){
-            if(users.get(i).getUsername().equals(u.getUsername())){
+            if(users.get(i).getUsername().equals(username)){
                 users.remove(i);
             }
         }

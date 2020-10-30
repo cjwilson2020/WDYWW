@@ -47,6 +47,20 @@ MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    static void removeUserFromTheatre(String hostID, final String username){
+        myRef = database.getReference();
+        pullData('t', hostID, new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if(obj != null){
+                 Theatre t = (Theatre) obj;
+                 t.removeUser(username);
+                 pushData(t);
+                }
+            }
+        });
+    }
+
     static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
