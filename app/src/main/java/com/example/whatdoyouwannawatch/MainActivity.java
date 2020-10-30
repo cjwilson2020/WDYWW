@@ -33,7 +33,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
-public class MainActivity extends AppCompatActivity {
+public class
+MainActivity extends AppCompatActivity {
     // Write info to the Realtime database
     private static final String TAG = "MainActivity";
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -134,11 +135,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         return null;
-    }
-
-    public void onClickWatchNow(View v) {
-        Intent intent = new Intent(MainActivity.this, CreateJoinTheatre.class);
-        startActivity(intent);
     }
 
     public void onClickLogIn(View v) {

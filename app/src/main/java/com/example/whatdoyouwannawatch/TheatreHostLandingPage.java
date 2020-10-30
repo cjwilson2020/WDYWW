@@ -8,21 +8,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
 
 public class TheatreHostLandingPage extends AppCompatActivity {
-    private int theatreID = 12345;
-    private int code = 98765;
+    private FirebaseUser fbUser;
 
     Button qButton;
     TextView qTextView;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theatre_host_landing_page);
+
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         qButton = (Button) findViewById(R.id.query_button);
         qTextView = (TextView) findViewById(R.id.query_editText);
@@ -37,14 +43,14 @@ public class TheatreHostLandingPage extends AppCompatActivity {
             }
         });
 
-        displayTheatreID();
-        displayCode();
+       // displayTheatreID();
+       // displayCode();
 
 
     }
 
     public void onClickCopyCode(View v) {
-        int code = getCode();
+        String code = getCode();
         // TODO: copy to clipboard
 
     }
@@ -53,14 +59,34 @@ public class TheatreHostLandingPage extends AppCompatActivity {
 
     }
 
-    // TODO: Implement once theatre id generation set up in FireBase
-    private int getTheatreID() {
-        return theatreID;
+    // TODO: Figure out how to pull theatre data from FireBase
+    private String getTheatreID() {
+        final String[] theatreID = new String[1];
+        MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object theatre) {
+                if(theatre != null){
+                    Theatre currTheatre = (Theatre) theatre;
+                    theatreID[0] = currTheatre.getHostID();
+                }
+            }
+        });
+        return theatreID[0];
     }
 
     // TODO: Implement once code generation set up in FireBase
-    private int getCode() {
-        return code;
+    private String getCode() {
+        final String[] code = new String[1];
+        MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object theatre) {
+                if(theatre != null){
+                    Theatre currTheatre = (Theatre) theatre;
+                    code[0] = currTheatre.getHostID();
+                }
+            }
+        });
+        return code[0];
     }
 
     private void displayTheatreID() {
