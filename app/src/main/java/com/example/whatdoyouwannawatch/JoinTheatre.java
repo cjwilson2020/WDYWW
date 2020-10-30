@@ -62,19 +62,15 @@ public class JoinTheatre extends AppCompatActivity {
     }
 
     private void addUserToTheatre() {
-        Toast.makeText(JoinTheatre.this, "Global Theatre: " + this.theatre + "Global User: " + this.user, Toast.LENGTH_SHORT).show();
-        Toast.makeText(JoinTheatre.this, "Theatre Users: " + this.theatre.getUsers(), Toast.LENGTH_SHORT).show();
-        //theatre.addUser(user);
-        //Toast.makeText(JoinTheatre.this, "Theatre Users: " + this.theatre.getUsers(), Toast.LENGTH_SHORT).show();
+        theatre.addUser(user);
+        MainActivity.pushData(theatre);
     }
 
     public void setTheatre(Theatre theatre) {
         this.theatre = theatre;
-        // Toast.makeText(JoinTheatre.this, "Global Theatre: " + this.theatre + "Theatre: " + theatre, Toast.LENGTH_SHORT).show();
     }
 
     public void setUser(User user) {
         this.user = user;
-        // Toast.makeText(JoinTheatre.this, "Global User: " + this.user + "User: " + user, Toast.LENGTH_SHORT).show();
     }
 }
