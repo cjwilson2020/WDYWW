@@ -2,19 +2,19 @@ package com.example.whatdoyouwannawatch;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 
 public class Result {
-    private String UID;
+//    private String UID;
     private Media finalDecision;
     private List<User> users;
     private List<Media> options;
-    private Media recommendation;
+//    private Media recommendation;
     private Date decisionMade;
 
     //constructor
     public Result() {
-        generateUID();
+        //generateUID();
     }
 
     public Result(Media finalDecision, List<User> users, List<Media> options, Date decisionMade) {
@@ -22,19 +22,18 @@ public class Result {
         this.users = users;
         this.options = options;
         this.decisionMade = decisionMade;
-        generateUID();
+//        generateUID();
     }
 
-    //TODO display the media
-    public void display(){}
+//    public void display(){}
 
-    public void setRecommendation(Media recommendation) {
-        this.recommendation = recommendation;
-    }
-
-    public Media getRecommendation(){
-        return this.recommendation;
-    }
+//    public void setRecommendation(Media recommendation) {
+//        this.recommendation = recommendation;
+//    }
+//
+//    public Media getRecommendation(){
+//        return this.recommendation;
+//    }
 
     //add the media to history
     public void addToHistory(List<User> users){
@@ -44,9 +43,9 @@ public class Result {
     }
 
     //Generate a random unique ID
-    private void generateUID(){
-        this.UID = UUID.randomUUID().toString();
-    }
+//    private void generateUID(){
+//        this.UID = UUID.randomUUID().toString();
+//    }
 
     //getters and setters
     public Media getFinalDecision() {
