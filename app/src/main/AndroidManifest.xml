@@ -15,7 +15,6 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".WatchHistoryActivity" />
-        <activity android:name=".QueryActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".MediaRanking" />

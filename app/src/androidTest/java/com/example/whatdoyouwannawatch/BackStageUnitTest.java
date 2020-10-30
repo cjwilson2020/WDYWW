@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class BackStageTest {
+public class BackStageUnitTest {
 
     @Test
     public void calcLength() {

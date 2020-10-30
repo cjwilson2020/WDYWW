@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,11 +18,19 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
             "Disney+", "STARZ", "Crunchyroll", "Tubi"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
+    String genreList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_streaming_services);
+
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) { //extra passed into this
+            genreList = extras.getString("genreList");
+        }
+        Log.d("search", genreList);
 
         arrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_multiple_choice, streamingServices);
@@ -45,9 +54,15 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
         for (String genre: selectedStreamingServices) {
             streamingServiceList += genre + ", ";
         }
+
+        streamingServiceList = streamingServiceList.trim();
+//        if (streamingServiceList.length() > 2);
+ //           streamingServiceList = streamingServiceList.substring(0, streamingServiceList.length()-2);
         Toast.makeText(this, streamingServiceList, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, MediaRanking.class);
+        intent.putExtra("genreList", genreList);
+        intent.putExtra("streamingServiceList", streamingServiceList);
         startActivity(intent);
     }
 }
