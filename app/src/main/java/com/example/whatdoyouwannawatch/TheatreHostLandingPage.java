@@ -53,6 +53,20 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onClickRemoveTheatre(View v) {
+        MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object theatre) {
+                if(theatre != null){
+                    Theatre currTheatre = (Theatre) theatre;
+                    MainActivity.removeTheatre(currTheatre.getHostID());
+                }
+            }
+        });
+        Intent intent = new Intent(this, UserHomeActivity.class);
+        startActivity(intent);
+    }
+
     public void displayTheatreID() {
         MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
             @Override
