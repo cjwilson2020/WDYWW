@@ -5,7 +5,6 @@ import android.util.Log;
 import org.junit.Test;
 import junit.framework.Assert;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
