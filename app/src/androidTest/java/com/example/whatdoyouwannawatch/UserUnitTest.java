@@ -24,6 +24,10 @@ public class UserUnitTest {
         user1.addRankingToEnd(new Media());
         user1.addPreference("Horror");
         user1.addPreference("SciFi");
+        user1.addFriend(new User("1", "user1", "1"));
+        user1.addFriend(new User("2", "user2", "2"));
+        user1.addFriend(new User("3", "user3", "3"));
+        user1.addHistory(new Result());
     }
 
     //test basic information
@@ -142,6 +146,11 @@ public class UserUnitTest {
     }
 
     @Test
+    public void getPreferences() {
+        assertEquals(user1.getPreferences().size(), 2);
+    }
+
+    @Test
     public void addPreference() {
         user1.addPreference("Nothing");
         assertEquals(user1.getPreferences().get(2), "Nothing");
@@ -153,29 +162,23 @@ public class UserUnitTest {
         assertEquals(user1.getPreferences().get(0), "SciFi");
     }
 
-    @Test
-    public void getPreferences() {
-    }
 
     //test friend
     @Test
+    public void getFriends() {
+        assertEquals(user1.getFriends().get(0).getUsername(), "user1");
+    }
+
+    @Test
     public void addFriend() {
+        user1.addFriend(new User("22", "test user", "123"));
+        assertEquals(user1.getFriends().get(3).getUsername(), "test user");
     }
 
     @Test
     public void removeFriend() {
-    }
-
-    @Test
-    public void getFriends() {
-    }
-
-    @Test
-    public void addHistory() {
-    }
-
-    @Test
-    public void removeHistory() {
+        user1.removeFriend(user1.getFriends().get(0));
+        assertEquals(user1.getFriends().get(0).getUsername(), "user2");
     }
 
     @Test
@@ -183,6 +186,20 @@ public class UserUnitTest {
     }
 
     @Test
+    public void addHistory() {
+        user1.addHistory(new Result());
+        assertEquals(user1.getHistory().size(), 2);
+    }
+
+    @Test
+    public void removeHistory() {
+        user1.removeHistory(user1.getHistory().get(0));
+        assertEquals(user1.getHistory().size(), 0);
+    }
+
+    @Test
     public void clearHistory() {
+        user1.clearHistory();
+        assertEquals(user1.getHistory().size(), 0);
     }
 }

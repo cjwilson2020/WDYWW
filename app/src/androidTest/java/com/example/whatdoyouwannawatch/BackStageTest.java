@@ -15,7 +15,7 @@ public class BackStageTest {
 
     @Test
     public void calcLength() {
-        Theatre t1 = new Theatre("123", "123", LocalTime.now());//room number should be String
+        Theatre t1 = new Theatre("123", "123", LocalTime.now());
         //BackStage b1 = t1.getBackstage();
         BackStage b1 = new BackStage(t1);
 
