@@ -1,5 +1,6 @@
 package com.example.whatdoyouwannawatch;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,16 +11,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 public class TheatreHostLandingPage extends AppCompatActivity {
     private FirebaseUser fbUser;
 
     Button qButton;
     TextView qTextView;
+
 
 
 
@@ -43,7 +50,10 @@ public class TheatreHostLandingPage extends AppCompatActivity {
             }
         });
 
-        displayTheatreID();
+            displayTheatreID();
+
+
+
        // displayCode();
 
 
@@ -60,19 +70,20 @@ public class TheatreHostLandingPage extends AppCompatActivity {
     }
 
     // TODO: Figure out how to pull theatre data from FireBase
-    private String getTheatreID() {
+    public void displayTheatreID() {
         final String[] theatreID = new String[1];
         MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object theatre) {
                 if(theatre != null){
                     Theatre currTheatre = (Theatre) theatre;
-                    theatreID[0] = currTheatre.getHostID();
+                    TextView displayTheatreID = (TextView) findViewById(R.id.textView_displayTheatreID);
+                    displayTheatreID.setText("You are in theatre " + currTheatre.getHostID());
                 }
             }
         });
-        return theatreID[0];
     }
+
 
     // TODO: Implement once code generation set up in FireBase
     private String getCode() {
@@ -89,13 +100,10 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         return code[0];
     }
 
-    private void displayTheatreID() {
-        TextView displayTheatreID = (TextView) findViewById(R.id.textView_displayTheatreID);
-        displayTheatreID.setText("You are now the host of Theatre #" + getTheatreID());
-    }
+
 
     private void displayCode() {
         TextView displayCode = (TextView) findViewById(R.id.textView_displayCode);
-        displayCode.setText("Invitation code: " + getCode());
+        displayCode.setText("Invitation code: ");
     }
 }
