@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +16,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 public class JoinTheatre extends AppCompatActivity {
+    private Theatre theatre;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,27 +28,53 @@ public class JoinTheatre extends AppCompatActivity {
     // TODO: Implement once FireBase set up for theatre/code linking
     public void onClickJoinTheatreByCode(View v) {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
-        String code = editTextTheatreCode.getText().toString(); // change to int
-        Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
-        // startActivity(intent);
-        // Toast.makeText(this, "Code entered: " + code, Toast.LENGTH_SHORT).show();
-
-
+        final String code = editTextTheatreCode.getText().toString(); // change to int
+        final Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
 
         MainActivity.pullData('t', code, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-                final String uid = FBuser.getUid();
-
                 Theatre theatre = (Theatre) obj;
-//                List users = theatre.getUsers();
-//                users.add(uid);
+                setTheatre(theatre);
 
-                MainActivity.pushData(theatre);
+                // Check to make sure theatre exists, TODO: alert user
+                if(theatre == null) {
+                    TextView warning = findViewById(R.id.textView_Warning);
+                    warning.setText("Warning: Theatre " + code + " does not exist.");
+                    return;
+                }
+
+                final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
+                final String userName = FBuser.getDisplayName();
+
+                MainActivity.pullData('u', userName, new DataCallback() {
+                    @Override
+                    public void onCallback(Object obj) {
+                        User user = (User) obj;
+                        setUser(user);
+                        addUserToTheatre();
+                    }
+                });
             }
         });
 
         startActivity(intent);
+    }
+
+    private void addUserToTheatre() {
+        Toast.makeText(JoinTheatre.this, "Global Theatre: " + this.theatre + "Global User: " + this.user, Toast.LENGTH_SHORT).show();
+        Toast.makeText(JoinTheatre.this, "Theatre Users: " + this.theatre.getUsers(), Toast.LENGTH_SHORT).show();
+        //theatre.addUser(user);
+        //Toast.makeText(JoinTheatre.this, "Theatre Users: " + this.theatre.getUsers(), Toast.LENGTH_SHORT).show();
+    }
+
+    public void setTheatre(Theatre theatre) {
+        this.theatre = theatre;
+        // Toast.makeText(JoinTheatre.this, "Global Theatre: " + this.theatre + "Theatre: " + theatre, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        // Toast.makeText(JoinTheatre.this, "Global User: " + this.user + "User: " + user, Toast.LENGTH_SHORT).show();
     }
 }
