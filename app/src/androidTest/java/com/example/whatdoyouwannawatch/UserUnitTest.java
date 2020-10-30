@@ -19,9 +19,9 @@ public class UserUnitTest {
         user1.addGenres("Horror");
         user1.addGenres("Unknown");
         user1.addGenres("111");
-        user1.addRankingToEnd(new Media());
-        user1.addRankingToEnd(new Media());
-        user1.addRankingToEnd(new Media());
+        user1.addRankingToEnd(new Media("11"));
+        user1.addRankingToEnd(new Media("22"));
+        user1.addRankingToEnd(new Media("33"));
         user1.addPreference("Horror");
         user1.addPreference("SciFi");
         user1.addFriend(new User("1", "user1", "1"));
@@ -114,16 +114,16 @@ public class UserUnitTest {
     @Test
     public void setOptions() {
         List<Media> options = new ArrayList<>();
-        options.add(new Media());
-        options.add(new Media());
-        options.add(new Media());
+        options.add(new Media("11"));
+        options.add(new Media("22"));
+        options.add(new Media("33"));
         user1.setOptions(options);
         assertEquals(user1.optionSize(), 3);
     }
 
     @Test
     public void addRankingToEnd() {
-        user1.addRankingToEnd(new Media());
+        user1.addRankingToEnd(new Media("44"));
         assertEquals(user1.rankingsSize(), 4);
     }
 

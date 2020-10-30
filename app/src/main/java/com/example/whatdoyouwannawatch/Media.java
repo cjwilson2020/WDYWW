@@ -22,7 +22,9 @@ public class Media implements Comparable<Media> {
     private Double rating;
 
     //constructor
-    public Media() {}
+    public Media(String s) {
+        this.id = s;
+    }
 
     //constructor1
     public Media(String title, List<String> genres, LocalTime length, Image poster) {
