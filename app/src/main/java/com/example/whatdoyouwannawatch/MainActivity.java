@@ -60,13 +60,19 @@ MainActivity extends AppCompatActivity {
         pullData('t', hostID, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                if(obj != null){
-                 Theatre t = (Theatre) obj;
-                 t.removeUser(username);
-                 pushData(t);
+                if(obj != null) {
+                    Theatre t = (Theatre) obj;
+                    t.removeUser(username);
+                    pushData(t);
                 }
             }
         });
+    }
+
+    static void removeTheatre(String hostID){
+        myRef = database.getReference();
+        DatabaseReference tRef =myRef.child("theatres").child(hostID);
+        tRef.removeValue();
     }
 
     static void pushData(Object obj) {

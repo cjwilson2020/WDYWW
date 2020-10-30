@@ -127,7 +127,7 @@ public class TheatreUnitTest {
     @Test
     public void TestRemoveUser() {
         t.setUsers(userList);
-        t.removeUser(user1);
+        t.removeUser(user1.getUsername());
         assertEquals(t.getUsers().get(0), user2);
     }
 }
