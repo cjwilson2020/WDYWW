@@ -51,18 +51,19 @@ public class CreateJoinTheatre extends AppCompatActivity {
     }
 
     public void onClickCreateTheatreTesting(View v){
-//        Theatre theatre;
         String name;
 
-        MainActivity.pullData('t', "0", new DataCallback() {
-            @Override
-            public void onCallback(Object obj) {
-                Theatre theatre = (Theatre) obj;
+//        MainActivity.pullData('t', "0", new DataCallback() {
+//            @Override
+//            public void onCallback(Object obj) {
+//                Theatre theatre = (Theatre) obj;
+//
+//                Toast.makeText( CreateJoinTheatre.this, theatre.getHostID(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-                Toast.makeText( CreateJoinTheatre.this, "hey I'm a message", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        Intent toRanking = new Intent(this, MediaRanking.class);
+        startActivity(toRanking);
 
     }
 
