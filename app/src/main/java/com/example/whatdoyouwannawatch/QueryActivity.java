@@ -20,13 +20,15 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import com.example.whatdoyouwannawatch.Media;
 
 public class QueryActivity extends AppCompatActivity {
     NestedScrollView nsv;
@@ -181,7 +183,7 @@ public class QueryActivity extends AppCompatActivity {
                     // For each result, we are going to extract:
                     // String id, String title, List<String> genres, List<String> cast, runtime as Time length, String director, String writer, String description, Image poster, Double rating
                     for (int i = 0; i < hits.length() - hits.length() - 1; i++) {
-                        //Media m = new Media("", "", new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), new Time(0), "", "", "", , 0.0 ); //Declare an empty media object
+                    //  Media m = new Media("", "", (List<String>)new ArrayList<String>(), (List<String>)new ArrayList<String>(),(List<String>)new ArrayList<String>(), new Time(0), "", "", "", (Image)null, 0.0 ); //Declare an empty media object
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this movie
                         if (i == 0)
                             Log.d("search", result_info.toString());
@@ -209,14 +211,14 @@ public class QueryActivity extends AppCompatActivity {
                             if("Id".equals((String) entry.getKey())){
                                 if (result_info.has((String) entry.getKey())) {
                                     //Translate String to desired datatype
-//                                    m.setId((String) result_info.getString((String) entry.getKey()));
+             //                     m.setId((String) result_info.getString((String) entry.getKey()));
 
                                 } else {
-//                                    m.setId( "No " + (String) entry.getKey() + " available");
+              //                    m.setId( "No " + (String) entry.getKey() + " available");
                                 }
                             } else if("Title".equals((String) entry.getKey())){
                                 if (result_info.has((String) entry.getKey())) {
-//                                    m.setTitle((String) result_info.getString((String) entry.getKey()));
+             //                     m.setTitle((String) result_info.getString((String) entry.getKey()));
 
                                     info.put((String) entry.getKey(), result_info.getString((String) entry.getKey()));
                                 } else {
@@ -225,7 +227,7 @@ public class QueryActivity extends AppCompatActivity {
                             } else if("IvaRating".equals((String) entry.getKey())){
                                 if (result_info.has((String) entry.getKey())) {
 
-//                                    m.setRating((double) Integer.parseInt(result_info.getString((String) entry.getKey())));
+               //                   m.setRating((double) Integer.parseInt(result_info.getString((String) entry.getKey())));
                                     info.put((String) entry.getKey(), result_info.getString((String) entry.getKey()));
                                 } else {
                                     info.put((String) entry.getKey(), "No " + (String) entry.getKey() + " available");
@@ -233,7 +235,7 @@ public class QueryActivity extends AppCompatActivity {
                             } else if ("Description".equals((String) entry.getKey())) { // do this for Description, Genre, and Contributors
                                 //  Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                 if (result_info.has("Descriptions")) {
-//                                    m.setDescription((String) result_info.getString((String) entry.getKey()));
+               //                   m.setDescription((String) result_info.getString((String) entry.getKey()));
 
                                     info.put((String) entry.getKey(), (String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString("Description"));
                                 } else {
@@ -249,7 +251,7 @@ public class QueryActivity extends AppCompatActivity {
                                         genres.add(temp.getString(j));
                                         g.concat(temp.getString(j) + ",");
                                     }
-//                                    m.setGenres(genres);
+                 //                 m.setGenres(genres);
                                 }
                                 //add g as the string for Genres
                                 if (g.length() > 0) {

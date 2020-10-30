@@ -71,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, Object> map = new HashMap<>();
 //      Log.d("login","obj class name: " + obj.getClass().getName());
         if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
-            String folder = ((User)obj).getUsername();
+            String folder = "users/" + ((User)obj).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
-            String folder = ((Theatre)obj).getRoomNumber();
+            String folder = "theatres/" + ((Theatre)obj).getRoomNumber();
             map.put(folder, obj);
         }
         myRef.updateChildren(map)
