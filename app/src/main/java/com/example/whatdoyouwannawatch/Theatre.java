@@ -1,7 +1,5 @@
 package com.example.whatdoyouwannawatch;
 
-import android.os.Build;
-
 import com.google.firebase.database.Exclude;
 
 import java.time.LocalTime;
@@ -9,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
 
 public class Theatre {
     private static int theatreCounter = 0;
@@ -20,9 +17,9 @@ public class Theatre {
     private List<User> users;
     private List<String> genres;
     private List<Media> options;
-    private LocalTime minTime;
-    private LocalTime maxTime;
-    private LocalTime timeCreated;
+    private int minTime;
+    private int maxTime;
+    //private LocalTime timeCreated;
     private Result result;
 
     public Theatre(){
@@ -32,15 +29,15 @@ public class Theatre {
     public Theatre(String uid){
         this.hostID = uid;
         this.roomNumber = Integer.toString(++theatreCounter);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.timeCreated = LocalTime.now();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            this.timeCreated = LocalTime.now();
+//        }
     }
 
-    public Theatre(String uid, String roomNumber, LocalTime timeCreated ){
+    public Theatre(String uid, String roomNumber ){
         this.hostID =uid;
         this.roomNumber =roomNumber;
-        this.timeCreated = timeCreated;
+//        this.timeCreated = timeCreated;
 //        this.backstage = new BackStage();
         this.users = new ArrayList<User>();
         this.genres = new ArrayList<String>();
@@ -85,26 +82,26 @@ public class Theatre {
     }
     public void removeOption(Media m){ this.options.remove(m); }
 
-    public LocalTime getMinTime() {
+    public int getMinTime() {
         return minTime;
     }
 
  //   public void setMinTime() { this.minTime = backstage.calcLength().get(0);    }
-    public void setMinTime(LocalTime t) { this.minTime = t;    }
+    public void setMinTime(int t) { this.minTime = t;    }
 
-    public LocalTime getMaxTime() {    return maxTime;    }
+    public int getMaxTime() {    return maxTime;    }
 
 //    public void setMaxTime() {     this.maxTime = backstage.calcLength().get(1);    }
-    public void setMaxTime(LocalTime t) {     this.maxTime = t;    }
+    public void setMaxTime(int t) {     this.maxTime = t;    }
 
-    public LocalTime getTimeCreated() {
-        return timeCreated;
-    }
-
-
-    public void setTimeCreated(LocalTime timeCreated) {
-        this.timeCreated = timeCreated;
-    }
+//    public LocalTime getTimeCreated() {
+//        return timeCreated;
+//    }
+//
+//
+//    public void setTimeCreated(LocalTime timeCreated) {
+//        this.timeCreated = timeCreated;
+//    }
 
     public Result getResult() {
         return result;
@@ -128,7 +125,7 @@ public class Theatre {
         result.put("options", getOptions());
         result.put("mintime", getMinTime());
         result.put("maxtime", getMaxTime());
-        result.put("timecreated", getTimeCreated());
+ //       result.put("timecreated", getTimeCreated());
 
         return result;
     }

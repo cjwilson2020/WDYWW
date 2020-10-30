@@ -27,8 +27,8 @@ public class BackStage {
     public static void calcLength() {
         List<LocalTime> returnList = new ArrayList<>();
         List<User> users = theatre.getUsers();
-        LocalTime minTime = LocalTime.of(0, 0, 0);
-        LocalTime maxTime = LocalTime.of(23, 59, 59);
+        Long minTime = LocalTime.of(0, 0, 0);
+        Long maxTime = LocalTime.of(23, 59, 59);
 
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);

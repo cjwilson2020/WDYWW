@@ -22,8 +22,8 @@ public class User {
     private List<String> preferences;
     private List<Media> rankings;
     private List<Media> options;
-    private LocalTime minLength;
-    private LocalTime maxLength;
+    private int minLength;
+    private int maxLength;
 
     //Constructors for guest
     User(){
@@ -84,10 +84,10 @@ public class User {
     public List<String> getPreferences() {return this.preferences;}
 
     //set and get length
-    public void setMinLength(LocalTime t) {this.minLength = t;}
-    public LocalTime getMinLength(){return this.minLength;}
-    public void setMaxLength(LocalTime t) {this.maxLength = t;}
-    public LocalTime getMaxLength(){return this.maxLength;}
+    public void setMinLength(int t) {this.minLength = t;}
+    public int getMinLength(){return this.minLength;}
+    public void setMaxLength(int t) {this.maxLength = t;}
+    public int getMaxLength(){return this.maxLength;}
 
     //add, remove friend and get friend list
     public void addFriend(User f){friends.add(f);}

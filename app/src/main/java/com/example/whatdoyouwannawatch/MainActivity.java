@@ -58,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
             User tmp = (User)obj;
             String u = "users";
             DatabaseReference uRef = myRef.child(u);
-            String folder = ((User)obj).getUsername();
+            String folder = u + "/" + ((User)obj).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
             Theatre tmp = (Theatre) obj;
             String t = "theatres";
             DatabaseReference uRef = myRef.child(t);
-            String folder = t + "/" + ((Theatre)obj).getRoomNumber();
+            String folder = t + "/" + ((Theatre)obj).getHostID();
             map.put(folder, obj);
         }
         myRef.updateChildren(map)
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static Object pullData(char type, String id, final DataCallback dcb){
-        String t = "theatres/";
+        String t = "theatres";
         String u = "users";
 
         if (type == 'u'){

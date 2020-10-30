@@ -20,14 +20,14 @@ public class BackStageTest {
         BackStage b1 = new BackStage(t1);
 
         User u1= new User("1","1", "1");
-        LocalTime u1t1 = LocalTime.of(0, 55, 0);
-        LocalTime u1t2 = LocalTime.of(3, 1, 50);
+        Long u1t1 = LocalTime.of(0, 55, 0);
+        Long u1t2 = LocalTime.of(3, 1, 50);
         u1.setMinLength(u1t1);
         u1.setMaxLength(u1t2);
 
         User u2= new User("2","2","2");
-        LocalTime u2t1 = LocalTime.of(0, 50, 0);
-        LocalTime u2t2 = LocalTime.of(2, 1, 50);
+        Long u2t1 = LocalTime.of(0, 50, 0);
+        Long u2t2 = LocalTime.of(2, 1, 50);
         u2.setMinLength(u2t1);
         u2.setMaxLength(u2t2);
 
