@@ -138,7 +138,7 @@ public class BackStage {
             //return returnList;
         }
 
-        public static void calcResult (List < Media > choices) {
+        public static void calcResult (List <Media> choices) {
             List<User> users = theatre.getUsers();
             int majority = (int) (users.size() / 2.0) + 1;
             List<Media> copy = new ArrayList(choices);

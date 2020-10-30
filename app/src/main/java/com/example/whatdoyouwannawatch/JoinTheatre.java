@@ -25,7 +25,7 @@ public class JoinTheatre extends AppCompatActivity {
     // TODO: Implement once FireBase set up for theatre/code linking
     public void onClickJoinTheatreByCode(View v) {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
-        String code = editTextTheatreCode.getText().toString(); // change to int
+        String code = editTextTheatreCode.getText().toString();
         Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
         // startActivity(intent);
         // Toast.makeText(this, "Code entered: " + code, Toast.LENGTH_SHORT).show();
@@ -36,13 +36,25 @@ public class JoinTheatre extends AppCompatActivity {
             @Override
             public void onCallback(Object obj) {
                 final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-                final String uid = FBuser.getUid();
+                String uid = FBuser.getDisplayName();
+                final User[] u = new User[1];
+                MainActivity.pullData('u', uid, new DataCallback(){
 
-                Theatre theatre = (Theatre) obj;
-//                List users = theatre.getUsers();
-//                users.add(uid);
+                    public void onCallback(Object usr) {
+                        if (usr != null) {
+                            u[0] = (User) usr;
+                        }
+                    }
 
-                MainActivity.pushData(theatre);
+                });
+
+                if(obj!=null) {
+                    Theatre theatre = (Theatre) obj;
+                    if(u[0]!= null) {
+                        theatre.addUser(u[0]);
+                    }
+                    MainActivity.pushData(theatre);
+                }
             }
         });
 

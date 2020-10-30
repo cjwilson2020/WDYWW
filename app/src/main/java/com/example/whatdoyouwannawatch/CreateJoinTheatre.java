@@ -31,31 +31,23 @@ public class CreateJoinTheatre extends AppCompatActivity {
     public void onClickCreateTheatre(View v) {
         final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fbUser != null) {
-            MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+            MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
                 @Override
                 public void onCallback(Object usr) {
-                    if (usr == null) {
+                    if (usr != null) {
                         Theatre theatre1 = new Theatre(fbUser.getDisplayName());
                         theatre1.addUser(new User(fbUser.getEmail(), fbUser.getDisplayName(),
                                 fbUser.getUid()));
+                        User host = (User) (usr);
+                        theatre1.addUser(host);
                         MainActivity.pushData(theatre1);
                     }
                 }
             });
-        } else {
-            MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
-                @Override
-                public void onCallback(Object usr) {
-                    if (usr == null) {
-                        Theatre theatre1 = new Theatre("GuestTheatre");
-                        MainActivity.pushData(theatre1);
-                    }
-                }
-            });
-        }
 
-        Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
-        startActivity(intent);
+            Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
+            startActivity(intent);
+        }
     }
 
     public void onClickCreateTheatreTesting(View v){
