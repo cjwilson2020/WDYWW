@@ -8,23 +8,46 @@
 
     <TextView
         android:id="@+id/textView21"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="28dp"
-        android:text="How long do you want to watch"
-        android:textSize="18sp"
+        android:layout_width="295dp"
+        android:layout_height="82dp"
+        android:layout_marginTop="160dp"
+        android:text="How long do you want to watch?"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <com.yahoo.mobile.client.android.util.rangeseekbar.RangeSeekBar-->
-<!--        android:id="@+id/rangeSeekbar"-->
-<!--        rsb:absoluteMaxValue="100"-->
-<!--        rsb:absoluteMinValue="0"-->
-<!--        android:layout_width="fill_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:layout_editor_absoluteX="0dp"-->
-<!--        tools:layout_editor_absoluteY="191dp" />-->
+    <org.florescu.android.rangeseekbar.RangeSeekBar
+        android:id="@+id/rang_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView21" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Drag to select how long you want to watch"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rang_seek_bar" />
+
+    <Button
+        android:id="@+id/btn_duration_selection"
+        android:onClick="onclic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

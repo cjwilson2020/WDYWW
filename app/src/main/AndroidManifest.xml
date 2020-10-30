@@ -19,6 +19,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".MediaRanking" />
+        <activity android:name=".DurationSelection" />
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".FriendListActivity" />
         <activity android:name=".UserHomeActivity" />

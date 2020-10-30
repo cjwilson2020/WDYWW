@@ -49,7 +49,7 @@ public class CreateJoinTheatre extends AppCompatActivity {
         }
     }
 
-    public void onClickCreateTheatreTesting(View v){
+    public void onClickCreateTheatreUtility(View v){
         String name;
 
 //        MainActivity.pullData('t', "0", new DataCallback() {
@@ -61,7 +61,7 @@ public class CreateJoinTheatre extends AppCompatActivity {
 //            }
 //        });
 
-        Intent toRanking = new Intent(this, MediaRanking.class);
+        Intent toRanking = new Intent(this, DurationSelection.class);
         startActivity(toRanking);
 
     }
