@@ -36,6 +36,8 @@ public class CreateJoinTheatre extends AppCompatActivity {
                 public void onCallback(Object usr) {
                     if (usr == null) {
                         Theatre theatre1 = new Theatre(fbUser.getDisplayName());
+                        theatre1.addUser(new User(fbUser.getEmail(), fbUser.getDisplayName(),
+                                fbUser.getUid()));
                         MainActivity.pushData(theatre1);
                     }
                 }
