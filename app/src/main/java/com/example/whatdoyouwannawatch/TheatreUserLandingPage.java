@@ -11,6 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +59,13 @@ public class TheatreUserLandingPage extends AppCompatActivity {
 
     public void onClickImAllSet(View v) {
         Intent intent = new Intent(this, ChooseGenresActivity.class);
+        startActivity(intent);
+    }
+
+    public void onClickLeaveTheatre(View v) {
+        FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
+        MainActivity.removeUserFromTheatre(theatreCode, FBuser.getDisplayName());
+        Intent intent = new Intent(this, UserHomeActivity.class);
         startActivity(intent);
     }
 
