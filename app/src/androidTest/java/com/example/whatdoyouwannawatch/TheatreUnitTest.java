@@ -113,4 +113,21 @@ public class TheatreUnitTest {
         t.setMaxTime(-10000);
         assertEquals(t.getMaxTime(), -10000);
     }
+
+    @Test
+    public void TestAddUser() {
+        t.setUsers(userList);
+        User u4 = new User();
+        t.addUser(user3);
+        t.addUser(u4);
+        assertEquals(t.getUsers().get(2), user3);
+        assertEquals(t.getUsers().get(3), u4);
+    }
+
+    @Test
+    public void TestRemoveUser() {
+        t.setUsers(userList);
+        t.removeUser(user1);
+        assertEquals(t.getUsers().get(0), user2);
+    }
 }
