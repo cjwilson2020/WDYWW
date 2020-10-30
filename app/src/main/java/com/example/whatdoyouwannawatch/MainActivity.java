@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     // Write info to the Realtime database
     private static final String TAG = "MainActivity";
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    public static DatabaseReference myRef = database.getReference("users");
+    public static DatabaseReference myRef = database.getReference();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         dbc.onCallback(null);
                     } else {
                         dbc.onCallback(theatre);
+
                     }
                 }
             }
@@ -175,23 +176,25 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //This is a method that I am creating to asynchronously call our API and wait for a response
-    //To implement this method, I need to use a callback function
-
-    public static void apiCallSearch(String title, final ApiCallback acb) throws IOException {
+    // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
+    // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
+    // To implement this method, I need to use a callback function
+    public static void apiCallSearch(String title , final ApiCallback acb)   throws IOException {
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
         //Log.d("search", "Title: " + title );
-        Request request = new Request.Builder()
+        Request request = new Request.Builder() // This is the query we build
                 .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/")
                 .get()
                 .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
                 .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
-                .addHeader("content-type", "application\\json")
-                .addHeader("programtype", "Movie,Show") //Program Types
-                .addHeader("title", title) //String title
-                .addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+                .addHeader("content-type", "application/json")
+                .addHeader("ProgramTypes", "Movie,Show") //Program Types
+                .addHeader("Title", title) //String title
+                .addHeader("Providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
+                //.addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
                 .build();
 
+        Log.d("search", request.toString());
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -201,16 +204,21 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                //A Response has a headers and a body
+                //Headers just contain info or metadata about the response like number of calls left for the free trial
+                // or the Access control methods allowed like GET, POST, PUT, etc
+
+                //The body has all of the data about the shows and movies found, if any..
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) {
                         throw new IOException("Unexpected code " + response);
                     }
+//                    Headers responseHeaders = response.headers();
+//                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+//                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
+//                    }
 
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
-                    //Here is where I get the query results
+                    //Here is where we get the query results
                     String results = responseBody.string();
                     try {
                         acb.onCallback(results);

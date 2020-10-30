@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,6 +25,20 @@ public class CreateJoinTheatre extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_join_theatre);
+        String uid = "123";
+
+
+        MainActivity.pullTheatre( new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                Theatre t = (Theatre) obj;
+
+                Log.d("theatre", t.toString());
+
+
+            }
+        } , uid);
+
     }
 
     public void onClickCreateTheatre(View v) {

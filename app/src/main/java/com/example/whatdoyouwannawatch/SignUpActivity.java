@@ -103,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // all fields for new account filled, go to home
 
-                            MainActivity.pullUser(new DataCallback() {
+                            MainActivity.pullUser(  new DataCallback() {
                                 @Override
                                 public void onCallback(Object usr) {
                                     if(usr== null){
