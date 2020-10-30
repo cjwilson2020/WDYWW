@@ -68,7 +68,7 @@ public class QueryActivity extends AppCompatActivity {
 
                     // public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
                     for (int i = 0; i < hits.length() - hits.length() - 1; i++) {
-                        Media m = new Media("", "", (List<String>) new ArrayList<String>(), (List<String>) new ArrayList<String>(), null, "", "", "", (Image) null, 0.0);
+                        Media m = new Media("", "", new ArrayList<String>(), new ArrayList<String>(), 0, "", "", "", (Image) null, 0.0);
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this movie
                         if (i == 0)
                             Log.d("search", result_info.toString());
