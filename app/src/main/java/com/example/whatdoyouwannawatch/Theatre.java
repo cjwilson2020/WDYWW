@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class Theatre {
-    private static int theatreCounter = 0;
 
     private String hostID;
-    private String roomNumber;
-//    private BackStage backstage;
+    //private String roomNumber;
+//  private BackStage backstage;
     private List<User> users;
     private List<String> genres;
     private List<Media> options;
@@ -28,27 +27,17 @@ public class Theatre {
 
     public Theatre(String uid){
         this.hostID = uid;
-        this.roomNumber = Integer.toString(++theatreCounter);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            this.timeCreated = LocalTime.now();
-//        }
-    }
-
-    public Theatre(String uid, String roomNumber ){
-        this.hostID =uid;
-        this.roomNumber =roomNumber;
-//        this.timeCreated = timeCreated;
-//        this.backstage = new BackStage();
         this.users = new ArrayList<User>();
         this.genres = new ArrayList<String>();
         this.options = new ArrayList<Media>();
     }
 
+
     //Setters and getters
     public String getHostID() { return hostID; }
     public void setHostID(String uid) { this.hostID = uid; }
 
-    public String getRoomNumber() { return roomNumber; }
+    //public String getRoomNumber() { return roomNumber; }
     
 //    public BackStage getBackstage() { return backstage; }
 //    public void setBackstage() { this.backstage = new BackStage(this); }
@@ -112,14 +101,13 @@ public class Theatre {
     }
 
      public String toString(){
-        return "HostID: " + hostID + "\nRoom Number: " + roomNumber;
+        return "HostID: " + hostID;
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("hostid", getHostID());
-        result.put("roomnumber", getRoomNumber());
         result.put("result", getResult());
         result.put("genres", getGenres());
         result.put("options", getOptions());

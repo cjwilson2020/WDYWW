@@ -25,17 +25,16 @@ public class BackStage {
     //public static List<LocalTime> calcLength() {
     @SuppressLint("NewApi")
     public static void calcLength() {
-        List<LocalTime> returnList = new ArrayList<>();
         List<User> users = theatre.getUsers();
-        Long minTime = LocalTime.of(0, 0, 0);
-        Long maxTime = LocalTime.of(23, 59, 59);
+        int minTime = -1;
+        int maxTime = 999;
 
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);
-            if (u.getMinLength().compareTo(minTime) > 0 && u.getMinLength().compareTo(maxTime) < 0) {
+            if (u.getMinLength() >(minTime)  && u.getMinLength() < (maxTime)) {
                 minTime = u.getMinLength();
             }
-            if (u.getMaxLength().compareTo(maxTime) < 0 && u.getMaxLength().compareTo(minTime) > 0) {
+            if (u.getMaxLength() < (maxTime) && u.getMaxLength() > (minTime)) {
                 maxTime = u.getMaxLength();
             }
         }
@@ -44,8 +43,6 @@ public class BackStage {
         //returnList.add(maxTime);
         theatre.setMinTime(minTime);
         theatre.setMaxTime(maxTime);
-
-        //return returnList;
     }
 
 

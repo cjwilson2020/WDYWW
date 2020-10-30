@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     if (theatre == null) {
                         dcb.onCallback(null);
                     } else {
-                        if (theatre.getRoomNumber() == null) {
+                        if (theatre.getHostID() == null) {
                             dcb.onCallback(null);
                         } else {
                             dcb.onCallback(theatre);
