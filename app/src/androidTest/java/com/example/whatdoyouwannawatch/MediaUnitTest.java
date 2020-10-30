@@ -1,116 +1,54 @@
 package com.example.whatdoyouwannawatch;
 
+import android.media.Image;
+
+import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class MediaUnitTest {
 
-    @Test
-    public void getId() {
+    Media m;
+    String id;
+    String title;
+    List<String> genres;
+    List<String> cast;
+    List<User> currentVoters;
+    int length;
+    String director;
+    String writer;
+    String description;
+    Image poster;
+    Double rating;
+
+    @Before
+    public void setUp() throws Exception {
+        id = "000";
+        title = "some movie";
+        genres = new ArrayList<>();
+        genres.add("g1");
+        genres.add("g2");
+        genres.add("g3");
+        length = 120;
+        cast.add("sb1");
+        cast.add("sb2");
+        cast.add("sb3");
+        writer = "sb00";
+        director = "sb11";
+        description = "bad movie";
+        rating = 1.0;
+        m = new Media(id, title, genres, cast, length, director, writer, description, poster, rating);
     }
 
     @Test
-    public void setId() {
-    }
-
-    @Test
-    public void getTitle() {
-    }
-
-    @Test
-    public void setTitle() {
-    }
-
-    @Test
-    public void getGenres() {
-    }
-
-    @Test
-    public void setGenres() {
-    }
-
-    @Test
-    public void getCast() {
-    }
-
-    @Test
-    public void setCast() {
-    }
-
-    @Test
-    public void getLength() {
-    }
-
-    @Test
-    public void setLength() {
-    }
-
-    @Test
-    public void getDirector() {
-    }
-
-    @Test
-    public void setDirector() {
-    }
-
-    @Test
-    public void getWriter() {
-    }
-
-    @Test
-    public void setWriter() {
-    }
-
-    @Test
-    public void getDescription() {
-    }
-
-    @Test
-    public void setDescription() {
-    }
-
-    @Test
-    public void getPoster() {
-    }
-
-    @Test
-    public void setPoster() {
-    }
-
-    @Test
-    public void getRating() {
-    }
-
-    @Test
-    public void setRating() {
-    }
-
-    @Test
-    public void getCurrentVoters() {
-    }
-
-    @Test
-    public void setCurrentVoters() {
-    }
-
-    @Test
-    public void addVoter() {
-    }
-
-    @Test
-    public void removeVoter() {
-    }
-
-    @Test
-    public void getNumVoters() {
-    }
-
-    @Test
-    public void equalTo() {
-    }
-
-    @Test
-    public void compareTo() {
+    public void SetGetID() {
+        assertEquals(m.getId(), "000");
+        m.setId("110");
+        assertEquals(m.getId(), "110");
     }
 }

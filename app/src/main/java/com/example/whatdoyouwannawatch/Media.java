@@ -14,7 +14,7 @@ public class Media implements Comparable<Media> {
     private List<String> genres;
     private List<String> cast;
     private List<User> currentVoters;
-    private LocalTime length;
+    private int length;
     private String director;
     private String writer;
     private String description;
@@ -24,10 +24,11 @@ public class Media implements Comparable<Media> {
     //constructor
     public Media(String s) {
         this.id = s;
+        this.currentVoters = new ArrayList<User>();
     }
 
     //constructor1
-    public Media(String title, List<String> genres, LocalTime length, Image poster) {
+    public Media(String title, List<String> genres, int length, Image poster) {
         this.title = title;
         this.genres = genres;
         this.length = length;
@@ -36,7 +37,7 @@ public class Media implements Comparable<Media> {
     }
 
     //constructor2, TODO make some parameters optional depends on what info we can get from stream service
-    public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
+    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, Image poster, Double rating) {
         this.id = id;
         this.title = title;
         this.genres = genres;
@@ -82,11 +83,11 @@ public class Media implements Comparable<Media> {
         this.cast = cast;
     }
 
-    public LocalTime getLength() {
+    public int getLength() {
         return length;
     }
 
-    public void setLength(LocalTime length) {
+    public void setLength(int length) {
         this.length = length;
     }
 
