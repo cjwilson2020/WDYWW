@@ -4,7 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,18 +21,18 @@ public class BackStage {
         this.theatre = t;
     }
 
-    public static List<Time> calcLength() {
-        List<Time> returnList = new ArrayList<Time>();
+    public static List<LocalTime> calcLength() {
+        List<LocalTime> returnList = new ArrayList<>();
         List<User> users = theatre.getUsers();
-        Time minTime = new Time(0, 0, 0);
-        Time maxTime = new Time(23, 59, 59);
+        LocalTime minTime = LocalTime.of(0, 0, 0);
+        LocalTime maxTime = LocalTime.of(23, 59, 59);
 
         for (int i = 0; i < users.size(); i++) {
             User u = users.get(i);
             if (u.getMinLength().compareTo(minTime) > 0 && u.getMinLength().compareTo(maxTime) < 0) {
                 minTime = u.getMinLength();
             }
-            if (u.getMaxLength().compareTo(maxTime) > 0 && u.getMaxLength().compareTo(minTime) < 0) {
+            if (u.getMaxLength().compareTo(maxTime) < 0 && u.getMaxLength().compareTo(minTime) > 0) {
                 maxTime = u.getMaxLength();
             }
         }

@@ -6,6 +6,7 @@ import org.junit.Test;
 import junit.framework.Assert;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +16,21 @@ public class BackStageTest {
 
     @Test
     public void calcLength() {
-        Theatre t1 = new Theatre("123", "111", new Time(22,22,22));
-        BackStage b1 = t1.getBackstage();
+        Theatre t1 = new Theatre("123", "123", LocalTime.now());//room number should be String
+        //BackStage b1 = t1.getBackstage();
+        BackStage b1 = new BackStage(t1);
 
         User u1= new User("1","1", "1");
-        Time u1t1 = new Time(0, 55, 0);
-        Time u1t2 = new Time(3, 1, 50);
+        LocalTime u1t1 = LocalTime.of(0, 55, 0);
+        LocalTime u1t2 = LocalTime.of(3, 1, 50);
         u1.setMinLength(u1t1);
         u1.setMaxLength(u1t2);
 
         User u2= new User("2","2","2");
-        Time u2t1 = new Time(0, 50, 0);
-        Time u2t2 = new Time(2, 1, 50);
-        u1.setMinLength(u2t1);
-        u1.setMaxLength(u2t2);
+        LocalTime u2t1 = LocalTime.of(0, 50, 0);
+        LocalTime u2t2 = LocalTime.of(2, 1, 50);
+        u2.setMinLength(u2t1);
+        u2.setMaxLength(u2t2);
 
         //t1.addUser(u1);
         //t1.addUser(u2);
@@ -38,7 +40,9 @@ public class BackStageTest {
 
         t1.setUsers(users);
 
-
+        //t1.setTimes();
+        t1.setMinTime();
+        t1.setMaxTime();
         assertEquals(u1t1, t1.getMinTime());
         assertEquals(u2t2, t1.getMaxTime());
 

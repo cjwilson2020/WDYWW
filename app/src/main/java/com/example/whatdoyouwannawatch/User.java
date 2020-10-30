@@ -2,11 +2,9 @@ package com.example.whatdoyouwannawatch;
 
 import android.media.Image;
 
-import java.sql.Array;
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class User {
     private String UID;
@@ -20,8 +18,8 @@ public class User {
     private List<String> preferences;
     private List<Media> rankings;
     private List<Media> options;
-    private Time minLength;
-    private Time maxLength;
+    private LocalTime minLength;
+    private LocalTime maxLength;
 
     //Constructors for guest
     User(){
@@ -83,10 +81,10 @@ public class User {
     public List<String> getPreferences() {return this.preferences;}
 
     //set and get length
-    public void setMinLength(Time minLength) {this.minLength = minLength;}
-    public Time getMinLength(){return this.minLength;}
-    public void setMaxLength(Time maxLength) {this.maxLength = maxLength;}
-    public Time getMaxLength(){return this.maxLength;}
+    public void setMinLength(LocalTime t) {this.minLength = t;}
+    public LocalTime getMinLength(){return this.minLength;}
+    public void setMaxLength(LocalTime t) {this.maxLength = t;}
+    public LocalTime getMaxLength(){return this.maxLength;}
 
     //add, remove friend and get friend list
     public void addFriend(User f){friends.add(f);}

@@ -1,6 +1,7 @@
 package com.example.whatdoyouwannawatch;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -14,18 +15,18 @@ public class Theatre {
     private List<User> users;
     private List<String> genres;
     private List<Media> options;
-    private Time minTime;
-    private Time maxTime;
-    private Time timeCreated;
+    private LocalTime minTime;
+    private LocalTime maxTime;
+    private LocalTime timeCreated;
     private Result result;
 
     public Theatre(String uid){
         this.hostID = uid;
         this.roomNumber = Integer.toString(++theatreCounter);
-        this.timeCreated = new Time(System.currentTimeMillis());
+        this.timeCreated = LocalTime.now();
     }
 
-    public Theatre(String uid, String roomNumber, Time timeCreated ){
+    public Theatre(String uid, String roomNumber, LocalTime timeCreated ){
         this.hostID =uid;
         this.roomNumber =roomNumber;
         this.timeCreated = timeCreated;
@@ -108,7 +109,7 @@ public class Theatre {
         this.options.remove(m);
     }
 
-    public Time getMinTime() {
+    public LocalTime getMinTime() {
         return minTime;
     }
 
@@ -116,7 +117,7 @@ public class Theatre {
         this.minTime = backstage.calcLength().get(0);
     }
 
-    public Time getMaxTime() {
+    public LocalTime getMaxTime() {
         return maxTime;
     }
 
@@ -124,11 +125,11 @@ public class Theatre {
         this.maxTime = backstage.calcLength().get(1);
     }
 
-    public Time getTimeCreated() {
+    public LocalTime getTimeCreated() {
         return timeCreated;
     }
 
-    public void setTimeCreated(Time timeCreated) {
+    public void setTimeCreated(LocalTime timeCreated) {
         this.timeCreated = timeCreated;
     }
 
