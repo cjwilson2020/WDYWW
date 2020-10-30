@@ -39,8 +39,8 @@ public class JoinTheatre extends AppCompatActivity {
                 final String uid = FBuser.getUid();
 
                 Theatre theatre = (Theatre) obj;
-                List users = theatre.getUsers();
-                users.add(uid);
+//                List users = theatre.getUsers();
+//                users.add(uid);
 
                 MainActivity.pushData(theatre);
             }

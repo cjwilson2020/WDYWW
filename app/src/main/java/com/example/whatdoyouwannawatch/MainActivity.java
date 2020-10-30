@@ -40,31 +40,28 @@ public class MainActivity extends AppCompatActivity {
     public static DatabaseReference myRef = database.getReference();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     static void pushData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
-
+        myRef = database.getReference();
         if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
             User tmp = (User)obj;
             String u = "users";
-            DatabaseReference uRef = myRef.child(u);
-            String folder = u + "/" + ((User)obj).getUsername();
+
+            String folder = u + "/" + (tmp).getUsername();
             map.put(folder, obj);
         } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
             Theatre tmp = (Theatre) obj;
             String t = "theatres";
-            DatabaseReference uRef = myRef.child(t);
-            String folder = t + "/" + ((Theatre)obj).getHostID();
+
+            String folder = t + "/" + (tmp).getHostID();
             map.put(folder, obj);
         }
         myRef.updateChildren(map)

@@ -29,11 +29,28 @@ public class CreateJoinTheatre extends AppCompatActivity {
     }
 
     public void onClickCreateTheatre(View v) {
-        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        Theatre theatre1 = new Theatre(fbUser.getDisplayName());
-
-        MainActivity.pushData(theatre1);
+        final FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fbUser != null) {
+            MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object usr) {
+                    if (usr == null) {
+                        Theatre theatre1 = new Theatre(fbUser.getDisplayName());
+                        MainActivity.pushData(theatre1);
+                    }
+                }
+            });
+        } else {
+            MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object usr) {
+                    if (usr == null) {
+                        Theatre theatre1 = new Theatre("GuestTheatre");
+                        MainActivity.pushData(theatre1);
+                    }
+                }
+            });
+        }
 
         Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
         startActivity(intent);
@@ -49,7 +66,6 @@ public class CreateJoinTheatre extends AppCompatActivity {
                 Theatre theatre = (Theatre) obj;
 
                 Toast.makeText( CreateJoinTheatre.this, "hey I'm a message", Toast.LENGTH_SHORT).show();
-
             }
         });
 
