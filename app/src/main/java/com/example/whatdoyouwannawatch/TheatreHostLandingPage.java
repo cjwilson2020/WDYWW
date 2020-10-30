@@ -51,6 +51,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         });
 
             displayTheatreID();
+            int test = 5;
 
 
 
