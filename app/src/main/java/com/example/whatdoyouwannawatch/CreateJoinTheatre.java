@@ -28,13 +28,21 @@ public class CreateJoinTheatre extends AppCompatActivity {
 
     public void onClickCreateTheatre(View v) {
         // Dummy Data
+
+        /*
         User user = new User("jbond@mi6.com","James","007");
         Theatre theatre = new Theatre(user.getUID());
 
         FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
         Theatre theatre1 = new Theatre(fbUser.getDisplayName());
 
+
+
+
         MainActivity.pushData(theatre);
+
+
+         */
 
         Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
         startActivity(intent);
