@@ -26,6 +26,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
         "Sports", "Drama", "Historical"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
+    private ArrayList<String> selectedGenres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
     public void onClickSelectGenres(View v) {
         FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
         SparseBooleanArray checked = listView.getCheckedItemPositions();
-        ArrayList<String> selectedGenres = new ArrayList<String>();
+        selectedGenres = new ArrayList<String>();
         for (int i = 0; i < checked.size(); i++) {
             int position = checked.keyAt(i);
             // add genre if checked
@@ -67,8 +68,13 @@ public class ChooseGenresActivity extends AppCompatActivity {
         for (String genre: selectedGenres) {
             genreList += genre + ", ";
         }
+        genreList = genreList.trim();
+ //       if (genreList.length() > 4);
+//            genreList = genreList.substring(0, genreList.length()-2);
         Toast.makeText(this, genreList, Toast.LENGTH_SHORT).show();
+
         Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);
+        intent.putExtra("genreList", genreList);
         startActivity(intent);
 
     }

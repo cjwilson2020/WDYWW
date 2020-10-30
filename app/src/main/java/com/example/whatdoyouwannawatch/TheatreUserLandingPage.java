@@ -20,6 +20,7 @@ public class TheatreUserLandingPage extends AppCompatActivity {
     private ListView listView;
     String theatreCode = "-111";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

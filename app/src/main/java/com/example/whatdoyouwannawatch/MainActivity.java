@@ -1,10 +1,12 @@
 package com.example.whatdoyouwannawatch;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.*;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -18,10 +20,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -97,7 +105,7 @@ MainActivity extends AppCompatActivity {
     static Object pullData(char type, String id, final DataCallback dcb){
         String t = "theatres";
         String u = "users";
-        id = id.toLowerCase();
+        id = id.toLowerCase().trim();
 
         if (type == 'u'){
             myRef = database.getReference().child(u).child(id);
@@ -165,7 +173,7 @@ MainActivity extends AppCompatActivity {
     // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
     // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
     // To implement this method, I need to use a callback function
-    public static void apiCallSearch(String title , final ApiCallback acb)   throws IOException {
+    public static void apiCallSearch(String genres, String providers , final ApiCallback acb)   throws IOException {
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
         //Log.d("search", "Title: " + title );
         Request request = new Request.Builder() // This is the query we build
@@ -175,9 +183,9 @@ MainActivity extends AppCompatActivity {
                 .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
                 .addHeader("content-type", "application/json")
                 .addHeader("ProgramTypes", "Movie,Show") //Program Types
-                .addHeader("Title", title) //String title
-                .addHeader("Providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
-                //.addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+                .addHeader("Providers", providers)
+                .addHeader("Genres", genres)
+                .addHeader("sortby", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
                 .build();
 
         Log.d("search", request.toString());
@@ -269,4 +277,6 @@ MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
