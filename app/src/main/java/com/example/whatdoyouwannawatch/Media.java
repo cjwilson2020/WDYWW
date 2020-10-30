@@ -24,6 +24,7 @@ public class Media implements Comparable<Media> {
     //constructor
     public Media(String s) {
         this.id = s;
+        this.currentVoters = new ArrayList<User>();
     }
 
     //constructor1

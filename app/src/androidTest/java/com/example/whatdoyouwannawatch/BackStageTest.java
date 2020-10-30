@@ -50,9 +50,101 @@ public class BackStageTest {
 
     @Test
     public void calcGenre() {
+        Theatre t1 = new Theatre("123");
+        //BackStage b1 = t1.getBackstage();
+        BackStage b1 = new BackStage(t1);
+        User u1= new User("1","1", "1");
+        u1.addGenres("Horror");
+        u1.addGenres("Fantasy");
+        u1.addGenres("Drama");
+
+        User u2= new User("2","2","2");
+        u2.addGenres("Horror");
+        u2.addGenres("Comedy");
+
+
+        User u3= new User("3","3","3");
+        u3.addGenres("Horror");
+        u3.addGenres("Foreign");
+        u3.addGenres("Drama");
+
+
+
+        t1.addUser(u1);
+        t1.addUser(u2);
+        t1.addUser(u3);
+
+        b1.calcGenre();
+
+        assertEquals("First choice","Horror", t1.getGenres().get(0));
+        assertEquals("Second choice","Drama", t1.getGenres().get(1));
+
     }
 
     @Test
     public void calcResult() {
+        Theatre t1 = new Theatre("123");
+        //BackStage b1 = t1.getBackstage();
+        BackStage b1 = new BackStage(t1);
+
+        Media a = new Media("A");
+        Media b = new Media("B");
+        Media c = new Media("C");
+        Media d = new Media("D");
+        Media e = new Media( "E");
+
+        User u1= new User("1","1", "1");
+        User u2= new User("2","2","2");
+        User u3= new User("3","3","3");
+        User u4 = new User("4", "4","4");
+        User u5 = new User("5", "5","5");
+
+        t1.addUser(u1);
+        t1.addUser(u2);
+        t1.addUser(u3);
+        t1.addUser(u4);
+        t1.addUser(u5);
+
+        u1.addRankingToEnd(a);
+        u1.addRankingToEnd(b);
+        u1.addRankingToEnd(c);
+        u1.addRankingToEnd(d);
+        u1.addRankingToEnd(e);
+
+        u2.addRankingToEnd(a);
+        u2.addRankingToEnd(d);
+        u2.addRankingToEnd(e);
+        u2.addRankingToEnd(b);
+        u2.addRankingToEnd(c);
+
+        u3.addRankingToEnd(b);
+        u3.addRankingToEnd(c);
+        u3.addRankingToEnd(e);
+        u3.addRankingToEnd(a);
+        u3.addRankingToEnd(d);
+
+        u4.addRankingToEnd(b);
+        u4.addRankingToEnd(e);
+        u4.addRankingToEnd(c);
+        u4.addRankingToEnd(d);
+        u4.addRankingToEnd(a);
+
+        u5.addRankingToEnd(a);
+        u5.addRankingToEnd(e);
+        u5.addRankingToEnd(b);
+        u5.addRankingToEnd(c);
+        u5.addRankingToEnd(d);
+
+        List<Media> choices = new ArrayList<>();
+        choices.add(a);
+        choices.add(b);
+        choices.add(c);
+        choices.add(d);
+        choices.add(e);
+
+        b1.calcResult(choices);
+
+        assertEquals("Media Result", a.getId(), t1.getResult().getFinalDecision().getId());
+
     }
 }

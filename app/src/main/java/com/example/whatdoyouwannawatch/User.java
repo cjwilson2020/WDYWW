@@ -66,7 +66,7 @@ public class User {
         }
     }
     //user can remove single ranked media from the list
-    public void removeRanking(String uid){ this.rankings.remove(uid); }
+    public void removeRanking(Media m){ this.rankings.remove(m); }
     //user can clear the rankings list and start over
     public void clearRanking(){ this.rankings = new ArrayList<>(); }
     //return the ranking list
