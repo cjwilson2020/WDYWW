@@ -116,6 +116,9 @@ public class User {
 
     //distinguish if a user guest or registered
     public boolean isGuest() {return isGuest;}
+    public void setGuest(boolean bool){
+        this.isGuest = bool;
+    }
 
     public String toString(){
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();

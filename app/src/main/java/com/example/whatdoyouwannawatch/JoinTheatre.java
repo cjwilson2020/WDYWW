@@ -28,7 +28,7 @@ public class JoinTheatre extends AppCompatActivity {
     // TODO: Implement once FireBase set up for theatre/code linking
     public void onClickJoinTheatreByCode(View v) {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
-        final String code = editTextTheatreCode.getText().toString(); // change to int
+        final String code = editTextTheatreCode.getText().toString();
         final Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
 
         MainActivity.pullData('t', code, new DataCallback() {
@@ -57,7 +57,6 @@ public class JoinTheatre extends AppCompatActivity {
                 });
             }
         });
-
         startActivity(intent);
     }
 
