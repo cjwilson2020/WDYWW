@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,7 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.sql.Time;
 import java.time.LocalTime;
@@ -35,6 +37,8 @@ public class QueryActivity extends AppCompatActivity {
     NestedScrollView nsv;
     public Context c = this;
     public static ArrayList<Media> mediaList = new ArrayList<Media>();
+    public static User u = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +59,7 @@ public class QueryActivity extends AppCompatActivity {
         try {
             MainActivity.apiCallSearch(value, new ApiCallback() {
                 @Override
-                public void onCallback(String res) throws JSONException {
+                public void onCallback(String res) throws JSONException, IOException {
                     //Here is where we will update the view
                     // res is a JSON string containing the search results
 
@@ -184,6 +188,16 @@ public class QueryActivity extends AppCompatActivity {
 
                                     if (temp.getJSONObject(0) != null)
                                         img = temp.getJSONObject(0).getString("FilePath");
+
+                                        MainActivity.apiCallImage(img, new ApiCallback() {
+                                            @Override
+                                            public void onCallback(String res) throws JSONException {
+
+                                            Log.d("img", res);
+
+                                            }
+                                        });
+
                                 }
                                 if (img != null) {
                                     info.put((String) entry.getKey(), img);
@@ -197,8 +211,10 @@ public class QueryActivity extends AppCompatActivity {
                         }
 
                         //Now info is loaded with all the info for this result
-
+                        //Toast.makeText(QueryActivity.this, "media list length: " + mediaList.size() ,Toast.LENGTH_SHORT ).show();
                         mediaList.add(m);
+                        Toast.makeText(QueryActivity.this, "media list length after adding m: " + mediaList.size() ,Toast.LENGTH_SHORT ).show();
+                        QueryActivity.u = null;
                     }
                 }
             });
@@ -208,5 +224,6 @@ public class QueryActivity extends AppCompatActivity {
         }
 
         Log.d("search", mediaList.toString());
+        Toast.makeText(this, "media list length: " + mediaList.size() ,Toast.LENGTH_SHORT ).show();
     }
 }

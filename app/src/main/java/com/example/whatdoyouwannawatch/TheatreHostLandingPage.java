@@ -17,7 +17,7 @@ import org.w3c.dom.Text;
 
 public class TheatreHostLandingPage extends AppCompatActivity {
     private FirebaseUser fbUser;
-
+    public static String id = "";
     Button qButton;
     TextView qTextView;
 
@@ -44,6 +44,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         });
 
         displayTheatreID();
+        Toast.makeText(this, "displayTheatreID() called", Toast.LENGTH_SHORT).show();
        // displayCode();
 
 
@@ -60,18 +61,29 @@ public class TheatreHostLandingPage extends AppCompatActivity {
     }
 
     // TODO: Figure out how to pull theatre data from FireBase
-    private String getTheatreID() {
+    private void getTheatreID() {
         final String[] theatreID = new String[1];
         MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object theatre) {
                 if(theatre != null){
                     Theatre currTheatre = (Theatre) theatre;
-                    theatreID[0] = currTheatre.getHostID();
+
+                    TheatreHostLandingPage.setTheatreID(currTheatre.getHostID());
+                    Log.d("theatre", "set theatre ID");
+                    Log.d("theatre", "Host ID: " + currTheatre.getHostID());
                 }
             }
         });
-        return theatreID[0];
+        theatreID[0] = id;
+        Toast.makeText(this, "Theatre ID: " + id, Toast.LENGTH_LONG);
+        //return theatreID[0];
+    }
+
+    public static void setTheatreID(String i){
+        Log.d("theatre", "In setTheatreID, i: " + i);
+        id = i;
+        Log.d("theatre", "And, id: " + id);
     }
 
     // TODO: Implement once code generation set up in FireBase
@@ -90,8 +102,11 @@ public class TheatreHostLandingPage extends AppCompatActivity {
     }
 
     private void displayTheatreID() {
+        Log.d("theatre", id );
         TextView displayTheatreID = (TextView) findViewById(R.id.textView_displayTheatreID);
-        displayTheatreID.setText("You are now the host of Theatre #" + getTheatreID());
+        getTheatreID();
+        Toast.makeText(this, "theare id: #" + id, Toast.LENGTH_LONG);
+        displayTheatreID.setText("You are now the host of Theatre #" + id);
     }
 
     private void displayCode() {

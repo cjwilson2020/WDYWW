@@ -18,6 +18,7 @@ import java.util.List;
 public class JoinTheatre extends AppCompatActivity {
     private Theatre theatre;
     private User user;
+    static boolean found;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class JoinTheatre extends AppCompatActivity {
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
         final String code = editTextTheatreCode.getText().toString();
         final Intent intent = new Intent(JoinTheatre.this, TheatreUserLandingPage.class);
-
+        found = false;
         MainActivity.pullData('t', code, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
@@ -38,7 +39,8 @@ public class JoinTheatre extends AppCompatActivity {
                 setTheatre(theatre);
 
                 // Check to make sure theatre exists, TODO: alert user
-                if(theatre == null) {
+                if (theatre == null) {
+                    JoinTheatre.found = true;
                     TextView warning = findViewById(R.id.textView_Warning);
                     warning.setText("Warning: Theatre " + code + " does not exist.");
                     return;
@@ -53,11 +55,13 @@ public class JoinTheatre extends AppCompatActivity {
                         User user = (User) obj;
                         setUser(user);
                         addUserToTheatre();
-                        startActivity(intent);
                     }
                 });
             }
         });
+        //if (found) {
+        startActivity(intent);
+        // }
     }
 
     private void addUserToTheatre() {

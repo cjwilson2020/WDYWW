@@ -95,106 +95,106 @@ public class BackStage {
 //        return result;
     }*/
 
-        public static void calcGenre () {
-            List<User> users = theatre.getUsers();
-            HashMap<String, Integer> hashMap = new HashMap<>();
-            for (int i = 0; i < users.size(); i++) {
-                User u = users.get(i);
-                for (int j = 0; j < u.getGenres().size(); j++) {
-                    String genre = u.getGenres().get(j);
-                    if (hashMap.containsKey(genre)) {
-                        hashMap.put(genre, hashMap.get(genre) + 1);
-                    } else {
-                        hashMap.put(genre, 1);
-                    }
+    public static void calcGenre () {
+        List<User> users = theatre.getUsers();
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        for (int i = 0; i < users.size(); i++) {
+            User u = users.get(i);
+            for (int j = 0; j < u.getGenres().size(); j++) {
+                String genre = u.getGenres().get(j);
+                if (hashMap.containsKey(genre)) {
+                    hashMap.put(genre, hashMap.get(genre) + 1);
+                } else {
+                    hashMap.put(genre, 1);
                 }
             }
-
-            Object[] genres = hashMap.keySet().toArray();
-            String firstGenre = "";
-            String secondGenre = "";
-            int firstCount = 0;
-            int secondCount = 0;
-            for (int i = 0; i < genres.length; i++) {
-                String s = (String) (genres[i]);
-                if (hashMap.get(s) > firstCount) {
-                    secondCount = firstCount;
-                    firstCount = hashMap.get(s);
-                    secondGenre = firstGenre;
-                    firstGenre = s;
-                } else if (hashMap.get(s) > secondCount) {
-                    secondCount = hashMap.get(s);
-                    secondGenre = s;
-                }
-            }
-            if (!firstGenre.equals("")) {
-                theatre.addGenre(firstGenre);
-                Log.i("Genre1", firstGenre);
-            }
-            if (!secondGenre.equals("")) {
-                theatre.addGenre(secondGenre);
-                Log.i("Genre2", secondGenre);
-            }
-            //return returnList;
         }
 
-        public static void calcResult (List <Media> choices) {
-            List<User> users = theatre.getUsers();
-            int majority = (int) (users.size() / 2.0) + 1;
-            List<Media> copy = new ArrayList(choices);
+        Object[] genres = hashMap.keySet().toArray();
+        String firstGenre = "";
+        String secondGenre = "";
+        int firstCount = 0;
+        int secondCount = 0;
+        for (int i = 0; i < genres.length; i++) {
+            String s = (String) (genres[i]);
+            if (hashMap.get(s) > firstCount) {
+                secondCount = firstCount;
+                firstCount = hashMap.get(s);
+                secondGenre = firstGenre;
+                firstGenre = s;
+            } else if (hashMap.get(s) > secondCount) {
+                secondCount = hashMap.get(s);
+                secondGenre = s;
+            }
+        }
+        if (!firstGenre.equals("")) {
+            theatre.addGenre(firstGenre);
+            Log.i("Genre1", firstGenre);
+        }
+        if (!secondGenre.equals("")) {
+            theatre.addGenre(secondGenre);
+            Log.i("Genre2", secondGenre);
+        }
+        //return returnList;
+    }
 
-            for (int i = 0; i < users.size(); i++) {
-                for (int j = 0; j < choices.size(); j++) {
-                    Media firstChoice = users.get(i).getRankings().get(0);
-                    if (firstChoice.equals(choices.get(j))) {
-                        choices.get(j).addVoter(users.get(i));
-                    }
+    public static void calcResult (List <Media> choices) {
+        List<User> users = theatre.getUsers();
+        int majority = (int) (users.size() / 2.0) + 1;
+        List<Media> copy = new ArrayList(choices);
+
+        for (int i = 0; i < users.size(); i++) {
+            for (int j = 0; j < choices.size(); j++) {
+                Media firstChoice = users.get(i).getRankings().get(0);
+                if (firstChoice.equals(choices.get(j))) {
+                    choices.get(j).addVoter(users.get(i));
                 }
             }
+        }
 
-            do {
-                int maxVoters = 0;
-                int maxIndex = -1;
-                int minVoters = 999999;
-                int minIndex = -1;
-                for (int k = 0; k < choices.size(); k++) {
-                    if (choices.get(k).getNumVoters() > maxVoters) {
-                        maxVoters = choices.get(k).getNumVoters();
-                        maxIndex = k;
-                    }
-                    if (choices.get(k).getNumVoters() < minVoters) {
-                        minVoters = choices.get(k).getNumVoters();
-                        minIndex = k;
-                    }
+        do {
+            int maxVoters = 0;
+            int maxIndex = -1;
+            int minVoters = 999999;
+            int minIndex = -1;
+            for (int k = 0; k < choices.size(); k++) {
+                if (choices.get(k).getNumVoters() > maxVoters) {
+                    maxVoters = choices.get(k).getNumVoters();
+                    maxIndex = k;
                 }
-                if (maxVoters >= majority) {
-                    Date date = new Date();
-                    Result result = new Result(choices.get(maxIndex), users, copy, date);
-                    theatre.setResult(result);
-                    return;
-                } else {
-                    Media leastPopular = choices.get(minIndex);
-                    List<User> voters = leastPopular.getCurrentVoters();
-                    choices.remove(minIndex);
-                    for (int j = 0; j < voters.size(); j++) {
-                        voters.get(j).removeRanking(leastPopular);
-                        Media newFirstChoice = voters.get(j).getRankings().get(0);
-                        for (int k = 0; k < choices.size(); k++) {
-                            if (newFirstChoice.equals(choices.get(k))) {
-                                choices.get(k).addVoter(voters.get(j));
-                            }
+                if (choices.get(k).getNumVoters() < minVoters) {
+                    minVoters = choices.get(k).getNumVoters();
+                    minIndex = k;
+                }
+            }
+            if (maxVoters >= majority) {
+                Date date = new Date();
+                Result result = new Result(choices.get(maxIndex), users, copy, date);
+                theatre.setResult(result);
+                return;
+            } else {
+                Media leastPopular = choices.get(minIndex);
+                List<User> voters = leastPopular.getCurrentVoters();
+                choices.remove(minIndex);
+                for (int j = 0; j < voters.size(); j++) {
+                    voters.get(j).removeRanking(leastPopular);
+                    Media newFirstChoice = voters.get(j).getRankings().get(0);
+                    for (int k = 0; k < choices.size(); k++) {
+                        if (newFirstChoice.equals(choices.get(k))) {
+                            choices.get(k).addVoter(voters.get(j));
                         }
                     }
                 }
-            } while (choices.size() > 1);
+            }
+        } while (choices.size() > 1);
 
 
-            Date date = new Date();
-            Result r = new Result(choices.get(0), users, copy, date);
-            theatre.setResult(r);
-            return;
-
-        }
-
+        Date date = new Date();
+        Result r = new Result(choices.get(0), users, copy, date);
+        theatre.setResult(r);
+        return;
 
     }
+
+
+}

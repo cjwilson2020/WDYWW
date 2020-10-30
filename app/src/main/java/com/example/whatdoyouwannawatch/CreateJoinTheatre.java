@@ -43,6 +43,7 @@ public class CreateJoinTheatre extends AppCompatActivity {
                 }
             });
 
+
             Intent intent = new Intent(CreateJoinTheatre.this, TheatreHostLandingPage.class);
             startActivity(intent);
         }
