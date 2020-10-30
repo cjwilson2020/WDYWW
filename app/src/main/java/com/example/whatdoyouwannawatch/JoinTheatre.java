@@ -53,13 +53,11 @@ public class JoinTheatre extends AppCompatActivity {
                         User user = (User) obj;
                         setUser(user);
                         addUserToTheatre();
+                        startActivity(intent);
                     }
                 });
             }
         });
-        //if (found) {
-        startActivity(intent);
-        // }
     }
 
     private void addUserToTheatre() {
