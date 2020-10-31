@@ -27,9 +27,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -93,7 +96,6 @@ public class MediaRanking extends AppCompatActivity {
             @Override
             public void onCallback(final ArrayList<Media> m) {
                 runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
                         Log.d(TAG, "retrieveData: mediaList size: " + m.size());
@@ -132,118 +134,93 @@ public class MediaRanking extends AppCompatActivity {
 
                     JSONObject obj = new JSONObject(res); //make it a JSON object
                     JSONArray hits = obj.getJSONArray("Hits"); //The hits are the actual result listings
-                    Log.d("search", hits.toString(2));
+                    //Log.d("search", hits.toString(2));
 
                     // A For-Loop to iterate through each result from the query
                     // For each result, we are going to extract:
 
                     // public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
-                    for (int i = 0; i < hits.length() - hits.length() - 1; i++) {
+                    final int len = hits.length();
+                    Log.d("search", "number of results: " + len);
+
+                    for (int i = 0; i < len; i++) {
                         Media m = new Media("", "", new ArrayList<String>(), new ArrayList<String>(), 0, "", "", "", (Image) null, 0.0);
-                        JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this movie
-                        if (i == 0)
-                            Log.d("search", result_info.toString());
-                        //I will make a HashMap to store key value pairs.
-                        HashMap<String, String> info;
-                        info = new HashMap<String, String>();
+                        JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
+                        Log.d("search", result_info.toString());
 
-                        // valuating
                         //String id, String title, List < String > genres, List < String > cast, Time length, String director, String writer, String description, Image poster, Double rating}
-                        info.put("Id", "");
-                        info.put("Title", "");
-                        info.put("Genres", ""); // a JSON ARRAY
-                        info.put("Cast", ""); //List<String> if (Contributors.getJSONObject(j).getString("Job").equals("Writer"))
-                        info.put("Runtime", ""); //Time length
-                        info.put("Director", ""); //PersonName if (Contributors.getJSONObject(j).getString("Job").equals("Director"))
-                        info.put("Description", "");
-                        info.put("Image", ""); //Image
-                        info.put("IvaRating", "");
+                        String[] info = {"Id","Title","Genres", "Cast", "Runtime", "Director", "Description", "Image", "IvaRating"};
+                        final int siz = info.length;
 
-                        Iterator it = info.entrySet().iterator();
-                        while (it.hasNext()) { //for each piece of info, load it into the hashmap and Media object
-                            Map.Entry entry = (Map.Entry) it.next(); // first is ID, then Title, and so on..
-                            Log.d("search", "");
-                            //If the key in the hashmap it Description,
-                            if ("Id".equals((String) entry.getKey())) {
-                                if (result_info.has((String) entry.getKey())) {
+                        for (int j = 0; i < siz; i++){ //each piece of info about current listing
+                            if ("Id".equals(info[j])) {
+                                if (result_info.has(info[j])){
                                     //Translate String to desired datatype
-                                    m.setId((String) result_info.getString((String) entry.getKey()));
+                                    m.setId((String) result_info.getString(info[j]));
                                 } else {
-                                    m.setId("No " + (String) entry.getKey() + " available");
+                                    m.setId("No " + info[j] + " available");
                                 }
-                            } else if ("Title".equals((String) entry.getKey())) {
-                                if (result_info.has((String) entry.getKey())) {
-                                    m.setTitle((String) result_info.getString((String) entry.getKey()));
+                            } else if ("Title".equals(info[j])) {
+                                if (result_info.has(info[j])) {
+                                    m.setTitle((String) result_info.getString(info[j]));
+                                    Log.d("search", m.getTitle());
 
-                                    info.put((String) entry.getKey(), result_info.getString((String) entry.getKey()));
                                 } else {
-                                    info.put((String) entry.getKey(), "No " + (String) entry.getKey() + " available");
+                                    m.setTitle( "No " + info[j] + " available");
                                 }
-                            } else if ("IvaRating".equals((String) entry.getKey())) {
-                                if (result_info.has((String) entry.getKey())) {
-                                    m.setRating((double) Integer.parseInt(result_info.getString((String) entry.getKey())));
-                                    info.put((String) entry.getKey(), result_info.getString((String) entry.getKey()));
+                            } else if ("IvaRating".equals(info[j])) {
+                                if (result_info.has(info[j])) {
+                                    m.setRating((double) Integer.parseInt(result_info.getString(info[j])));
                                 } else {
-                                    info.put((String) entry.getKey(), "No " + (String) entry.getKey() + " available");
+                                    m.setRating(0.0);
                                 }
-                            } else if ("Description".equals((String) entry.getKey())) { // do this for Description, Genre, and Contributors
+                            } else if ("Description".equals(info[j])) { // do this for Description, Genre, and Contributors
                                 //  Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                 if (result_info.has("Descriptions")) {
-                                    m.setDescription((String) result_info.getString((String) entry.getKey()));
-                                    info.put((String) entry.getKey(), (String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString("Description"));
+                                    m.setDescription((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
                                 } else {
-                                    info.put((String) entry.getKey(), "No Description available");
+                                    m.setDescription("No "+ info[j] + " available");
                                 }
-                            } else if ("Genres".equals((String) entry.getKey())) {
-                                String g = ""; //comma separated string with list of genres that this result matches
-                                //List of Strings
+                            } else if ("Genres".equals( info[j])) {
                                 ArrayList<String> genres = new ArrayList<String>();
                                 if (result_info.has("Genres")) {
                                     JSONArray temp = result_info.getJSONArray("Genres");
-                                    for (int j = 0; j < temp.length(); j++) { // for each genre listed, add it to g
-                                        genres.add(temp.getString(j));
-                                        g.concat(temp.getString(j) + ",");
+                                    for (int k = 0; k < temp.length(); k++) { // for each genre listed, add it to g
+                                        genres.add(temp.getString(k));
                                     }
                                     m.setGenres((List<String>) genres);
                                 }
-                                //add g as the string for Genres
-                                if (g.length() > 0) {
-                                    info.put((String) entry.getKey(), g);
-                                } else {
-                                    info.put((String) entry.getKey(), "No Genres available");
-                                }
-                            } else if ("Cast".equals((String) entry.getKey()) || "Director".equals((String) entry.getKey())) {
+                            } else if ("Cast".equals( info[j]) || "Director".equals( info[j])) {
                                 String cast = null;
                                 String director = null;
                                 if (result_info.has("Contributors")) {
                                     JSONArray temp = result_info.getJSONArray("Contributors");
-                                    for (int j = 0; j < temp.length(); j++) { // for each contributor listed, add its PersonName if it satosfies condition
-                                        if (temp.getJSONObject(j).getString("Job").equals("Director")) {
-                                            director.concat(temp.getJSONObject(j).getString("PersonName") + ",");
-                                        } else if (temp.getJSONObject(j).getString("Job").equals("Actor")) {
-                                            cast.concat(temp.getJSONObject(j).getString("PersonName" + ","));
+                                    for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satosfies condition
+                                        if (temp.getJSONObject(k).getString("Job").equals("Director")) {
+                                            director.concat(temp.getJSONObject(k).getString("PersonName") + ",");
+                                        } else if (temp.getJSONObject(k).getString("Job").equals("Actor")) {
+                                            cast.concat(temp.getJSONObject(k).getString("PersonName" + ","));
                                         }
                                     }
-                                    // cast should be of format "<person>,<person>,
-                                    // director should be of format <person>"
-                                    if (cast != null && ((String) entry.getKey()).equals("Cast")) {
-                                        info.put((String) entry.getKey(), cast);
+                                    if (cast != null && ( info[j]).equals("Cast")) {
                                         ArrayList<String> c = new ArrayList<String>();
                                         c.add(cast);
                                         m.setCast((List<String>) c);
-                                    } else if (cast == null && ((String) entry.getKey()).equals("Cast")) {
-                                        info.put((String) entry.getKey(), "No Genres available");
+                                    } else if (cast == null && ( info[j]).equals("Cast")) {
+                                        m.setCast(null);
                                     }
-                                    if (director != null && ((String) entry.getKey()).equals("Director")) {
-                                        info.put((String) entry.getKey(), director);
+                                    if (director != null && ( info[j]).equals("Director")) {
                                         m.setDirector(director);
-                                    } else if (director == null && ((String) entry.getKey()).equals("Director")) {
-                                        info.put((String) entry.getKey(), "No Genres available");
+                                    } else if (director == null && (info[j]).equals("Director")) {
+                                        m.setDirector("No " + info[j] + " available");
                                     }
                                 } else {
-                                    info.put((String) entry.getKey(), "No " + (String) entry.getKey() + "available");
+                                    if ("Cast".equals(info[j])){
+                                        m.setCast(null);
+                                    } else if ("Director".equals(info[j]))
+                                        m.setDirector("No Director available");
                                 }
-                            } else if ("Image".equals((String) entry.getKey())) { //TODO implement the image getter from this API in ITERATION 2
+                            } else if ("Image".equals(info[j])) {
                                 String img = null;
                                 if (result_info.has("Images")) {
                                     JSONArray temp = result_info.getJSONArray("Images");
@@ -252,18 +229,23 @@ public class MediaRanking extends AppCompatActivity {
 
                                     MainActivity.apiCallImage(img, new ApiCallback() {
                                         @Override
-                                        public void onCallback(String res) throws JSONException {
+                                        public void onCallback(String res) throws JSONException, MalformedURLException {
                                             Log.d("img", res);
+                                            //res gets the image URL
+                                            JSONObject obj = new JSONObject(res); //make it a JSON object
+                                            URL url = new URL(obj.getString("Url"));
+                                      //      Image image = ImageIO.read(url);
+                                     //       m.setPoster(image);
                                         }
                                     });
                                 }
                                 if (img != null)
-                                    info.put((String) entry.getKey(), img);
+                                    Log.d("search", "");
+                                    //m.setPoster(img);
                                 else
-                                    info.put((String) entry.getKey(), "No Images available");
+                                    m.setPoster(null);
                             }
-                            Log.d("search", (String) entry.getKey() + ": " + info.get(entry.getKey()));
-                            it.remove(); // avoids a ConcurrentModificationException
+                            Log.d("search", info[j] + ": " + info[j]);
                         }
                         Log.d("MainActivity.getMediaList()", m.getTitle());
                         MediaRanking.mediaList.add(m);

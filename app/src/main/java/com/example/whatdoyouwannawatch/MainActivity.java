@@ -265,11 +265,7 @@ MainActivity extends AppCompatActivity {
                     if (!response.isSuccessful()) {
                         throw new IOException("Unexpected code " + response);
                     }
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-//                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
-
+//
                     //Here is where we get the query results
                     String results = responseBody.string();
                     try {
