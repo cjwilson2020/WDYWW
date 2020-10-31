@@ -30,6 +30,7 @@ public class Theatre {
         this.users = new ArrayList<User>();
         this.genres = new ArrayList<String>();
         this.options = new ArrayList<Media>();
+        this.result = new Result(new Media("x"));
     }
 
 

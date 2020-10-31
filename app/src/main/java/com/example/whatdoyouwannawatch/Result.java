@@ -17,6 +17,10 @@ public class Result {
         //generateUID();
     }
 
+    public Result(Media finalDecision){
+        this.finalDecision = finalDecision;
+    }
+
     public Result(Media finalDecision, List<User> users, List<Media> options, Date decisionMade) {
         this.finalDecision = finalDecision;
         this.users = users;

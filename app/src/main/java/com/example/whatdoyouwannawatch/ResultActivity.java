@@ -7,22 +7,82 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 public class ResultActivity extends AppCompatActivity {
-    private final String decision = "Blade Runner";
+    FirebaseUser fbUser;
+    String theatreID;
+    private static ArrayList<Media> mediaList = new ArrayList<Media>(5);
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference myRef = database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        TextView displayTitle = findViewById(R.id.textView19);
-        displayTitle.setText(decision);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) { //extra passed into this
+            mediaList = (ArrayList<Media>) extras.getSerializable("mediaList");
+            theatreID = extras.getString("theatreID");
+        }
+         waitForResult();
     }
 
-    public void onClickResult(View v){
+    private void waitForResult() {
+        myRef = database.getReference();
+        DatabaseReference tRef =myRef.child("theatres").child(theatreID).child("result");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Result r = dataSnapshot.getValue(Result.class);
+                TextView displayTitle = findViewById(R.id.textView19);
+                displayTitle.setText(r.getFinalDecision().getTitle());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+    }
+
+    public void onClickDone(View v){
         Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
         startActivity(intent);
 
         // TODO add result to history
+    }
+
+    public void onClickCalcResult(View v){
+        if(fbUser.getDisplayName().equals(theatreID)) {
+            MainActivity.pullData('t', theatreID, new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    if(obj!= null){
+                        Theatre t = (Theatre)obj;
+                        BackStage b = new BackStage(t);
+                        b.calcResult(mediaList);
+                        MainActivity.pushData(t);
+                        TextView displayTitle = findViewById(R.id.textView19);
+                        displayTitle.setText(t.getResult().getFinalDecision().getTitle());
+                    }
+                }
+            });
+
+
+
+        }
     }
 }

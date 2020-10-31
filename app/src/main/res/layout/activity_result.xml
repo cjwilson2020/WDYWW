@@ -46,8 +46,19 @@
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:layout_marginBottom="40dp"
-        android:onClick="onClickResult"
+        android:onClick="onClickDone"
         android:text="Done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/calcResultButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="240dp"
+        android:layout_marginBottom="44dp"
+        android:onClick="onClickCalcResult"
+        android:text="Calculate Result"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
