@@ -23,6 +23,11 @@ public class Media implements Comparable<Media>, Serializable {
     private URL poster;
     private Double rating;
 
+
+    public Media(){
+        this.currentVoters = new ArrayList<User>();
+    }
+
     //constructor
     public Media(String s) {
         this.id = s;

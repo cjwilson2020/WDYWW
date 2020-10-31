@@ -45,9 +45,14 @@ public class ResultActivity extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Result r = dataSnapshot.getValue(Result.class);
-                TextView displayTitle = findViewById(R.id.textView19);
-                displayTitle.setText(r.getFinalDecision().getTitle());
+                DataSnapshot dataSnapshotRes = dataSnapshot.child("result");
+
+                for (DataSnapshot valueRes : dataSnapshotRes.getChildren()){
+                    Result r =dataSnapshot.getValue(Result.class);
+                    TextView displayTitle = findViewById(R.id.textView19);
+                    displayTitle.setText(r.getFinalDecision().getTitle());
+                }
+
             }
 
             @Override
