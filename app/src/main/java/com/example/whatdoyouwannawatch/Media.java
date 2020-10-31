@@ -157,6 +157,12 @@ public class Media implements Comparable<Media>, Serializable {
         return this.currentVoters.size();
     }
 
+    public void setNumVoters(int i){
+        while(this.currentVoters.size() > i ){
+            this.currentVoters.remove(this.currentVoters.size()-1);
+        }
+    }
+
     public boolean equalTo(Media m){ return this.title == m.title; }
 
     @Override

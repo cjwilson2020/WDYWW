@@ -59,6 +59,10 @@ public class User {
     public void setOptions(List<Media> o){
         this.options = o;
     }
+
+    public void setRankings(List<Media> r){
+        this.rankings = r;
+    }
     //user add media object in options to rankings list
     public void addRankingToEnd(Media m){
         if(!this.rankings.contains(m)) {

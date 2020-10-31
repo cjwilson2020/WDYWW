@@ -141,12 +141,17 @@ public class BackStage {
     public static void calcResult (List <Media> choices) {
         List<User> users = theatre.getUsers();
         int majority = (int) (users.size() / 2.0) + 1;
-        List<Media> copy = new ArrayList(choices);
+        ArrayList copy = new ArrayList(choices);
+        if(users.size() ==1){
+            Date date = new Date();
+            Result r = new Result(users.get(0).getRankings().get(0), users, copy, date);
+            theatre.setResult(r);
+        }
 
         for (int i = 0; i < users.size(); i++) {
             for (int j = 0; j < choices.size(); j++) {
                 Media firstChoice = users.get(i).getRankings().get(0);
-                if (firstChoice.equals(choices.get(j))) {
+                if (firstChoice.getId().equals(choices.get(j).getId())) {
                     choices.get(j).addVoter(users.get(i));
                 }
             }
@@ -180,7 +185,7 @@ public class BackStage {
                     voters.get(j).removeRanking(leastPopular);
                     Media newFirstChoice = voters.get(j).getRankings().get(0);
                     for (int k = 0; k < choices.size(); k++) {
-                        if (newFirstChoice.equals(choices.get(k))) {
+                        if (newFirstChoice.getId().equals(choices.get(k).getId())) {
                             choices.get(k).addVoter(voters.get(j));
                         }
                     }

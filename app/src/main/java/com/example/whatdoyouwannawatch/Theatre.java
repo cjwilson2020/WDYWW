@@ -43,7 +43,7 @@ public class Theatre {
 //    public BackStage getBackstage() { return backstage; }
 //    public void setBackstage() { this.backstage = new BackStage(this); }
 
-    public List<User> getUsers() { return users; }
+    public List<User> getUsers() { return this.users; }
     public void setUsers(List<User> users) { this.users = users; }
 
     public void addUser(User u){

@@ -22,22 +22,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class MediaRanking extends AppCompatActivity {
 
     private static ArrayList<Media> mediaList = new ArrayList<Media>(5);
     private String genreList = null;
     private String streamingServiceList = null;
+    private String theatreID;
+    FirebaseUser fbUser;
+
     private static final String TAG = "MediaRanking";
     int minTime;
     int maxTime;
@@ -46,6 +54,7 @@ public class MediaRanking extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_ranking);
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         Bundle extras = getIntent().getExtras();
 
@@ -54,6 +63,7 @@ public class MediaRanking extends AppCompatActivity {
             streamingServiceList = extras.getString("streamingServiceList");
             minTime = extras.getInt("minTime");
             maxTime = extras.getInt("maxTime");
+            theatreID = extras.getString("theatreID");
         }
 
         retrieveData();
@@ -116,7 +126,25 @@ public class MediaRanking extends AppCompatActivity {
         // TODO push mediaList to Theatre
         Toast.makeText(MediaRanking.this, "" + mediaList.toString(), Toast.LENGTH_SHORT).show();
 
+        MainActivity.pullData('t', theatreID, new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                    if(obj!=null){
+                        Theatre t = (Theatre)obj;
+                        List<User> users = t.getUsers();
+                        for(int i = 0; i< users.size(); i++){
+                            if(users.get(i).getUsername().equals(fbUser.getDisplayName())){
+                                users.get(i).setRankings(mediaList);
+                            }
+                        }
+                        MainActivity.pushData(t);
+                    }
+            }
+        });
+
         Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("theatreID", theatreID);
+        intent.putExtra("mediaList",  (Serializable) mediaList);
         startActivity(intent);
     }
 
