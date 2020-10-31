@@ -60,7 +60,7 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
  //           streamingServiceList = streamingServiceList.substring(0, streamingServiceList.length()-2);
         Toast.makeText(this, streamingServiceList, Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, MediaRanking.class);
+        Intent intent = new Intent(this, DurationSelection.class);
         intent.putExtra("genreList", genreList);
         intent.putExtra("streamingServiceList", streamingServiceList);
         startActivity(intent);

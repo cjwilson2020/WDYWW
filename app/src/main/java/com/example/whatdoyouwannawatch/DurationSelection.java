@@ -8,17 +8,24 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import org.florescu.android.rangeseekbar.RangeSeekBar;
 
 public class DurationSelection extends AppCompatActivity {
 
     RangeSeekBar bar;
     TextView feedback;
+    int minimum = 40;
+    int maximum = 180;
+    FirebaseUser fbUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_duration_selection);
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         bar = findViewById(R.id.rang_seek_bar);
         feedback = findViewById(R.id.textView5);
@@ -31,13 +38,26 @@ public class DurationSelection extends AppCompatActivity {
             public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
                 Number min = bar.getSelectedMinValue();
                 Number max = bar.getSelectedMaxValue();
+                minimum = min.intValue();
+                maximum  = max.intValue();
 
                 feedback.setText(min + " minutes ~ " + max + "minutes");
             }
         });
     }
 
-    public void onClickDurationSelection(View v){
+    public void onClickNext(View v){
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if(obj!= null){
+                    User u = (User) obj;
+                    u.setMinLength(minimum);
+                    u.setMaxLength(maximum);
+                    MainActivity.pushData(u);
+                }
+            }
+        });
         Intent intent = new Intent(DurationSelection.this, MediaRanking.class);
         startActivity(intent);
     }
