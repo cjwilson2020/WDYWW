@@ -22,7 +22,9 @@ public class DurationSelection extends AppCompatActivity {
     FirebaseUser fbUser;
     String genreList;
     String streamingServiceList;
-
+    int minTime;
+    int maxTime;
+    String theatreID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,9 @@ public class DurationSelection extends AppCompatActivity {
         if (extras != null) { //extra passed into this
             genreList = extras.getString("genreList");
             streamingServiceList = extras.getString("streamingServiceList");
-
+            minTime = extras.getInt("minTime");
+            maxTime = extras.getInt("maxTime");
+            theatreID = extras.getString("theatreID");
         }
         bar = findViewById(R.id.rang_seek_bar);
         feedback = findViewById(R.id.textView5);
@@ -72,6 +76,7 @@ public class DurationSelection extends AppCompatActivity {
         intent.putExtra("streamingServiceList", streamingServiceList);
         intent.putExtra("minTime", minimum);
         intent.putExtra("maxTime", maximum);
+        intent.putExtra("theatreID", theatreID);
         startActivity(intent);
     }
 }

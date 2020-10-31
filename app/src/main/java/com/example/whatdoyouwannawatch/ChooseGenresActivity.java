@@ -27,11 +27,14 @@ public class ChooseGenresActivity extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private ArrayList<String> selectedGenres;
+    private String theatreID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_genres);
+        Intent intent = getIntent();
+        theatreID = intent.getStringExtra("theatreID");
 
         arrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_multiple_choice, genres);
@@ -75,6 +78,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);
         intent.putExtra("genreList", genreList);
+        intent.putExtra("theatreID", theatreID);
         startActivity(intent);
 
     }

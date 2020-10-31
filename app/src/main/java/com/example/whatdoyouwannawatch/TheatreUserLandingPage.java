@@ -59,6 +59,7 @@ public class TheatreUserLandingPage extends AppCompatActivity {
 
     public void onClickImAllSet(View v) {
         Intent intent = new Intent(this, ChooseGenresActivity.class);
+        intent.putExtra("theatreID", getTheatreId());
         startActivity(intent);
     }
 

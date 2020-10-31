@@ -19,6 +19,7 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     String genreList = null;
+    String theatreID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
 
         if (extras != null) { //extra passed into this
             genreList = extras.getString("genreList");
+            theatreID = extras.getString("theatreID");
         }
         Log.d("search", genreList);
 
@@ -63,6 +65,7 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DurationSelection.class);
         intent.putExtra("genreList", genreList);
         intent.putExtra("streamingServiceList", streamingServiceList);
+        intent.putExtra("theatreID", theatreID);
         startActivity(intent);
     }
 }

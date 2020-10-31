@@ -2,11 +2,15 @@ package com.example.whatdoyouwannawatch;
 
 
 
+import android.media.Image;
+
+import java.io.Serializable;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Media implements Comparable<Media> {
+public class Media implements Comparable<Media>, Serializable {
     private String id;
     private String title;
     private List<String> genres;
