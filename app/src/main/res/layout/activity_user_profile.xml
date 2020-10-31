@@ -78,7 +78,7 @@
         android:id="@+id/textView"
         android:layout_width="177dp"
         android:layout_height="43dp"
-        android:text="Horror, Romance, Action, Comedy, Food"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.222"

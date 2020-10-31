@@ -49,7 +49,7 @@ public class User {
     }
 
     //set and get genres
-    public List<String> getGenres() {return genres;}
+    public List<String> getGenres() {return this.genres;}
     public void addGenres(String g) {this.genres.add(g);}
     public void removeGenres(String g) {this.genres.remove(g);}
 
