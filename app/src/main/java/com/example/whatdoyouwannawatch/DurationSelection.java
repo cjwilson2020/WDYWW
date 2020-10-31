@@ -20,13 +20,24 @@ public class DurationSelection extends AppCompatActivity {
     int minimum = 40;
     int maximum = 180;
     FirebaseUser fbUser;
+    String genreList;
+    String streamingServiceList;
+    int minTime;
+    int maxTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_duration_selection);
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        Bundle extras = getIntent().getExtras();
 
+        if (extras != null) { //extra passed into this
+            genreList = extras.getString("genreList");
+            streamingServiceList = extras.getString("streamingServiceList");
+            minTime = extras.getInt("minTime");
+            minTime = extras.getInt("minTime");
+        }
         bar = findViewById(R.id.rang_seek_bar);
         feedback = findViewById(R.id.textView5);
         bar.setRangeValues(0,300);
@@ -59,6 +70,10 @@ public class DurationSelection extends AppCompatActivity {
             }
         });
         Intent intent = new Intent(DurationSelection.this, MediaRanking.class);
+        intent.putExtra("genreList", genreList);
+        intent.putExtra("streamingServiceList", streamingServiceList);
+        intent.putExtra("minTime", minimum);
+        intent.putExtra("maxTime", maximum);
         startActivity(intent);
     }
 }

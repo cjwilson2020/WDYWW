@@ -148,10 +148,17 @@ public class MediaRanking extends AppCompatActivity {
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
                         Log.d("search", result_info.toString());
 
-                        //String id, String title, List < String > genres, List < String > cast, Time length, String director, String writer, String description, Image poster, Double rating}
+                        //String id,
+                        //String title,
+                        // List < String > genres,
+                        // List < String > cast,
+                        // Time length, String director,
+                        // String writer,
+                        // String description,
+                        // Image poster,
+                        // Double rating
                         String[] info = {"Id","Title","Genres", "Cast", "Runtime", "Director", "Description", "Image", "IvaRating"};
                         final int siz = info.length;
-
                         for (int j = 0; i < siz; i++){ //each piece of info about current listing
                             if ("Id".equals(info[j])) {
                                 if (result_info.has(info[j])){
