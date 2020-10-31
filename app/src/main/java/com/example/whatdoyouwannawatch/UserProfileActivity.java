@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,10 +22,21 @@ public class UserProfileActivity extends AppCompatActivity {
         final String uid = FBuser.getUid();
         user_id = uid;
 
-        // Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
-
         TextView name = findViewById(R.id.textView_Name);
         name.setText(FBuser.getDisplayName());
+
+        MainActivity.pullData('u', FBuser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if(obj!=null) {
+                    User u = (User) obj;
+                    String genres = u.getPreferences().toString();
+                    Log.i("Genre", u.toString());
+                    TextView displayGenres = findViewById(R.id.textView);
+                    displayGenres.setText(genres);
+                }
+            }
+        });
 
     }
 
