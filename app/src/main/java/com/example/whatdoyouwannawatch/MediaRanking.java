@@ -149,7 +149,7 @@ public class MediaRanking extends AppCompatActivity {
                     Log.d("search", "number of results: " + len);
 
                     for (int i = 0; i < len; i++) {
-                        Media m = new Media("", "", new ArrayList<String>(), new ArrayList<String>(), 0, "", "", "", (Image) null, 0.0);
+                        Media m = new Media("", "", new ArrayList<String>(), new ArrayList<String>(), 0, "", "", "", (URL) null, 0.0);
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
                         Log.d("search", result_info.toString());
 
