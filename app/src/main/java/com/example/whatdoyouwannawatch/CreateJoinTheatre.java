@@ -61,7 +61,7 @@ public class CreateJoinTheatre extends AppCompatActivity {
 //            }
 //        });
 
-        Intent toRanking = new Intent(this, DurationSelection.class);
+        Intent toRanking = new Intent(CreateJoinTheatre.this, DurationSelection.class);
         startActivity(toRanking);
 
     }
