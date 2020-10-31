@@ -55,6 +55,7 @@ For iteration 1, we have implemented the following functionality:
   a) After creating an account and signing out, a user may log in using their email and password by clicking "Log in"
   
 4) Profile
+
   a) After entering a Theatre for the first time and selecting preferred genres, users will be able to see their preferred genres in the User Profile page
   
 5) Watch History, Friends List, Settings
