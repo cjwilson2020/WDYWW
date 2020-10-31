@@ -123,8 +123,13 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     public void onClickRanking(View v) {
+
         // TODO push mediaList to Theatre
-        Toast.makeText(MediaRanking.this, "" + mediaList.toString(), Toast.LENGTH_SHORT).show();
+        ArrayList<String> toasts = new ArrayList<String>();
+        for (Media e : mediaList) {
+            toasts.add(e.getTitle());
+        }
+        Toast.makeText(MediaRanking.this, "" + toasts.toString(), Toast.LENGTH_SHORT).show();
 
         MainActivity.pullData('t', theatreID, new DataCallback() {
             @Override
