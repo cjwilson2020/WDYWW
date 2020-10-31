@@ -123,7 +123,6 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     public void onClickRanking(View v) {
-
         // TODO push mediaList to Theatre
         ArrayList<String> toasts = new ArrayList<String>();
         for (Media e : mediaList) {
