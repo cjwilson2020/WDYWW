@@ -180,15 +180,18 @@ MainActivity extends AppCompatActivity {
     // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
     // To implement this method, I need to use a callback function
     public static void apiCallSearch(String genres, String providers , final ApiCallback acb)   throws IOException {
+
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
         //Log.d("search", "Title: " + title );
+        genres = (genres.toLowerCase()).replaceAll("\\s+","");
+        providers = (providers.toLowerCase()).replaceAll("\\s+","");
+
         Request.Builder builder = new Request.Builder();
         builder.url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/");
         builder.get();
         builder.addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com");
         builder.addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd");
         builder.addHeader("content-type", "application/json");
-        builder.addHeader("ProgramTypes", "Movie,Show");
         builder.addHeader("Providers", providers);
         builder.addHeader("Genres", genres);
         builder.addHeader("sortby", "Relevance");// This is the query we build
