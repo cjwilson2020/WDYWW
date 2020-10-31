@@ -80,7 +80,7 @@ public class MediaRanking extends AppCompatActivity {
         fill.add("title5");
 
         RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
-        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(titles, this);
+        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
 
         ItemTouchHelper.Callback callback = new MediaRankingTouchHelper(mediaRankingAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
@@ -279,12 +279,12 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
 
     private static final String TAG = "RankingAdapter";
 
-    private ArrayList<String> mediaList;
+    private ArrayList<Media> mediaList;
     private Context context;
     private ItemTouchHelper itemTouchHelper;
 
 
-    public MediaRankingAdapter(ArrayList<String> list, Context con) {
+    public MediaRankingAdapter(ArrayList<Media> list, Context con) {
         mediaList = list;
         context = con;
     }
@@ -301,7 +301,7 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder called");
 
-        holder.text.setText(mediaList.get(position));
+        holder.text.setText(mediaList.get(position).getTitle());
 
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,7 +311,7 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
         });
     }
 
-    public ArrayList<String> getMediaList() {
+    public ArrayList<Media> getMediaList() {
         return mediaList;
     }
 
@@ -322,7 +322,7 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        String media = mediaList.get(fromPosition);
+        Media media = mediaList.get(fromPosition);
         mediaList.remove(fromPosition);
         mediaList.add(toPosition, media);
         notifyItemMoved(fromPosition, toPosition);
