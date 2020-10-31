@@ -20,22 +20,26 @@
 
     <ListView
         android:id="@+id/listView_displayStreamingServices"
-        android:layout_width="match_parent"
-        android:layout_height="550dp"
+        android:layout_width="358dp"
+        android:layout_height="354dp"
         android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView_chooseYourStreamingServices" />
+        app:layout_constraintTop_toBottomOf="@id/textView_chooseYourStreamingServices"
+        app:layout_constraintVertical_bias="0.134" />
 
     <Button
         android:id="@+id/button_selectStreamingServices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:onClick="onClickSelectStreamingServices"
         android:text="Next"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.916"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.953" />
 </androidx.constraintlayout.widget.ConstraintLayout>
