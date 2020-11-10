@@ -2,6 +2,7 @@ package com.example.whatdoyouwannawatch;
 
 import android.content.Intent;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.*;
@@ -19,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +43,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-
 
 public class
 MainActivity extends AppCompatActivity {
@@ -186,17 +189,15 @@ MainActivity extends AppCompatActivity {
         genres = (genres.toLowerCase()).replaceAll("\\s+","");
         providers = (providers.toLowerCase()).replaceAll("\\s+","");
 
-        Request.Builder builder = new Request.Builder();
-        builder.url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/");
-        builder.get();
-        builder.addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com");
-        builder.addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd");
-        builder.addHeader("content-type", "application/json");
-        builder.addHeader("Providers", providers);
-        builder.addHeader("Genres", genres);
-        builder.addHeader("sortby", "Relevance");// This is the query we build
-//Program Types
-        Request request = builder //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+        Request request = new Request.Builder()
+                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?SortBy=Relevance&ProgramTypes=Movie%2CShow&Providers=Netflix")
+                .addHeader("content-type", "application/json")
+                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                .addHeader("ProgramTypes", "movie,show")
+                .addHeader("Providers", providers)
+                .addHeader("Genres", genres)
+                .addHeader("sortby", "Relevance")// This is the query we build
                 .build();
 
         Log.d("search", request.toString());
@@ -281,6 +282,76 @@ MainActivity extends AppCompatActivity {
                 }catch (IOException i){
                     i.printStackTrace();
                 }
+            }
+        });
+    }
+
+    static void checkProfileImg(final CheckCallBack ccb, final String username) {
+        Log.d("img", "In checkProfileImg");
+        Log.d("img", username);
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        ///Urw3ICjs0edn1hsM7ACFPWDMTeG3/profile_image.jpg
+        StorageReference storageRef = storage.getReference();
+
+        StorageReference userRef = storageRef.child(username);
+        final StorageReference picRef = storageRef.child(username).child("profile_image.jpg");
+        Log.d("img", picRef.toString());
+        picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                ccb.onCallback(true);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.d("img", "Something went wrong");
+                ccb.onCallback(false);
+            }
+        });
+    }
+    static void setProfileImg(String username, byte[] data) {
+        Log.d("img", "In setProfileImg");
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference profileRef = storageRef.child(username);
+        StorageReference profileImgRef = storageRef.child(username + "/profile_image.jpg");
+        Log.d("img", "Reference created: " + profileImgRef);
+
+        UploadTask uploadTask = profileImgRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.d("file", "upload FAILED");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                Log.d("file", "upload SUCCESSFUL");
+            }
+        });
+    }
+    public static void downloadProfileImg(final ImageCallBack icb, String username) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference imageRef = storageRef.child(username + "/profile_image.jpg");
+        Log.d("file", "Downloading profile image");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                icb.onCallback(bytes);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.d("check", "No Profile Image");
             }
         });
     }

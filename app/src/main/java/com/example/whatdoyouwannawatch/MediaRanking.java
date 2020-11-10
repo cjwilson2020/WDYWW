@@ -138,7 +138,11 @@ public class MediaRanking extends AppCompatActivity {
                         List<User> users = t.getUsers();
                         for(int i = 0; i< users.size(); i++){
                             if(users.get(i).getUsername().equals(fbUser.getDisplayName())){
+
+
                                 users.get(i).setRankings(mediaList);
+
+
                             }
                         }
                         MainActivity.pushData(t);
@@ -170,8 +174,8 @@ public class MediaRanking extends AppCompatActivity {
                     Log.d("search", "number of results: " + len);
 
 
-                    for (int i = 0; i < len; i = i + 1) {
-                        Log.d("search", "Result #" + i);
+                    for (int i = 0; i < 5; i = i + 1) {
+                        Log.d("search", "Result #" + i+1);
                         String iden = "";
                         String tit = "";
                         ArrayList<String> gens = new ArrayList<String>();
@@ -250,12 +254,13 @@ public class MediaRanking extends AppCompatActivity {
                                     });
                                 }
                                 if (img != null)
-                                    Log.d("search", "");
+                                    Log.d("search", "poster found");
                                     //m.setPoster(img);
                                 else
                                     Log.d("search", "no poster");
                             }
-                            Log.d("search", info[j] + ": " + info[j]);
+                            if (result_info.has(info[j]))
+                                Log.d("search", info[j] + ": " + result_info.getString(info[j]));
                         }
                         Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im[0], rat);
 

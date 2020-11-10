@@ -7,7 +7,7 @@
     tools:context=".UserProfileActivity">
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/profileImage"
         android:layout_width="128dp"
         android:layout_height="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
