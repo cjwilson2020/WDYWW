@@ -111,11 +111,11 @@ public class BackStageUnitTest {
         u1.addRankingToEnd(d);
         u1.addRankingToEnd(e);
 
-        u2.addRankingToEnd(a);
+        u2.addRankingToEnd(c);
         u2.addRankingToEnd(d);
         u2.addRankingToEnd(e);
         u2.addRankingToEnd(b);
-        u2.addRankingToEnd(c);
+        u2.addRankingToEnd(a);
 
         u3.addRankingToEnd(b);
         u3.addRankingToEnd(c);
@@ -130,9 +130,9 @@ public class BackStageUnitTest {
         u4.addRankingToEnd(a);
 
         u5.addRankingToEnd(a);
-        u5.addRankingToEnd(e);
-        u5.addRankingToEnd(b);
         u5.addRankingToEnd(c);
+        u5.addRankingToEnd(b);
+        u5.addRankingToEnd(e);
         u5.addRankingToEnd(d);
 
         List<Media> choices = new ArrayList<>();
@@ -144,7 +144,7 @@ public class BackStageUnitTest {
 
         b1.calcResult(choices);
 
-        assertEquals("Media Result", a.getId(), t1.getResult().getFinalDecision().getId());
+        assertEquals("Media Result", b.getId(), t1.getResult().getFinalDecision().getId());
 
     }
 }

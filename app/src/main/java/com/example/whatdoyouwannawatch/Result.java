@@ -83,4 +83,8 @@ public class Result {
     public void setDecisionMade(Date decisionMade) {
         this.decisionMade = decisionMade;
     }
+
+    public String toString(){
+        return finalDecision.getTitle();
+    }
 }
