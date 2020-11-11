@@ -69,15 +69,15 @@ public class MediaRanking extends AppCompatActivity {
         retrieveData();
     }
 
-    private void initRecyclerView(ArrayList<String> titles) {
-        Log.d(TAG, "titles: " + titles.toString());
+    private void initRecyclerView() {
+//        Log.d(TAG, "titles: " + titles.toString());
 
-        ArrayList<String> fill = new ArrayList<String>();
-        fill.add("title1");
-        fill.add("title2");
-        fill.add("title3");
-        fill.add("title4");
-        fill.add("title5");
+//        ArrayList<String> fill = new ArrayList<String>();
+//        fill.add("title1");
+//        fill.add("title2");
+//        fill.add("title3");
+//        fill.add("title4");
+//        fill.add("title5");
 
         RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
         MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
@@ -90,32 +90,31 @@ public class MediaRanking extends AppCompatActivity {
         recyclerView.setAdapter(mediaRankingAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        String res = "";
-        for (String s : titles) {
-            res = res + s + ", ";
-        }
-        res = res.trim();
-        Toast.makeText(this, res, Toast.LENGTH_LONG);
+//        String res = "";
+//        for (String s : titles) {
+//            res = res + s + ", ";
+//        }
+//        res = res.trim();
+//        Toast.makeText(this, res, Toast.LENGTH_LONG);
     }
 
     private void retrieveData() {
-        // ArrayList<String> titleList = new ArrayList<>(5);
         getMediaList(genreList, streamingServiceList, new MediaCallback() {
             @Override
             public void onCallback(final ArrayList<Media> m) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "retrieveData: mediaList size: " + m.size());
-                        Iterator i = mediaList.iterator();
-                        ArrayList<String> tmp = new ArrayList<>(5);
-                        while (i.hasNext()) {
-                            Media j = (Media) i.next();
-                            tmp.add(j.getTitle());
-                        }
-                        Log.d(TAG, "retrieveDate: " + tmp.toString());
+//                        Log.d(TAG, "retrieveData: mediaList size: " + m.size());
+//                        Iterator i = mediaList.iterator();
+//                        ArrayList<String> tmp = new ArrayList<>(5);
+//                        while (i.hasNext()) {
+//                            Media j = (Media) i.next();
+//                            tmp.add(j.getTitle());
+//                        }
+//                        Log.d(TAG, "retrieveDate: " + tmp.toString());
 
-                        initRecyclerView(tmp);
+                        initRecyclerView();
                     }
                 });
             }
@@ -123,7 +122,7 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     public void onClickRanking(View v) {
-        // TODO push mediaList to Theatre
+        // TODO for testing purposes
         ArrayList<String> toasts = new ArrayList<String>();
         for (Media e : mediaList) {
             toasts.add(e.getTitle());
