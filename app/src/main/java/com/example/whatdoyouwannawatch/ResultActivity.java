@@ -2,9 +2,13 @@ package com.example.whatdoyouwannawatch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +19,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
@@ -23,11 +32,13 @@ public class ResultActivity extends AppCompatActivity {
     private static ArrayList<Media> mediaList = new ArrayList<Media>(5);
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
+    ImageView resultImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        resultImg = findViewById(R.id.result_poster);
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         Bundle extras = getIntent().getExtras();
@@ -50,9 +61,9 @@ public class ResultActivity extends AppCompatActivity {
                 for (DataSnapshot valueRes : dataSnapshotRes.getChildren()){
                     Result r =dataSnapshot.getValue(Result.class);
                     TextView displayTitle = findViewById(R.id.textView19);
+
                     displayTitle.setText(r.getFinalDecision().getTitle());
                 }
-
             }
 
             @Override
@@ -82,6 +93,26 @@ public class ResultActivity extends AppCompatActivity {
                         MainActivity.pushData(t);
                         TextView displayTitle = findViewById(R.id.textView19);
                         displayTitle.setText(t.getResult().getFinalDecision().getTitle());
+
+                        URL url = null;
+                        if(t.getResult().getFinalDecision().getPoster() != null) {
+                            try {
+                                url = new URL(t.getResult().getFinalDecision().getPoster().toString());
+                                if (url != null) {
+                                    HttpURLConnection connection = null;
+                                    connection = (HttpURLConnection) url.openConnection();
+                                    connection.setDoInput(true);
+                                    connection.connect();
+                                    InputStream input = connection.getInputStream();
+                                    Bitmap poster = BitmapFactory.decodeStream(input);
+                                    resultImg.setImageBitmap(poster);
+                                } else {
+                                    Log.d("result", "No poster available for this result.");
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             });

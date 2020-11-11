@@ -18,6 +18,7 @@ public class User {
     private boolean isGuest;
     private List<String> genres;
     private List<User> friends;
+    private List<User> friendRequests;
     private List<Result> history;
     private List<String> preferences;
     private List<Media> rankings;
@@ -41,6 +42,7 @@ public class User {
         this.email = email;
         this.UID = uid;
         this.friends = new ArrayList<>();
+        this.friendRequests = new ArrayList<>();
         this.history = new ArrayList<>();
         this.genres = new ArrayList<>();
         this.rankings = new ArrayList<>();
@@ -133,6 +135,14 @@ public class User {
 
     public String toString(){
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
+    }
+
+    public List<User> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void addFriendRequest(User friendRequest) {
+        this.friendRequests.add(friendRequest);
     }
 
     @Exclude

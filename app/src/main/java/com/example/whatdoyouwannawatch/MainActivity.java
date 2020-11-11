@@ -58,12 +58,12 @@ MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    static void removeUserFromTheatre(String hostID, final String username){
+    static void removeUserFromTheatre(String hostID, final String username) {
         myRef = database.getReference();
         pullData('t', hostID, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                if(obj != null) {
+                if (obj != null) {
                     Theatre t = (Theatre) obj;
                     t.removeUser(username);
                     pushData(t);
@@ -72,9 +72,9 @@ MainActivity extends AppCompatActivity {
         });
     }
 
-    static void removeTheatre(String hostID){
+    static void removeTheatre(String hostID) {
         myRef = database.getReference();
-        DatabaseReference tRef =myRef.child("theatres").child(hostID);
+        DatabaseReference tRef = myRef.child("theatres").child(hostID);
         tRef.removeValue();
     }
 
@@ -83,13 +83,13 @@ MainActivity extends AppCompatActivity {
         // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
         myRef = database.getReference();
-        if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")){
-            User tmp = (User)obj;
+        if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")) {
+            User tmp = (User) obj;
             String u = "users";
 
             String folder = u + "/" + (tmp).getUsername();
             map.put(folder.toLowerCase(), obj);
-        } else if(obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")){
+        } else if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")) {
             Theatre tmp = (Theatre) obj;
             String t = "theatres";
 
@@ -111,12 +111,12 @@ MainActivity extends AppCompatActivity {
                 });
     }
 
-    static Object pullData(char type, String id, final DataCallback dcb){
+    static Object pullData(char type, String id, final DataCallback dcb) {
         String t = "theatres";
         String u = "users";
         id = id.toLowerCase().trim();
 
-        if (type == 'u'){
+        if (type == 'u') {
             myRef = database.getReference().child(u).child(id);
             Log.d("pull", myRef.toString());
 
@@ -134,13 +134,14 @@ MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
                     Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
                 }
             });
-        } else if (type == 't'){
+        } else if (type == 't') {
             myRef = database.getReference().child(t).child(id);
             Log.d("pull", myRef.toString());
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -159,6 +160,7 @@ MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
@@ -182,25 +184,82 @@ MainActivity extends AppCompatActivity {
     // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
     // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
     // To implement this method, I need to use a callback function
-    public static void apiCallSearch(String genres, String providers , final ApiCallback acb)   throws IOException {
+    public static void apiCallSearch(String progTypes, String genres, String providers, final ApiCallback acb) throws IOException {
 
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
         //Log.d("search", "Title: " + title );
-        genres = (genres.toLowerCase()).replaceAll("\\s+","");
-        providers = (providers.toLowerCase()).replaceAll("\\s+","");
+        genres = genres.replaceAll("\\s+", "");
+        providers = providers.replaceAll("\\s+", "");
+
+
+        Log.d("search", "genres: " + genres);
+        Log.d("search", "providers: " + providers);
+        Log.d("search", "progTypes: " + progTypes);
+        /*
+            .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/
+            search/?
+            Genres=Crime%2CDrama&
+            SortBy=Relevance&
+            Includes=Images%2CGenres%2CDescriptions&
+            ProgramTypes=Movie%2CShow&
+            Providers=AmazonPrimeVideo%2c
+            ")
+        */
+
+        String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?";
+        address = address.concat("Genres=");
+        String gl[] = genres.split(",");
+        if (gl.length > 0) {
+            for (String g : gl) {
+                if (gl[gl.length - 1].equals(g)) {
+                    address = address.concat(g + "&");
+                } else {
+                    address = address.concat(g + "%2C");
+                }
+            }
+        }
+
+        address = address.concat("SortBy=Relevance&");
+        address = address.concat("Includes=Images%2CGenres%2CDescriptions&");
+        address = address.concat("ProgramTypes=");
+        String pt[] = progTypes.split(",");
+        if (pt.length > 0) {
+            for (String p : pt) {
+                if (pt[pt.length - 1].equals(p)) {
+                    address = address.concat(p + "&");
+                } else {
+                    address = address.concat(p + "%2C");
+                }
+            }
+        }
+        address = address.concat("Providers=%20");
+        String prv[] = providers.split(",");
+        if (prv.length > 0) {
+            for (String p : prv) {
+                if (prv[prv.length - 1].equals(p)) {
+                    address = address.concat(p);
+                } else {
+                    address = address.concat(p + "%2C");
+                }
+            }
+        }
+
 
         Request request = new Request.Builder()
-                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?SortBy=Relevance&ProgramTypes=Movie%2CShow&Providers=Netflix")
-                .addHeader("content-type", "application/json")
-                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
-                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
-                .addHeader("ProgramTypes", "movie,show")
-                .addHeader("Providers", providers)
-                .addHeader("Genres", genres)
-                .addHeader("sortby", "Relevance")// This is the query we build
+                .url(address)
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .addHeader("X-RapidAPI-Key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+                .addHeader("X-RapidAPI-Host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+//                .addHeader("Genres", genres)
+//                .addHeader("SortBy", "Relevance")// This is the query we build
+//                .addHeader("Includes", "Images,Genres,Descriptions")
+//                .addHeader("ProgramTypes", progTypes)
+//                .addHeader("Providers", providers)
                 .build();
 
         Log.d("search", request.toString());
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -210,6 +269,9 @@ MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                //Call
+                Log.d("search", "call from response: " + call.request().toString());
+
                 //A Response has a headers and a body
                 //Headers just contain info or metadata about the response like number of calls left for the free trial
                 // or the Access control methods allowed like GET, POST, PUT, etc
@@ -219,26 +281,20 @@ MainActivity extends AppCompatActivity {
                     if (!response.isSuccessful()) {
                         throw new IOException("Unexpected code " + response);
                     }
-//                    Headers responseHeaders = response.headers();
-//                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-//                        Log.d("search",responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//                    }
-
-                    //Here is where we get the query results
                     String results = responseBody.string();
                     try {
                         acb.onCallback(results);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }catch (IOException i){
+                } catch (IOException i) {
                     i.printStackTrace();
                 }
             }
         });
     }
 
-    public static void apiCallImage(String path , final ApiCallback acb)   throws IOException {
+    public static void apiCallImage(String path, final ApiCallback acb) throws IOException {
         OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
         //Log.d("search", "Title: " + title );
         Request request = new Request.Builder() // This is the query we build
@@ -279,7 +335,7 @@ MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }catch (IOException i){
+                } catch (IOException i) {
                     i.printStackTrace();
                 }
             }
@@ -311,6 +367,7 @@ MainActivity extends AppCompatActivity {
             }
         });
     }
+
     static void setProfileImg(String username, byte[] data) {
         Log.d("img", "In setProfileImg");
 
@@ -336,6 +393,7 @@ MainActivity extends AppCompatActivity {
             }
         });
     }
+
     public static void downloadProfileImg(final ImageCallBack icb, String username) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

@@ -22,8 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 
 public class ChooseGenresActivity extends AppCompatActivity {
-    private String genres[] = {"Horror", "Comedy", "Romance", "Action", "True Crime", "Fantasy",
-        "Sports", "Drama", "Historical"};
+    private String genres[] = {"Biography", "Thriller", "Horror", "Comedy", "Romance", "Crime", "Action-Adventure", "Mystery-Suspense", "Fantasy",
+            "Sports", "Drama", "Historical"};
+
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private ArrayList<String> selectedGenres;
@@ -33,6 +34,17 @@ public class ChooseGenresActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_genres);
+
+        //Sorting the genres
+        for (int i = 0; i < genres.length; i++) {
+            for (int j = i + 1; j < genres.length; j++) {
+                if (genres[i].compareTo(genres[j]) > 0) {
+                    String temp = genres[i];
+                    genres[i] = genres[j];
+                    genres[j] = temp;
+                }
+            }
+        }
         Intent intent = getIntent();
         theatreID = intent.getStringExtra("theatreID");
 
@@ -59,7 +71,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                if(obj != null){
+                if (obj != null) {
                     User u = (User) obj;
                     u.setPreferences(userGenres);
                     MainActivity.pushData(u);
@@ -68,12 +80,15 @@ public class ChooseGenresActivity extends AppCompatActivity {
         });
 
         String genreList = "";
-        for (String genre: selectedGenres) {
+        for (String genre : selectedGenres) {
             genreList += genre + ", ";
         }
         genreList = genreList.trim();
- //       if (genreList.length() > 4);
-//            genreList = genreList.substring(0, genreList.length()-2);
+        if (genreList.length() > 0) {
+            if (genreList.substring(genreList.length() - 1).equals(",")) {
+                genreList = genreList.substring(0, genreList.length() - 1);
+            }
+        }
         Toast.makeText(this, genreList, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);

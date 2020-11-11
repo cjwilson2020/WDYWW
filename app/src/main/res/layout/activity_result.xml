@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/result_poster"
         android:layout_width="230dp"
         android:layout_height="229dp"
         android:layout_marginTop="88dp"
