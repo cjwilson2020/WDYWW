@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class ChooseStreamingServicesActivity extends AppCompatActivity {
     private String streamingServices[] = {"Amazon Instant Video", "NBC", "ABC", "FOX",
-        "Fandango Movies", "Google Play", "CBS", "The CW", "TBS", "Nickelodon", "Discovery Channel",
+            "Fandango Movies", "Google Play", "CBS", "The CW", "TBS", "Nickelodon", "Discovery Channel",
             "HBO", "Disney XD", "USA Network", "Hulu", "Amazon Prime Video", "iTunes", "Netflix",
             "Atom Tickets"};
     private ArrayAdapter<String> arrayAdapter;
@@ -27,7 +27,16 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_streaming_services);
-
+        //Sorting the streamingServices
+        for (int i = 0; i < streamingServices.length; i++) {
+            for (int j = i + 1; j < streamingServices.length; j++) {
+                if (streamingServices[i].compareTo(streamingServices[j]) > 0) {
+                    String temp = streamingServices[i];
+                    streamingServices[i] = streamingServices[j];
+                    streamingServices[j] = temp;
+                }
+            }
+        }
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) { //extra passed into this
@@ -55,15 +64,16 @@ public class ChooseStreamingServicesActivity extends AppCompatActivity {
         }
 
         String streamingServiceList = "";
-        for (String genre: selectedStreamingServices) {
+        for (String genre : selectedStreamingServices) {
             streamingServiceList += genre + ", ";
         }
-
         streamingServiceList = streamingServiceList.trim();
-//        if (streamingServiceList.length() > 2);
- //           streamingServiceList = streamingServiceList.substring(0, streamingServiceList.length()-2);
+        if (streamingServiceList.length() > 0) {
+            if (streamingServiceList.substring(streamingServiceList.length() - 1).equals(",")) {
+                streamingServiceList = streamingServiceList.substring(0, streamingServiceList.length() - 1);
+            }
+        }
         Toast.makeText(this, streamingServiceList, Toast.LENGTH_SHORT).show();
-
         Intent intent = new Intent(this, DurationSelection.class);
         intent.putExtra("genreList", genreList);
         intent.putExtra("streamingServiceList", streamingServiceList);

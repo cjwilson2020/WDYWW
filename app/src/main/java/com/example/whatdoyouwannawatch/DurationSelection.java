@@ -2,8 +2,10 @@ package com.example.whatdoyouwannawatch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,8 +23,6 @@ public class DurationSelection extends AppCompatActivity {
     FirebaseUser fbUser;
     String genreList;
     String streamingServiceList;
-    int minTime;
-    int maxTime;
     String theatreID;
 
     @Override
@@ -35,13 +35,11 @@ public class DurationSelection extends AppCompatActivity {
         if (extras != null) { //extra passed into this
             genreList = extras.getString("genreList");
             streamingServiceList = extras.getString("streamingServiceList");
-            minTime = extras.getInt("minTime");
-            maxTime = extras.getInt("maxTime");
             theatreID = extras.getString("theatreID");
         }
         bar = findViewById(R.id.rang_seek_bar);
         feedback = findViewById(R.id.textView5);
-        bar.setRangeValues(0,300);
+        bar.setRangeValues(0, 300);
         bar.setSelectedMinValue(40);
         bar.setSelectedMaxValue(180);
 
@@ -51,18 +49,18 @@ public class DurationSelection extends AppCompatActivity {
                 Number min = bar.getSelectedMinValue();
                 Number max = bar.getSelectedMaxValue();
                 minimum = min.intValue();
-                maximum  = max.intValue();
+                maximum = max.intValue();
 
                 feedback.setText(min + " minutes ~ " + max + "minutes");
             }
         });
     }
 
-    public void onClickNext(View v){
+    public void onClickNext(View v) {
         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                if(obj!= null){
+                if (obj != null) {
                     User u = (User) obj;
                     u.setMinLength(minimum);
                     u.setMaxLength(maximum);
@@ -73,8 +71,23 @@ public class DurationSelection extends AppCompatActivity {
         Intent intent = new Intent(DurationSelection.this, MediaRanking.class);
         intent.putExtra("genreList", genreList);
         intent.putExtra("streamingServiceList", streamingServiceList);
-        intent.putExtra("minTime", minimum);
-        intent.putExtra("maxTime", maximum);
+        String progTypes = "";
+        if (maximum >= 55) {
+            progTypes = progTypes.concat(",Movie");
+        }
+        if (minimum < 55) {
+            progTypes = progTypes.concat(",Show");
+        }
+
+
+        if ( progTypes.endsWith(",")) {
+            progTypes = progTypes.substring(0, progTypes.length() - 1);
+        }
+        if (progTypes.startsWith(",")) {
+            progTypes = progTypes.substring(1);
+        }
+        Toast.makeText(this, "Minimum: " + minimum + ", Maximum: " + maximum, Toast.LENGTH_SHORT).show();
+        intent.putExtra("progType", progTypes);
         intent.putExtra("theatreID", theatreID);
         startActivity(intent);
     }

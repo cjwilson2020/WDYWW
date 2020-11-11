@@ -47,8 +47,7 @@ public class MediaRanking extends AppCompatActivity {
     FirebaseUser fbUser;
 
     private static final String TAG = "MediaRanking";
-    int minTime;
-    int maxTime;
+    String progTypes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +60,10 @@ public class MediaRanking extends AppCompatActivity {
         if (extras != null) { //extra passed into this
             genreList = extras.getString("genreList");
             streamingServiceList = extras.getString("streamingServiceList");
-            minTime = extras.getInt("minTime");
-            maxTime = extras.getInt("maxTime");
             theatreID = extras.getString("theatreID");
+            progTypes = extras.getString("progType");
         }
+        extras.clear();
 
         retrieveData();
     }
@@ -99,7 +98,7 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     private void retrieveData() {
-        getMediaList(genreList, streamingServiceList, new MediaCallback() {
+        getMediaList(progTypes, genreList, streamingServiceList, new MediaCallback() {
             @Override
             public void onCallback(final ArrayList<Media> m) {
                 runOnUiThread(new Runnable() {
@@ -132,33 +131,30 @@ public class MediaRanking extends AppCompatActivity {
         MainActivity.pullData('t', theatreID, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                    if(obj!=null){
-                        Theatre t = (Theatre)obj;
-                        List<User> users = t.getUsers();
-                        for(int i = 0; i< users.size(); i++){
-                            if(users.get(i).getUsername().equals(fbUser.getDisplayName())){
-
-
-                                users.get(i).setRankings(mediaList);
-
-
-                            }
+                if (obj != null) {
+                    Theatre t = (Theatre) obj;
+                    List<User> users = t.getUsers();
+                    for (int i = 0; i < users.size(); i++) {
+                        if (users.get(i).getUsername().equals(fbUser.getDisplayName())) {
+                            users.get(i).setRankings(mediaList);
                         }
-                        MainActivity.pushData(t);
                     }
+                    MainActivity.pushData(t);
+                }
             }
         });
 
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("theatreID", theatreID);
-        intent.putExtra("mediaList",  (Serializable) mediaList);
+        intent.putExtra("mediaList", (Serializable) mediaList);
         startActivity(intent);
     }
 
-    public static void getMediaList(String genreList, String streamingServiceList, final MediaCallback mcb) {
+    public static void getMediaList(String progTypes, String genreList, String streamingServiceList, final MediaCallback mcb) {
         ArrayList<Media> mediaList = new ArrayList<Media>();
+
         try {
-            MainActivity.apiCallSearch(genreList, streamingServiceList, new ApiCallback() {
+            MainActivity.apiCallSearch(progTypes, genreList, streamingServiceList, new ApiCallback() {
                 @Override
                 public void onCallback(String res) throws JSONException, IOException {
                     //Here is where we will update the view
@@ -172,9 +168,8 @@ public class MediaRanking extends AppCompatActivity {
                     final int len = hits.length();
                     Log.d("search", "number of results: " + len);
 
-
                     for (int i = 0; i < 5; i = i + 1) {
-                        Log.d("search", "Result #" + i+1);
+                        Log.d("search", "Result #" + (i + 1));
                         String iden = "";
                         String tit = "";
                         ArrayList<String> gens = new ArrayList<String>();
@@ -185,7 +180,6 @@ public class MediaRanking extends AppCompatActivity {
                         String desc = "";
                         final URL[] im = {null};
                         Double rat = 0.0;
-
 
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
                         //Log.d("search", result_info.toString());
@@ -217,13 +211,13 @@ public class MediaRanking extends AppCompatActivity {
                                 }
                             } else if ("Description".equals(info[j])) { // Description
                                 //  Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
-                                if (result_info.has("Descriptions")) {
+                                if (result_info.has("Descriptions") && result_info.getJSONArray("Descriptions").length() > 0) {
                                     desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
                                 } else {
                                     desc = ("No " + info[j] + " available");
                                 }
                             } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
-                                if (result_info.has("Contributors")) {
+                                if (result_info.has("Contributors") && result_info.getJSONArray("Contributors").length() > 0) {
                                     JSONArray temp = result_info.getJSONArray("Contributors");
                                     for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satosfies condition
                                         if (temp.getJSONObject(k).getString("Job").equals("Director")) {
@@ -235,43 +229,49 @@ public class MediaRanking extends AppCompatActivity {
                                 } else {
                                     director = "no Director available";
                                 }
-                            } else if ("Image".equals(info[j])) {
-                                String img = null;
-                                if (result_info.has("Images")) {
-                                    JSONArray temp = result_info.getJSONArray("Images");
-                                    if (temp.getJSONObject(0) != null)
-                                        img = temp.getJSONObject(0).getString("FilePath");
-
-                                    MainActivity.apiCallImage(img, new ApiCallback() {
-                                        @Override
-                                        public void onCallback(String res) throws JSONException, MalformedURLException {
-                                            Log.d("img", res);
-                                            //res gets the image URL
-                                            JSONObject obj = new JSONObject(res); //make it a JSON object
-                                            im[0] = new URL(obj.getString("Url"));
-                                        }
-                                    });
-                                }
-                                if (img != null)
-                                    Log.d("search", "poster found");
-                                    //m.setPoster(img);
-                                else
-                                    Log.d("search", "no poster");
                             }
                             if (result_info.has(info[j]))
                                 Log.d("search", info[j] + ": " + result_info.getString(info[j]));
                         }
-                        Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im[0], rat);
+
+                        String img = null;
+                        if (result_info.has("Images") && result_info.getJSONArray("Images").length() > 0) {
+                            JSONArray temp = result_info.getJSONArray("Images");
+                            if (temp.getJSONObject(0) != null)
+                                img = temp.getJSONObject(0).getString("FilePath");
+
+                            if (img != null)
+                                Log.d("search", "poster found");
+                                //m.setPoster(img);
+                            else
+                                Log.d("search", "no poster");
+
+                            MainActivity.apiCallImage(img, new ApiCallback() {
+                                @Override
+                                public void onCallback(String res) throws JSONException, MalformedURLException {
+                                    Log.d("img", res);
+                                    //res gets the image URL
+                                    JSONObject obj = new JSONObject(res); //make it a JSON object
+                                    String addr = obj.getString("Url");
+                                    Log.d("img", "addr: " + addr);
+                                    im[0] = new URL(addr);
+                                    Log.d("img", "im[0]: " + im[0]);
+                                }
+                            });
+                        }
+                        Log.d("img", "im[0] after downloading: ");
+                        Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);
 
                         Log.d("search", "m.Title = " + m.getTitle());
                         MediaRanking.mediaList.add(m);
+
+                        Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+                        mcb.onCallback(MediaRanking.mediaList);
                     }
-                    Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
-                    mcb.onCallback(MediaRanking.mediaList);
                 }
             });
-            Log.d("search", mediaList.toString());
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
     }
