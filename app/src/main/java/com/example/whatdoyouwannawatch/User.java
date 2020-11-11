@@ -106,9 +106,10 @@ public class User {
     public List<User> getFriends() {return friends;}
 
     //add, remove history. Get and clear history list
-    public void addHistory(Result r){history.add(r);}
-    public void removeHistory(Result r){history.remove(r);}
-    public List<Result> getHistory() {return history;}
+    public void addHistory(Result r){this.history.add(r);}
+    public void setHistory(ArrayList<Result> results){this.history = results;}
+    public void removeHistory(Result r){this.history.remove(r);}
+    public List<Result> getHistory() {return this.history;}
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID

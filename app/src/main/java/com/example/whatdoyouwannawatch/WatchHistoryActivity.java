@@ -40,10 +40,12 @@ public class WatchHistoryActivity extends AppCompatActivity {
         MainActivity.pullData('u', FBuser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
+
                 if(obj!=null) {
                     User u = (User) obj;
                     List<Result> watchHistory = u.getHistory();
                 }
+
             }
         });
 
