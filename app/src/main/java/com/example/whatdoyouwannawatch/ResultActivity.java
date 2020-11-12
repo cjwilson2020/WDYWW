@@ -92,7 +92,9 @@ public class ResultActivity extends AppCompatActivity {
                         BackStage b = new BackStage(t);
                         b.calcResult(mediaList);
                         MainActivity.pushData(t);
+
                         updateWatchHistories(t);
+
                         TextView displayTitle = findViewById(R.id.textView19);
                         displayTitle.setText(t.getResult().getFinalDecision().getTitle());
 
@@ -125,11 +127,14 @@ public class ResultActivity extends AppCompatActivity {
         Result result = theatre.getResult();
         ArrayList<User> users = (ArrayList<User>) theatre.getUsers();
         for (User u : users) {
-            Toast.makeText(ResultActivity.this,"User History: " + u.getHistory(), Toast.LENGTH_SHORT).show();
-//            Toast.makeText(ResultActivity.this,"guest? " + u.isGuest(), Toast.LENGTH_SHORT).show();
+
+//            Toast.makeText(ResultActivity.this,"guest? " + u.toMap(), Toast.LENGTH_SHORT).show();
+
+
             if (u.getHistory() == null) u.setHistory(new ArrayList<Result>());
             u.addHistory(result);
-            MainActivity.pushData(u);
+            Toast.makeText(ResultActivity.this,"User History: " + u.toMap(), Toast.LENGTH_SHORT).show();
+//            MainActivity.pushData(u);
         }
     }
 }
