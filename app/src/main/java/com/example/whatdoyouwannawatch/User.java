@@ -35,6 +35,16 @@ public class User {
         this.options = new ArrayList<>();
     }
 
+    User(String uid) {
+        this.isGuest = true;
+        this.UID = uid;
+        this.username = uid;
+        this.genres = new ArrayList<>();
+        this.rankings = new ArrayList<>();
+        this.preferences = new ArrayList<>();
+        this.options = new ArrayList<>();
+    }
+
     //Constructor for registered user
     User(String email, String username, String uid){
         this.isGuest = false;
