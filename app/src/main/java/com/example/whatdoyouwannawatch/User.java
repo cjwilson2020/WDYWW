@@ -143,7 +143,7 @@ public class User {
     public void setFriends(List<User>friends) {this.friends = friends;}
 
     //add, remove history. Get and clear history list
-    public void addHistory(Result r){this.history.add(r);}
+    public void addHistory(Result r){ this.history.add(r);}
     public void setHistory(ArrayList<Result> results){this.history = results;}
     public void removeHistory(Result r){this.history.remove(r);}
     public List<Result> getHistory() {return this.history;}

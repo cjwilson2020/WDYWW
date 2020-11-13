@@ -125,7 +125,7 @@ public class ResultActivity extends AppCompatActivity {
                         BackStage b = new BackStage(t);
                         b.calcResult(mediaList);
                         MainActivity.pushData(t);
-
+                        Log.i("User", "About to update");
                         updateWatchHistories(t);
 
                         TextView displayTitle = findViewById(R.id.textView19);
@@ -157,17 +157,27 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void updateWatchHistories(Theatre theatre){
-        Result result = theatre.getResult();
+        final Result result = theatre.getResult();
         ArrayList<User> users = (ArrayList<User>) theatre.getUsers();
         for (User u : users) {
+            MainActivity.pullData('u', u.getUsername(), new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    if (obj != null) {
+                        User us = (User)obj;
+                        if (us.getHistory() == null || us.getHistory().size() < 1) {
+                            ArrayList<Result> history = new ArrayList<Result>();
+                            history.add(result);
+                            us.setHistory(history);
+                        } else {
+                            us.addHistory(result);
+                        }
+                        MainActivity.pushData(us);
+                    }
+                }
+            });
+            //Toast.makeText(ResultActivity.this,"User History: " + u.getHistory().toString(), Toast.LENGTH_SHORT).show();
 
-//            Toast.makeText(ResultActivity.this,"guest? " + u.toMap(), Toast.LENGTH_SHORT).show();
-
-
-            if (u.getHistory() == null) u.setHistory(new ArrayList<Result>());
-            u.addHistory(result);
-            Toast.makeText(ResultActivity.this,"User History: " + u.toMap(), Toast.LENGTH_SHORT).show();
-//            MainActivity.pushData(u);
         }
     }
 }
