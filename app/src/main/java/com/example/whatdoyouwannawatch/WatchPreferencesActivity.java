@@ -2,11 +2,14 @@ package com.example.whatdoyouwannawatch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WatchPreferencesActivity extends AppCompatActivity {
-    private String genres[] = {"Horror", "Comedy", "Romance", "Action", "True Crime", "Fantasy",
+    private String genres[] = {"Biography", "Thriller", "Horror", "Comedy", "Romance", "Crime", "Action-Adventure", "Mystery-Suspense", "Fantasy",
             "Sports", "Drama", "Historical"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
@@ -47,9 +50,9 @@ public class WatchPreferencesActivity extends AppCompatActivity {
                         listView.setItemChecked(i, true);
                     }
                 }
-
             }
         });
+
     }
 
     public void savePreferences(View view) {
@@ -71,6 +74,19 @@ public class WatchPreferencesActivity extends AppCompatActivity {
                     User u = (User) obj;
                     u.setPreferences(userGenres);
                     MainActivity.pushData(u);
+
+                    // tell user their preferences have been saved
+                    android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(WatchPreferencesActivity.this);
+                    builder1.setMessage("Your genre preferences have been saved.");
+                    builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
                 }
             }
         });

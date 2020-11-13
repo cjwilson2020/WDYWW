@@ -10,13 +10,13 @@
         android:id="@+id/button10"
         android:layout_width="225dp"
         android:layout_height="47dp"
-        android:text="Contact Us"
         android:onClick="goToContactUsOnClick"
+        android:text="Contact Us"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.599" />
+        app:layout_constraintVertical_bias="0.519" />
 
     <Button
         android:id="@+id/delete_button"
@@ -39,18 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.513" />
-
-    <Button
-        android:id="@+id/button8"
-        android:layout_width="225dp"
-        android:layout_height="47dp"
-        android:text="Time &amp; Location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.428" />
+        app:layout_constraintVertical_bias="0.432" />
 
     <TextView
         android:id="@+id/textView12"

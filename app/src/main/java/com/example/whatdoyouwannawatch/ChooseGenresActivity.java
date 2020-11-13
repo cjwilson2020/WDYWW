@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChooseGenresActivity extends AppCompatActivity {
     private String genres[] = {"Biography", "Thriller", "Horror", "Comedy", "Romance", "Crime", "Action-Adventure", "Mystery-Suspense", "Fantasy",
@@ -29,6 +34,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<String> selectedGenres;
     private String theatreID;
+    private List<String> existingUserPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,43 @@ public class ChooseGenresActivity extends AppCompatActivity {
         listView.setAdapter(arrayAdapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        String username = fbUser.getDisplayName();
+        MainActivity.pullData('u', username, new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                final User user = (User) obj;
+                if(!user.isGuest()) {
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(ChooseGenresActivity.this);
+                    builder1.setMessage("Would you like to use your saved genre preferences?");
+                    builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            existingUserPreferences = user.getPreferences();
+                            for(int i = 0; i < arrayAdapter.getCount(); i++) {
+                                if(existingUserPreferences.contains(listView.getItemAtPosition(i))) {
+                                    listView.setItemChecked(i, true);
+                                }
+                            }
+                            Button button = findViewById(R.id.button_selectGenres);
+                            button.performClick();
+                            existingUserPreferences = user.getPreferences();
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                }
+            }
+        });
     }
 
     public void onClickSelectGenres(View v) {
@@ -89,7 +132,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
                 genreList = genreList.substring(0, genreList.length() - 1);
             }
         }
-        Toast.makeText(this, genreList, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, genreList, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, ChooseStreamingServicesActivity.class);
         intent.putExtra("genreList", genreList);
