@@ -34,28 +34,27 @@ public class WatchHistoryActivity extends AppCompatActivity {
         //delete the test later
 
         final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-        TextView title = (TextView)findViewById(R.id.textView1);
-        ListView historyView = (ListView)findViewById(R.id.listView_history);
-
         MainActivity.pullData('u', FBuser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
 
                 if(obj!=null) {
+                    TextView title = (TextView)findViewById(R.id.textView1);
+                    ListView historyView = (ListView)findViewById(R.id.listView_history);
                     User u = (User) obj;
                     List<Result> watchHistory = u.getHistory();
-                }
+                    if (watchHistory == null || watchHistory.size() == 0){
+                        title.setText("No history available");
 
+                    } else{
+                        title.setText("Watch History");
+                        ArrayAdapter historyAdapter = new ArrayAdapter<Result>(WatchHistoryActivity.this, android.R.layout.simple_list_item_1, watchHistory);
+                        historyView.setAdapter(historyAdapter);}
+                }
             }
         });
 
-        if (watchHistory == null || watchHistory.size() == 0){
-            title.setText("No history available");
 
-        } else{
-            title.setText("Watch History");
-            ArrayAdapter historyAdapter = new ArrayAdapter<Result>(this, android.R.layout.simple_list_item_1, watchHistory);
-            historyView.setAdapter(historyAdapter);}
 
 
 
