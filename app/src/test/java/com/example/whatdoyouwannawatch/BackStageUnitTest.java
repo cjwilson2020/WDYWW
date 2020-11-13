@@ -12,7 +12,6 @@ public class BackStageUnitTest {
     @Test
     public void TestCalcLength() {
         Theatre t1 = new Theatre("123");
-        //BackStage b1 = t1.getBackstage();
         BackStage b1 = new BackStage(t1);
 
         User u1= new User("1","1", "1");

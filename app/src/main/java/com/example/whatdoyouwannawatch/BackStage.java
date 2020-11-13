@@ -16,8 +16,8 @@ import java.util.List;
 public class BackStage {
     private static Theatre theatre;
 
-    public BackStage() {
-    }
+//    public BackStage() {
+//    }
 
     public BackStage(Theatre t) {
         this.theatre = t;
@@ -40,60 +40,9 @@ public class BackStage {
             }
         }
 
-        //returnList.add(minTime);
-        //returnList.add(maxTime);
         theatre.setMinTime(minTime);
         theatre.setMaxTime(maxTime);
     }
-
-
-
-    /*
-    private void vote() {
-        Result result;
-        Date date = new Date();
-        //copy the list of options
-        List<Media> vOptions = new ArrayList<>();
-        for (Media m : theatre.getOptions()) {
-            vOptions.add(m);
-        }
-
-        //first round
-        for (int i = 0; i < 5; i++) {
-            for (User u : theatre.getUsers()) {
-                if (u.getRankings().get(i).equals(vOptions.get(0))) {
-                    vOptions.get(0).addVoter(u);
-                } else if (u.getRankings().get(i).equals(vOptions.get(1))) {
-                    vOptions.get(1).addVoter(u);
-                } else if (u.getRankings().get(i).equals(vOptions.get(2))) {
-                    vOptions.get(2).addVoter(u);
-                } else if (u.getRankings().get(i).equals(vOptions.get(3))) {
-                    vOptions.get(3).addVoter(u);
-                } else if (u.getRankings().get(i).equals(vOptions.get(4))) {
-                    vOptions.get(4).addVoter(u);
-                }
-            }
-        }
-
-        //four more rounds to eliminate other options until only one left
-        for (int j = 1; j < 5; j++) {
-            //sort options by voter size
-            Collections.sort(vOptions);
-            //remove first option and assign it to removedOption
-            List<User> removedOption = vOptions.remove(0).getCurrentVoters();
-            //choose the jth option in the removed users and cast their vote to the next choice
-            for (User u : removedOption) {
-                for (Media m : vOptions) {
-                    u.getRankings().get(j).equalTo(m);
-                    m.addVoter(u);
-                }
-            }
-        }
-        //return the last one as recommendation
-        result = new Result(vOptions.get(0), theatre.getUsers(), theatre.getOptions(), date);
-
-//        return result;
-    }*/
 
     public static void calcGenre () {
         List<User> users = theatre.getUsers();
