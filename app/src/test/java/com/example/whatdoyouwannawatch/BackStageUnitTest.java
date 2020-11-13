@@ -1,15 +1,11 @@
 package com.example.whatdoyouwannawatch;
 
-import android.util.Log;
-
 import org.junit.Test;
-import junit.framework.Assert;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class BackStageUnitTest {
 

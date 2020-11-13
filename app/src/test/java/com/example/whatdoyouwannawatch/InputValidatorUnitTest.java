@@ -2,7 +2,8 @@ package com.example.whatdoyouwannawatch;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is a unit test for InputValidator class
