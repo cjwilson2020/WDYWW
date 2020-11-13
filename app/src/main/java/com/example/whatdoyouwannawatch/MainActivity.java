@@ -187,6 +187,39 @@ MainActivity extends AppCompatActivity {
         return null;
     }
 
+    static void deleteData(Object obj){
+        // A HashMap is used to upload information to firebase, the String is the location in
+        // firebase and the Object is the Object to be put in firebase
+        HashMap<String, Object> map = new HashMap<>();
+        myRef = database.getReference();
+        if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")) {
+            User tmp = (User) obj;
+            String u = "users";
+
+            String folder = u + "/" + (tmp).getUsername();
+            map.put(folder.toLowerCase(), null);
+        } else if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")) {
+            Theatre tmp = (Theatre) obj;
+            String t = "theatres";
+
+            String folder = t + "/" + (tmp).getHostID();
+            map.put(folder.toLowerCase(), null);
+        }
+        myRef.updateChildren(map)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("delete", "Error deleting User/Theatre", e);
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Log.d("delete", "Successfully deleted from firebase");
+                    }
+                });
+    }
+
     public void onClickLogIn(View v) {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);

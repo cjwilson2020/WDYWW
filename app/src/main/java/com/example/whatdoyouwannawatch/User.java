@@ -165,6 +165,7 @@ public class User {
         result.put("genres", getGenres());
         result.put("rankings", getRankings());
         result.put("preferences", getPreferences());
+        result.put("guest", isGuest());
 
         return result;
     }
