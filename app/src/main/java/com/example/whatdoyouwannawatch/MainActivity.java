@@ -13,8 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,11 +57,13 @@ MainActivity extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     static void removeUserFromTheatre(String hostID, final String username) {
@@ -187,6 +195,45 @@ MainActivity extends AppCompatActivity {
     public void onClickSignUp(View v) {
         Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickContinueAsGuest(View v) {
+        // create anonymous user
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            setGuestUsername(user, user.getUid());
+                        }
+                    }
+                });
+    }
+
+    private void setGuestUsername(final FirebaseUser user, String username) {
+        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .build();
+        user.updateProfile(userProfileChangeRequest)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object usr) {
+                                    if(usr== null){
+                                        User newUser = new User(user.getDisplayName());
+                                        MainActivity.pushData(newUser);
+                                    }
+                                }
+                            });
+                            Intent intent = new Intent(MainActivity.this, JoinTheatre.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
     }
 
     // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,

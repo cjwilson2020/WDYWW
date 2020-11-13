@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +34,7 @@ public class ResultActivity extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
     ImageView resultImg;
+    public boolean userIsGuest = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +77,35 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void onClickDone(View v){
-        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
-        startActivity(intent);
+        //TODO: If guest, don't redirect to homepage. Instead, delete guest and return to first page.
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        updateGuestStatus(mAuth.getCurrentUser());
+        Toast.makeText(this,  "User is guest?: " + userIsGuest, Toast.LENGTH_LONG).show();
+        if (userIsGuest) {
+            // delete user
+
+
+            Intent intent = new Intent(ResultActivity.this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
+            startActivity(intent);
+        }
+
 
         // TODO add result to history
+    }
+
+    public void updateGuestStatus(FirebaseUser fbUser) {
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if (obj != null) {
+                    User u = (User) obj;
+                    userIsGuest = u.isGuest();
+                }
+            }
+        });
     }
 
     public void onClickCalcResult(View v){
