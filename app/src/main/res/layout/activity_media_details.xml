@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="year and type"
+        android:text=""
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_title" />
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Directed By"
+        android:text=""
         android:textColor="@color/colorText"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="director"
+        android:text=""
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_directed_by" />
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="length"
+        android:text=""
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_year_type" />
@@ -77,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="language"
+        android:text=""
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_length" />

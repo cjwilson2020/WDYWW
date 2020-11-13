@@ -43,6 +43,7 @@ public class AddFriendActivity extends AppCompatActivity {
                         public void onCallback(Object obj) {
                             if(obj != null){
                                 User us = (User) obj;
+                                Log.i("Users", us.getUsername());
                                 if(us.getFriends()== null || us.getFriends().size()<1) {
                                     us.addFriend(friend);
                                     MainActivity.pushData(us);
@@ -63,6 +64,8 @@ public class AddFriendActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
                                     }
                                 }
+                            }else{
+                                Log.i("Users", "Null User");
                             }
                         }
                     });

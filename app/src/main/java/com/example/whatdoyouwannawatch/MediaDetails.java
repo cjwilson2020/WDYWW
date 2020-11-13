@@ -32,7 +32,7 @@ public class MediaDetails extends AppCompatActivity {
 
         title.setText(data.getTitle());
 //        year.setText(data.getYear() + " " + getType());
-        length.setText(Integer.toString(data.getLength()));
+//        length.setText(Integer.toString(data.getLength()));
 //        lang.setText(data.getLanguage());
         if (data.getDirector().equals("no Director available")){
             by.setText("");

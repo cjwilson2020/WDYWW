@@ -47,20 +47,20 @@ public class ResultActivity extends AppCompatActivity {
             mediaList = (ArrayList<Media>) extras.getSerializable("mediaList");
             theatreID = extras.getString("theatreID");
         }
-         waitForResult();
+        waitForResult();
     }
 
     private void waitForResult() {
         myRef = database.getReference();
-        DatabaseReference tRef =myRef.child("theatres").child(theatreID).child("result");
+        DatabaseReference tRef = myRef.child("theatres").child(theatreID).child("result");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataSnapshot dataSnapshotRes = dataSnapshot.child("result");
 
-                for (DataSnapshot valueRes : dataSnapshotRes.getChildren()){
-                    Result r =dataSnapshot.getValue(Result.class);
+                for (DataSnapshot valueRes : dataSnapshotRes.getChildren()) {
+                    Result r = dataSnapshot.getValue(Result.class);
                     TextView displayTitle = findViewById(R.id.textView19);
 
                     displayTitle.setText(r.getFinalDecision().getTitle());
@@ -75,15 +75,13 @@ public class ResultActivity extends AppCompatActivity {
 
     }
 
-    public void onClickDone(View v){
+    public void onClickDone(View v) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
                 if (obj != null) {
                     User u = (User) obj;
-                    Log.i("Guest", u.getUsername());
-                    Log.i("Guest", Boolean.toString(u.isGuest()));
                     if (u.isGuest()) {
                         // delete user
                         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
@@ -92,20 +90,43 @@ public class ResultActivity extends AppCompatActivity {
                                 if (obj != null) {
                                     User u = (User) obj;
                                     MainActivity.deleteData(u);
+                                    MainActivity.removeUserFromTheatre(theatreID, fbUser.getDisplayName());
                                 }
                             }
                         });
                         //Delete guest in FB Auth
                         FirebaseAuth.getInstance().getCurrentUser().delete();
-
                         Intent intent = new Intent(ResultActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
-                        startActivity(intent);
+                        if (theatreID.equalsIgnoreCase(fbUser.getDisplayName())) {
+                            MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object theatre) {
+                                    if (theatre != null) {
+                                        Theatre currTheatre = (Theatre) theatre;
+                                        MainActivity.removeTheatre(currTheatre.getHostID());
+                                    }
+                                }
+                            });
+                            Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
+                            startActivity(intent);
+                        } else {
+                            MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object obj) {
+                                    if (obj != null) {
+                                        User u = (User) obj;
+                                        MainActivity.removeUserFromTheatre(theatreID, fbUser.getDisplayName());
+                                        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+                        }
+
                     }
-                }
-                else{
+                } else {
                     Log.i("Guest", "Guest is null");
                 }
             }
@@ -115,13 +136,13 @@ public class ResultActivity extends AppCompatActivity {
         // TODO add result to history
     }
 
-    public void onClickCalcResult(View v){
-        if(fbUser.getDisplayName().equals(theatreID)) {
+    public void onClickCalcResult(View v) {
+        if (fbUser.getDisplayName().equals(theatreID)) {
             MainActivity.pullData('t', theatreID, new DataCallback() {
                 @Override
                 public void onCallback(Object obj) {
-                    if(obj!= null){
-                        Theatre t = (Theatre)obj;
+                    if (obj != null) {
+                        Theatre t = (Theatre) obj;
                         BackStage b = new BackStage(t);
                         b.calcResult(mediaList);
                         MainActivity.pushData(t);
@@ -132,7 +153,7 @@ public class ResultActivity extends AppCompatActivity {
                         displayTitle.setText(t.getResult().getFinalDecision().getTitle());
 
                         URL url = null;
-                        if(t.getResult().getFinalDecision().getPoster() != null) {
+                        if (t.getResult().getFinalDecision().getPoster() != null) {
                             try {
                                 url = new URL(t.getResult().getFinalDecision().getPoster().toString());
                                 if (url != null) {
@@ -153,10 +174,27 @@ public class ResultActivity extends AppCompatActivity {
                     }
                 }
             });
+        }else{
+            MainActivity.pullData('t', theatreID, new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    if(obj!=null){
+                        Theatre t = (Theatre) obj;
+                        TextView displayTitle = findViewById(R.id.textView19);
+                        if(t.getResult().getFinalDecision().getId().equals("x")){
+                            displayTitle.setText("Result Not Yet Calculated");
+                        }else {
+                            displayTitle.setText(t.getResult().getFinalDecision().getTitle());
+                        }
+                    }
+
+                }
+            });
+
         }
     }
 
-    private void updateWatchHistories(Theatre theatre){
+    private void updateWatchHistories(Theatre theatre) {
         final Result result = theatre.getResult();
         ArrayList<User> users = (ArrayList<User>) theatre.getUsers();
         for (User u : users) {
@@ -164,7 +202,7 @@ public class ResultActivity extends AppCompatActivity {
                 @Override
                 public void onCallback(Object obj) {
                     if (obj != null) {
-                        User us = (User)obj;
+                        User us = (User) obj;
                         if (us.getHistory() == null || us.getHistory().size() < 1) {
                             ArrayList<Result> history = new ArrayList<Result>();
                             history.add(result);
