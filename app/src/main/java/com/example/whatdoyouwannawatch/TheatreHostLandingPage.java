@@ -13,11 +13,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class TheatreHostLandingPage extends AppCompatActivity {
     private FirebaseUser fbUser;
-
     Button qButton;
     TextView qTextView;
-
-
 
 
     @Override
@@ -26,26 +23,9 @@ public class TheatreHostLandingPage extends AppCompatActivity {
         setContentView(R.layout.activity_theatre_host_landing_page);
 
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        qButton = (Button) findViewById(R.id.button_inviteFriends);
-        qTextView = (TextView) findViewById(R.id.query_editText);
-        qButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Add text to QueryActivity's extras
-               // Intent intent = new Intent(TheatreHostLandingPage.this, QueryActivity.class);
-                //String q = (String) qTextView.getText().toString();
-                //intent.putExtra("KEY", q);
-                //startActivity(intent);
-            }
-        });
-
-            displayTheatreID();
+        displayTheatreID();
     }
 
-    public void onClickInviteFriend(View v) {
-
-    }
 
     public void onClickNextHost(View v) {
         Intent intent = new Intent(this, TheatreUserLandingPage.class);
