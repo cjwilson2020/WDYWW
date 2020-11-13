@@ -56,11 +56,23 @@ For iteration 1, we have implemented the following functionality:
   
 4) Profile
 
-  a) After entering a Theatre for the first time and selecting preferred genres, users will be able to see their preferred genres in the User Profile page
+  a) Users will be able to see their preferred genres in the User Profile page after either entering a Theatre for the first time, or editing their watch preferences in the settings.
   
-5) Watch History, Friends List, Settings
+5) Watch History
 
-  a) The front-end activities for these actions are done, but they currently display dummy data
+  a) Users will be able to see all media they have previously watched through What Do You Wanna Watch.
+
+6) Friends List 
+
+  a) Users will be able see all of their friends and add new friends by username. 
+  
+7) Settings
+
+  a) Watch Preferences
+  b) FAQ
+  c) Contact Us
+  d) Delete Account
+
 
 ## Run Tests
 
