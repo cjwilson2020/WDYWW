@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class BackStageUnitTest {
 
     @Test
-    public void calcLength() {
+    public void TestCalcLength() {
         Theatre t1 = new Theatre("123");
         //BackStage b1 = t1.getBackstage();
         BackStage b1 = new BackStage(t1);
@@ -31,17 +31,12 @@ public class BackStageUnitTest {
         u2.setMinLength(u2t1);
         u2.setMaxLength(u2t2);
 
-        //t1.addUser(u1);
-        //t1.addUser(u2);
         List<User> users = new ArrayList<User>();
         users.add(u1);
         users.add(u2);
 
         t1.setUsers(users);
 
-        //t1.setTimes();
-        //t1.setMinTime();
-        //t1.setMaxTime();
         b1.calcLength();
         assertEquals(u1t1, t1.getMinTime());
         assertEquals(u2t2, t1.getMaxTime());
@@ -49,9 +44,8 @@ public class BackStageUnitTest {
     }
 
     @Test
-    public void calcGenre() {
+    public void TestCalcGenre() {
         Theatre t1 = new Theatre("123");
-        //BackStage b1 = t1.getBackstage();
         BackStage b1 = new BackStage(t1);
         User u1= new User("1","1", "1");
         u1.addGenres("Horror");
@@ -62,13 +56,10 @@ public class BackStageUnitTest {
         u2.addGenres("Horror");
         u2.addGenres("Comedy");
 
-
         User u3= new User("3","3","3");
         u3.addGenres("Horror");
         u3.addGenres("Foreign");
         u3.addGenres("Drama");
-
-
 
         t1.addUser(u1);
         t1.addUser(u2);
@@ -82,7 +73,7 @@ public class BackStageUnitTest {
     }
 
     @Test
-    public void calcResult() {
+    public void TestCalcResultMultiUser() {
         Theatre t1 = new Theatre("123");
         //BackStage b1 = t1.getBackstage();
         BackStage b1 = new BackStage(t1);
@@ -145,6 +136,41 @@ public class BackStageUnitTest {
         b1.calcResult(choices);
 
         assertEquals("Media Result", b.getId(), t1.getResult().getFinalDecision().getId());
+
+    }
+
+    @Test
+    public void TestCalcResultSingleUser() {
+        Theatre t2 = new Theatre("1234");
+        //BackStage b1 = t1.getBackstage();
+        BackStage b1 = new BackStage(t2);
+
+        Media a = new Media("A");
+        Media b = new Media("B");
+        Media c = new Media("C");
+        Media d = new Media("D");
+        Media e = new Media( "E");
+
+        User u1= new User("1","1", "1");
+
+        t2.addUser(u1);
+
+        u1.addRankingToEnd(c);
+        u1.addRankingToEnd(b);
+        u1.addRankingToEnd(a);
+        u1.addRankingToEnd(d);
+        u1.addRankingToEnd(e);
+
+        List<Media> choices = new ArrayList<>();
+        choices.add(a);
+        choices.add(b);
+        choices.add(c);
+        choices.add(d);
+        choices.add(e);
+
+        b1.calcResult(choices);
+
+        assertEquals("Media Result", c.getId(), t2.getResult().getFinalDecision().getId());
 
     }
 }
