@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,7 +39,7 @@ public class TheatreUserLandingPage extends AppCompatActivity {
                 if(obj!=null) {
                     Log.i("Null", "Not null");
                     Theatre t = (Theatre)obj;
-                    List<User> uList = t.getUsers();
+                    final List<User> uList = t.getUsers();
                     int x = uList.size();
                     String [] users = new String [x];
                     for(int i = 0; i< uList.size(); i++){
@@ -48,6 +49,12 @@ public class TheatreUserLandingPage extends AppCompatActivity {
                     arrayAdapter = new ArrayAdapter<String>(TheatreUserLandingPage.this, android.R.layout.simple_list_item_1, users);
                     listView = findViewById(R.id.listView_displayUsers);
                     listView.setAdapter(arrayAdapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View v, int i, long l) {
+                            onClickFriend(uList, i);
+                        }
+                    });
                 }
                 else{
                     Log.i("Null", "Null");
@@ -57,6 +64,12 @@ public class TheatreUserLandingPage extends AppCompatActivity {
         });
         TextView youAreNowInTheatre= findViewById(R.id.textView_youAreNowInTheatre);
         youAreNowInTheatre.setText("You are in "   + getTheatreId() + "'s theatre" );
+    }
+
+    private void onClickFriend(List<User> uList, int i) {
+        Intent intent = new Intent(TheatreUserLandingPage.this, FriendProfileActivity.class);
+        intent.putExtra("username", uList.get(i).getUsername());
+        startActivity(intent);
     }
 
     public void onClickImAllSet(View v) {

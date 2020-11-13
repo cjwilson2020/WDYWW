@@ -114,19 +114,28 @@ public class User {
     //add, remove friend and get friend list
     public void addFriend(User f){
         boolean found = false;
-        for(int i =0; i < friends.size(); i++){
-            if(friends.get(i).getUsername().equals(f.getUsername())){
-                found = true;
+        if(friends!= null) {
+            for (int i = 0; i < friends.size(); i++) {
+                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                friends.add(f);
             }
         }
-        if(!found){
-            friends.add(f);
+        else{
+            ArrayList<User> temp = new ArrayList<User>();
+            temp.add(f);
+            this.setFriends(temp);
         }
     }
     public void removeFriend(User f){
-        for(int i =0; i < friends.size(); i++){
-            if(friends.get(i).getUsername().equals(f.getUsername())){
-                friends.remove(i);
+        if(friends!=null) {
+            for (int i = 0; i < friends.size(); i++) {
+                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                    friends.remove(i);
+                }
             }
         }
     }

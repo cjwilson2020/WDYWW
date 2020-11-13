@@ -62,8 +62,8 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
 
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         listView = (ListView) findViewById(R.id.listview);
 
