@@ -166,6 +166,18 @@ public class Media implements Comparable<Media>, Serializable {
         }
     }
 
+    public String getLanguage() {  return language;  }
+
+    public void setLanguage(String language) { this.language = language; }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
+
+    public String getYear() { return year; }
+
+    public void setYear(String year) { this.year = year; }
+
     public boolean equalTo(Media m){ return this.title == m.title; }
 
     @Override

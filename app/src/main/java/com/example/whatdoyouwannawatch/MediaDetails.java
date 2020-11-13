@@ -17,10 +17,9 @@ public class MediaDetails extends AppCompatActivity {
         setContentView(R.layout.activity_media_details);
 
         String json = getIntent().getStringExtra("data");
+        Toast.makeText(this, json, Toast.LENGTH_LONG);
 
         Media data = new Gson().fromJson(json, Media.class);
-
-        Toast.makeText(this, data.getTitle(), Toast.LENGTH_SHORT);
 
         ImageView poster = findViewById(R.id.detail_poster);
         TextView title = findViewById(R.id.detail_title);

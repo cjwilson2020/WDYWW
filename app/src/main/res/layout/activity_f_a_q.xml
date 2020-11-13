@@ -20,10 +20,13 @@
 
     <ListView
         android:id="@+id/FrequentlyAskedQuestions"
-        android:layout_width="413dp"
-        android:layout_height="631dp"
-        android:layout_marginTop="96dp"
+        android:layout_width="348dp"
+        android:layout_height="448dp"
+        android:layout_marginTop="34dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.401" />
 </androidx.constraintlayout.widget.ConstraintLayout>
