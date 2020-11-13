@@ -68,4 +68,8 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToFAQOnClick(View view) {
+        Intent intent = new Intent(SettingsActivity.this, FAQActivity.class);
+        startActivity(intent);
+    }
 }
