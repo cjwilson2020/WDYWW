@@ -115,6 +115,7 @@ public class User {
     public void addFriend(User f){friends.add(f);}
     public void removeFriend(User f){friends.remove(f);}
     public List<User> getFriends() {return friends;}
+    public void setFriends(List<User>friends) {this.friends = friends;}
 
     //add, remove history. Get and clear history list
     public void addHistory(Result r){history.add(r);}
