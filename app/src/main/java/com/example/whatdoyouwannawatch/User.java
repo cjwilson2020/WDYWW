@@ -112,8 +112,24 @@ public class User {
     public int getMaxLength(){return this.maxLength;}
 
     //add, remove friend and get friend list
-    public void addFriend(User f){friends.add(f);}
-    public void removeFriend(User f){friends.remove(f);}
+    public void addFriend(User f){
+        boolean found = false;
+        for(int i =0; i < friends.size(); i++){
+            if(friends.get(i).getUsername().equals(f.getUsername())){
+                found = true;
+            }
+        }
+        if(!found){
+            friends.add(f);
+        }
+    }
+    public void removeFriend(User f){
+        for(int i =0; i < friends.size(); i++){
+            if(friends.get(i).getUsername().equals(f.getUsername())){
+                friends.remove(i);
+            }
+        }
+    }
     public List<User> getFriends() {return friends;}
     public void setFriends(List<User>friends) {this.friends = friends;}
 

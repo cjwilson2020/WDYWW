@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 public class FriendProfileActivity extends AppCompatActivity {
     String uName;
@@ -102,5 +103,28 @@ public class FriendProfileActivity extends AppCompatActivity {
 
             MainActivity.setProfileImg(uName, bytes);
         }
+    }
+    public void onClickUnfriend(View v){
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if (obj != null) {
+                    final User u = (User) obj;
+                    MainActivity.pullData('u', uName, new DataCallback() {
+                        @Override
+                        public void onCallback(Object obj) {
+                            if(obj != null){
+                                User friend = (User)obj;
+                                u.removeFriend(friend);
+                                MainActivity.pushData(u);
+                                Intent intent = new Intent(FriendProfileActivity.this, FriendListActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 }
