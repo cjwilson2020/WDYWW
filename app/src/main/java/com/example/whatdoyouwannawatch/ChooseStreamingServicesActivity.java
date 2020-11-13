@@ -15,9 +15,8 @@ import java.util.ArrayList;
 
 public class ChooseStreamingServicesActivity extends AppCompatActivity {
     private String streamingServices[] = {"Amazon Instant Video", "NBC", "ABC", "FOX",
-            "Fandango Movies", "Google Play", "CBS", "The CW", "TBS", "Nickelodon", "Discovery Channel",
-            "HBO", "Disney XD", "USA Network", "Hulu", "Amazon Prime Video", "iTunes", "Netflix",
-            "Atom Tickets"};
+            "Fandango Movies", "Google Play", "Nickelodeon", "Discovery Channel",
+            "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     String genreList = null;
