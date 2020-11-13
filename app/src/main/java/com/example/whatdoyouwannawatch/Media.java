@@ -89,9 +89,9 @@ public class Media implements Comparable<Media>, Serializable {
         return cast;
     }
 
-    public void setCast(List<String> cast) {
-        this.cast = cast;
-    }
+//    public void setCast(List<String> cast) {
+//        this.cast = cast;
+//    }
 
     public int getLength() {
         return length;
@@ -129,9 +129,9 @@ public class Media implements Comparable<Media>, Serializable {
         return poster;
     }
 
-    public void setPoster(URL poster) {
-        this.poster = poster;
-    }
+//    public void setPoster(URL poster) {
+//        this.poster = poster;
+//    }
 
     public Double getRating() {
         return rating;
@@ -152,33 +152,33 @@ public class Media implements Comparable<Media>, Serializable {
     public void addVoter(User u){
         this.currentVoters.add(u);
     }
-    public void removeVoter(User u){
-        this.currentVoters.remove(u);
-    }
+//    public void removeVoter(User u){
+//        this.currentVoters.remove(u);
+//    }
 
     public int getNumVoters(){
         return this.currentVoters.size();
     }
 
-    public void setNumVoters(int i){
-        while(this.currentVoters.size() > i ){
-            this.currentVoters.remove(this.currentVoters.size()-1);
-        }
-    }
-
-    public String getLanguage() {  return language;  }
-
-    public void setLanguage(String language) { this.language = language; }
-
-    public String getType() { return type; }
-
-    public void setType(String type) { this.type = type; }
-
-    public String getYear() { return year; }
-
-    public void setYear(String year) { this.year = year; }
-
-    public boolean equalTo(Media m){ return this.title == m.title; }
+//    public void setNumVoters(int i){
+//        while(this.currentVoters.size() > i ){
+//            this.currentVoters.remove(this.currentVoters.size()-1);
+//        }
+//    }
+//
+//    public String getLanguage() {  return language;  }
+//
+//    public void setLanguage(String language) { this.language = language; }
+//
+//    public String getType() { return type; }
+//
+//    public void setType(String type) { this.type = type; }
+//
+//    public String getYear() { return year; }
+//
+//    public void setYear(String year) { this.year = year; }
+//
+//    public boolean equalTo(Media m){ return this.title == m.title; }
 
     @Override
     public int compareTo(Media m) {

@@ -137,6 +137,12 @@ public class MediaUnitTest {
     }
 
     @Test
+    public void TestSetGenres(){
+        m.setGenres(genres);
+        assertEquals(m.getGenres().get(0), "g1");
+    }
+
+    @Test
     public void TestCompareTo() {
         Media m1 = new Media();
         Media m2 = new Media();

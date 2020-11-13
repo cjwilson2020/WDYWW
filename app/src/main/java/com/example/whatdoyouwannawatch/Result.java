@@ -56,33 +56,33 @@ public class Result {
         return finalDecision;
     }
 
-    public void setFinalDecision(Media finalDecision) {
-        this.finalDecision = finalDecision;
-    }
+//    public void setFinalDecision(Media finalDecision) {
+//        this.finalDecision = finalDecision;
+//    }
 
     public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//    }
 
     public List<Media> getOptions() {
         return options;
     }
 
-    public void setOptions(List<Media> options) {
-        this.options = options;
-    }
+//    public void setOptions(List<Media> options) {
+//        this.options = options;
+//    }
 
-    public Date getDecisionMade() {
-        return decisionMade;
-    }
+//    public Date getDecisionMade() {
+//        return decisionMade;
+//    }
 
-    public void setDecisionMade(Date decisionMade) {
-        this.decisionMade = decisionMade;
-    }
+//    public void setDecisionMade(Date decisionMade) {
+//        this.decisionMade = decisionMade;
+//    }
 
     public String toString(){
         return finalDecision.getTitle();
