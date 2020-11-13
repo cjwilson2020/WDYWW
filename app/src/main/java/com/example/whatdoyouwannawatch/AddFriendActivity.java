@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +24,8 @@ public class AddFriendActivity extends AppCompatActivity {
 
     // TODO: Implement once FireBase set up for theatre/code linking
     public void onClickAddFriend(View v) {
+        TextView warning = findViewById(R.id.textView_Warning);
+        warning.setText("");
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
         final String username = editTextTheatreCode.getText().toString();
         MainActivity.pullData('u', username, new DataCallback() {
@@ -31,10 +34,8 @@ public class AddFriendActivity extends AppCompatActivity {
                 if (obj == null) {
                     TextView warning = findViewById(R.id.textView_Warning);
                     warning.setText("Warning: User " + username + " does not exist.");
-                    return;
                 }else {
                     final User friend = (User) obj;
-                    Log.i("Friend", friend.getUsername());
                     final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
                     final String userName = FBuser.getDisplayName();
                     MainActivity.pullData('u', userName, new DataCallback() {
@@ -42,21 +43,31 @@ public class AddFriendActivity extends AppCompatActivity {
                         public void onCallback(Object obj) {
                             if(obj != null){
                                 User us = (User) obj;
-                                Log.i("Friend", us.getUsername());
-                                if(us.getFriends()!= null) {
+                                if(us.getFriends()== null || us.getFriends().size()<1) {
                                     us.addFriend(friend);
+                                    MainActivity.pushData(us);
+                                    Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
                                 }else{
-                                    ArrayList<User> friends = new ArrayList<User>();
-                                    friends.add(friend);
-                                    us.setFriends(friends);
+                                    ArrayList<User> friends = (ArrayList<User>) us.getFriends();
+                                    boolean found =false;
+                                    for(int i = 0; i< friends.size(); i++){
+                                        if(friends.get(i).getUsername().equals(friend.getUsername())){
+                                            found =true;
+                                        }
+                                    }
+                                    if(found) {
+                                        Toast.makeText(getApplicationContext(), "You are already friends with this user", Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        us.addFriend(friend);
+                                        MainActivity.pushData(us);
+                                        Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                                MainActivity.pushData(us);
                             }
                         }
                     });
-                    Intent intent = new Intent(AddFriendActivity.this, FriendListActivity.class);
-                    startActivity(intent);
                 }
+                return;
             }
         });
     }
