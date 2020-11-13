@@ -27,16 +27,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static com.example.whatdoyouwannawatch.MediaDetails.getBitmapFromURL;
-
 public class ResultActivity extends AppCompatActivity {
-    private static ImageView resultImg;
     FirebaseUser fbUser;
     String theatreID;
     private static ArrayList<Media> mediaList = new ArrayList<Media>(5);
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
-
+    ImageView resultImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +96,6 @@ public class ResultActivity extends AppCompatActivity {
                         });
                         //Delete guest in FB Auth
                         FirebaseAuth.getInstance().getCurrentUser().delete();
-
                         Intent intent = new Intent(ResultActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else {
@@ -109,8 +105,7 @@ public class ResultActivity extends AppCompatActivity {
                                 public void onCallback(Object theatre) {
                                     if (theatre != null) {
                                         Theatre currTheatre = (Theatre) theatre;
-                                        //MainActivity.removeTheatre(currTheatre.getHostID());
-                                        MainActivity.deleteData(currTheatre);
+                                        MainActivity.removeTheatre(currTheatre.getHostID());
                                     }
                                 }
                             });
@@ -159,14 +154,21 @@ public class ResultActivity extends AppCompatActivity {
 
                         URL url = null;
                         if (t.getResult().getFinalDecision().getPoster() != null) {
-                            url = t.getResult().getFinalDecision().getPosterImg();
-                            if (url != null) {
-                                Log.d("result", url.toString());
-
-                                ResultActivity.resultImg.setImageBitmap(getBitmapFromURL(url.toString()));
-
-                            } else {
-                                Log.d("result", "No poster available for this result.");
+                            try {
+                                url = new URL(t.getResult().getFinalDecision().getPoster().toString());
+                                if (url != null) {
+                                    HttpURLConnection connection = null;
+                                    connection = (HttpURLConnection) url.openConnection();
+                                    connection.setDoInput(true);
+                                    connection.connect();
+                                    InputStream input = connection.getInputStream();
+                                    Bitmap poster = BitmapFactory.decodeStream(input);
+                                    resultImg.setImageBitmap(poster);
+                                } else {
+                                    Log.d("result", "No poster available for this result.");
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
