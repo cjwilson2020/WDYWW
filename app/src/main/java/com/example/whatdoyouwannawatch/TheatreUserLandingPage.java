@@ -22,6 +22,7 @@ public class TheatreUserLandingPage extends AppCompatActivity {
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     String theatreCode = "-111";
+    FirebaseUser fbUser;
 
 
     @Override
@@ -30,6 +31,7 @@ public class TheatreUserLandingPage extends AppCompatActivity {
         setContentView(R.layout.activity_theatre_user_landing_page);
         Intent intent = getIntent();
         theatreCode = (intent.getStringExtra("theatreCode"));
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
         MainActivity.pullData('t', theatreCode, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
@@ -64,10 +66,28 @@ public class TheatreUserLandingPage extends AppCompatActivity {
     }
 
     public void onClickLeaveTheatre(View v) {
-        FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-        MainActivity.removeUserFromTheatre(theatreCode, FBuser.getDisplayName());
-        Intent intent = new Intent(this, UserHomeActivity.class);
-        startActivity(intent);
+        // if guest, redirect to theatre selection. Else go to user home page
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if (obj != null) {
+                    User u = (User) obj;
+                    Log.i("Guest", u.getUsername());
+                    Log.i("Guest", Boolean.toString(u.isGuest()));
+                    MainActivity.removeUserFromTheatre(theatreCode, fbUser.getDisplayName());
+                    if (u.isGuest()) {
+                        Intent intent = new Intent(TheatreUserLandingPage.this, JoinTheatre.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(TheatreUserLandingPage.this, UserHomeActivity.class);
+                        startActivity(intent);
+                    }
+                }
+                else{
+                    Log.i("Guest", "Guest is null");
+                }
+            }
+        });
     }
 
     private String getTheatreId() {

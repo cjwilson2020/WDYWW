@@ -76,9 +76,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void onClickDone(View v){
-        //TODO: If guest, don't redirect to homepage. Instead, delete guest and return to first page.
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        //updateGuestStatus(mAuth.getCurrentUser());
         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
@@ -97,7 +95,7 @@ public class ResultActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        //Sign guest out
+                        //Delete guest in FB Auth
                         FirebaseAuth.getInstance().getCurrentUser().delete();
 
                         Intent intent = new Intent(ResultActivity.this, MainActivity.class);
@@ -106,7 +104,6 @@ public class ResultActivity extends AppCompatActivity {
                         Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
                         startActivity(intent);
                     }
-                    //userIsGuest = (Boolean) u.isGuest();
                 }
                 else{
                     Log.i("Guest", "Guest is null");
@@ -116,10 +113,6 @@ public class ResultActivity extends AppCompatActivity {
 
 
         // TODO add result to history
-    }
-
-    public void updateGuestStatus(FirebaseUser fbUser) {
-
     }
 
     public void onClickCalcResult(View v){
