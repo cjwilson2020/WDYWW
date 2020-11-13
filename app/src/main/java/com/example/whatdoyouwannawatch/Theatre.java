@@ -22,7 +22,7 @@ public class Theatre {
     private Result result;
 
     public Theatre(){
-    //Required for Firebase's dataSnapshot
+        //Required for Firebase's dataSnapshot
     }
 
     public Theatre(String uid){
@@ -39,7 +39,7 @@ public class Theatre {
     public void setHostID(String uid) { this.hostID = uid; }
 
     //public String getRoomNumber() { return roomNumber; }
-    
+
 //    public BackStage getBackstage() { return backstage; }
 //    public void setBackstage() { this.backstage = new BackStage(this); }
 
@@ -89,12 +89,12 @@ public class Theatre {
         return minTime;
     }
 
- //   public void setMinTime() { this.minTime = backstage.calcLength().get(0);    }
+    //   public void setMinTime() { this.minTime = backstage.calcLength().get(0);    }
     public void setMinTime(int t) { this.minTime = t;    }
 
     public int getMaxTime() {    return maxTime;    }
 
-//    public void setMaxTime() {     this.maxTime = backstage.calcLength().get(1);    }
+    //    public void setMaxTime() {     this.maxTime = backstage.calcLength().get(1);    }
     public void setMaxTime(int t) {     this.maxTime = t;    }
 
 //    public LocalTime getTimeCreated() {
@@ -114,7 +114,7 @@ public class Theatre {
         this.result = result;
     }
 
-     public String toString(){
+    public String toString(){
         return "HostID: " + hostID;
     }
 
@@ -127,7 +127,7 @@ public class Theatre {
         result.put("options", getOptions());
         result.put("mintime", getMinTime());
         result.put("maxtime", getMaxTime());
- //       result.put("timecreated", getTimeCreated());
+        //       result.put("timecreated", getTimeCreated());
 
         return result;
     }

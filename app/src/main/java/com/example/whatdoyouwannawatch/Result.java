@@ -5,11 +5,11 @@ import java.util.List;
 //import java.util.UUID;
 
 public class Result {
-//    private String UID;
+    //    private String UID;
     private Media finalDecision;
     private List<User> users;
     private List<Media> options;
-//    private Media recommendation;
+    //    private Media recommendation;
     private Date decisionMade;
 
     //constructor
