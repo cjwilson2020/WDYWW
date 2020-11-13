@@ -65,7 +65,6 @@ public class User {
     public void addGenres(String g) {this.genres.add(g);}
     public void removeGenres(String g) {this.genres.remove(g);}
 
-
     //Start voting process
     //get options from database
     public void setOptions(List<Media> o){
