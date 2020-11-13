@@ -22,6 +22,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".MediaRanking" />
+        <activity android:name=".MediaDetails" />
         <activity android:name=".DurationSelection" />
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".FriendListActivity" />
