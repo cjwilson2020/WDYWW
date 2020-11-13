@@ -1,0 +1,137 @@
+Index: app/src/test/java/com/example/whatdoyouwannawatch/InputValidatorUnitTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.assertTrue;\r\n\r\n/**\r\n * This is a unit test for InputValidator class\r\n */\r\npublic class InputValidatorUnitTest {\r\n    InputValidator iv;\r\n\r\n    @Before\r\n    public void setup(){\r\n        iv = new InputValidator();\r\n    }\r\n\r\n    @Test\r\n    public void TestPasswordIsValid() {\r\n        String pw1 = \"\";\r\n        String pw2 = \"somepw\";\r\n        String pw3 = \"somereallylongpassword32167\";\r\n        assertTrue(!iv.passwordIsValid(pw1));\r\n        assertTrue(iv.passwordIsValid(pw2));\r\n        assertTrue(iv.passwordIsValid(pw3));\r\n    }\r\n\r\n    @Test\r\n    public void emailIsValid() {\r\n        String e1 = \"\";\r\n        String e2 = \"someone@somesite\";\r\n        String e3 = \"avalidemail@some.com\";\r\n        assertTrue(!iv.emailIsValid(e1));\r\n        assertTrue(!iv.emailIsValid(e2));\r\n        assertTrue(iv.emailIsValid(e3));\r\n    }\r\n\r\n    @Test\r\n    public void usernameIsValid() {\r\n        String un1 = \"\";\r\n        String un2 = \"short\";\r\n        String un3 = \"CAP\";\r\n        String un4 = \"Some quite long username, what do you think\";\r\n        assertTrue(!iv.usernameIsValid(un1));\r\n        assertTrue(iv.usernameIsValid(un2));\r\n        assertTrue(iv.usernameIsValid(un3));\r\n        assertTrue(iv.usernameIsValid(un4));\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/example/whatdoyouwannawatch/InputValidatorUnitTest.java	(revision a6d088af64f69dd96e46688e0832c1435d1affe8)
++++ app/src/test/java/com/example/whatdoyouwannawatch/InputValidatorUnitTest.java	(date 1605301178483)
+@@ -3,6 +3,8 @@
+ import org.junit.Before;
+ import org.junit.Test;
+ 
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertTrue;
+ 
+ /**
+Index: app/src/main/java/com/example/whatdoyouwannawatch/BackStage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport android.annotation.SuppressLint;\r\nimport android.os.Build;\r\nimport android.util.Log;\r\n\r\nimport androidx.annotation.RequiresApi;\r\n\r\nimport java.time.LocalTime;\r\nimport java.util.ArrayList;\r\nimport java.util.Collections;\r\nimport java.util.Date;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class BackStage {\r\n    private static Theatre theatre;\r\n\r\n    public BackStage() {\r\n    }\r\n\r\n    public BackStage(Theatre t) {\r\n        this.theatre = t;\r\n    }\r\n\r\n    //public static List<LocalTime> calcLength() {\r\n    @SuppressLint(\"NewApi\")\r\n    public static void calcLength() {\r\n        List<User> users = theatre.getUsers();\r\n        int minTime = -1;\r\n        int maxTime = 999;\r\n\r\n        for (int i = 0; i < users.size(); i++) {\r\n            User u = users.get(i);\r\n            if (u.getMinLength() > (minTime) && u.getMinLength() < (maxTime)) {\r\n                minTime = u.getMinLength();\r\n            }\r\n            if (u.getMaxLength() < (maxTime) && u.getMaxLength() > (minTime)) {\r\n                maxTime = u.getMaxLength();\r\n            }\r\n        }\r\n\r\n        //returnList.add(minTime);\r\n        //returnList.add(maxTime);\r\n        theatre.setMinTime(minTime);\r\n        theatre.setMaxTime(maxTime);\r\n    }\r\n\r\n\r\n\r\n    /*\r\n    private void vote() {\r\n        Result result;\r\n        Date date = new Date();\r\n        //copy the list of options\r\n        List<Media> vOptions = new ArrayList<>();\r\n        for (Media m : theatre.getOptions()) {\r\n            vOptions.add(m);\r\n        }\r\n\r\n        //first round\r\n        for (int i = 0; i < 5; i++) {\r\n            for (User u : theatre.getUsers()) {\r\n                if (u.getRankings().get(i).equals(vOptions.get(0))) {\r\n                    vOptions.get(0).addVoter(u);\r\n                } else if (u.getRankings().get(i).equals(vOptions.get(1))) {\r\n                    vOptions.get(1).addVoter(u);\r\n                } else if (u.getRankings().get(i).equals(vOptions.get(2))) {\r\n                    vOptions.get(2).addVoter(u);\r\n                } else if (u.getRankings().get(i).equals(vOptions.get(3))) {\r\n                    vOptions.get(3).addVoter(u);\r\n                } else if (u.getRankings().get(i).equals(vOptions.get(4))) {\r\n                    vOptions.get(4).addVoter(u);\r\n                }\r\n            }\r\n        }\r\n\r\n        //four more rounds to eliminate other options until only one left\r\n        for (int j = 1; j < 5; j++) {\r\n            //sort options by voter size\r\n            Collections.sort(vOptions);\r\n            //remove first option and assign it to removedOption\r\n            List<User> removedOption = vOptions.remove(0).getCurrentVoters();\r\n            //choose the jth option in the removed users and cast their vote to the next choice\r\n            for (User u : removedOption) {\r\n                for (Media m : vOptions) {\r\n                    u.getRankings().get(j).equalTo(m);\r\n                    m.addVoter(u);\r\n                }\r\n            }\r\n        }\r\n        //return the last one as recommendation\r\n        result = new Result(vOptions.get(0), theatre.getUsers(), theatre.getOptions(), date);\r\n\r\n//        return result;\r\n    }*/\r\n\r\n    public static void calcGenre () {\r\n        List<User> users = theatre.getUsers();\r\n        HashMap<String, Integer> hashMap = new HashMap<>();\r\n        for (int i = 0; i < users.size(); i++) {\r\n            User u = users.get(i);\r\n            for (int j = 0; j < u.getGenres().size(); j++) {\r\n                String genre = u.getGenres().get(j);\r\n                if (hashMap.containsKey(genre)) {\r\n                    hashMap.put(genre, hashMap.get(genre) + 1);\r\n                } else {\r\n                    hashMap.put(genre, 1);\r\n                }\r\n            }\r\n        }\r\n\r\n        Object[] genres = hashMap.keySet().toArray();\r\n        String firstGenre = \"\";\r\n        String secondGenre = \"\";\r\n        int firstCount = 0;\r\n        int secondCount = 0;\r\n        for (int i = 0; i < genres.length; i++) {\r\n            String s = (String) (genres[i]);\r\n            if (hashMap.get(s) > firstCount) {\r\n                secondCount = firstCount;\r\n                firstCount = hashMap.get(s);\r\n                secondGenre = firstGenre;\r\n                firstGenre = s;\r\n            } else if (hashMap.get(s) > secondCount) {\r\n                secondCount = hashMap.get(s);\r\n                secondGenre = s;\r\n            }\r\n        }\r\n        if (!firstGenre.equals(\"\")) {\r\n            theatre.addGenre(firstGenre);\r\n            Log.i(\"Genre1\", firstGenre);\r\n        }\r\n        if (!secondGenre.equals(\"\")) {\r\n            theatre.addGenre(secondGenre);\r\n            Log.i(\"Genre2\", secondGenre);\r\n        }\r\n        //return returnList;\r\n    }\r\n\r\n    public static void calcResult (List <Media> choices) {\r\n        List<User> users = theatre.getUsers();\r\n        int majority = (int) (users.size() / 2.0) + 1;\r\n        ArrayList copy = new ArrayList(choices);\r\n        if(users.size() ==1){\r\n            Date date = new Date();\r\n            Result r = new Result(users.get(0).getRankings().get(0), users, copy, date);\r\n            theatre.setResult(r);\r\n        }\r\n\r\n        for (int i = 0; i < users.size(); i++) {\r\n            for (int j = 0; j < choices.size(); j++) {\r\n                Media firstChoice = users.get(i).getRankings().get(0);\r\n                if (firstChoice.getId().equals(choices.get(j).getId())) {\r\n                    choices.get(j).addVoter(users.get(i));\r\n                }\r\n            }\r\n        }\r\n\r\n        do {\r\n            int maxVoters = 0;\r\n            int maxIndex = -1;\r\n            int minVoters = 999999;\r\n            int minIndex = -1;\r\n            for (int k = 0; k < choices.size(); k++) {\r\n                if (choices.get(k).getNumVoters() > maxVoters) {\r\n                    maxVoters = choices.get(k).getNumVoters();\r\n                    maxIndex = k;\r\n                }\r\n                if (choices.get(k).getNumVoters() < minVoters) {\r\n                    minVoters = choices.get(k).getNumVoters();\r\n                    minIndex = k;\r\n                }\r\n            }\r\n            if (maxVoters >= majority) {\r\n                Date date = new Date();\r\n                Result result = new Result(choices.get(maxIndex), users, copy, date);\r\n                theatre.setResult(result);\r\n                return;\r\n            } else {\r\n                Media leastPopular = choices.get(minIndex);\r\n                List<User> voters = leastPopular.getCurrentVoters();\r\n                choices.remove(minIndex);\r\n                for (int j = 0; j < voters.size(); j++) {\r\n                    voters.get(j).removeRanking(leastPopular);\r\n                    Media newFirstChoice = voters.get(j).getRankings().get(0);\r\n                    for (int k = 0; k < choices.size(); k++) {\r\n                        if (newFirstChoice.getId().equals(choices.get(k).getId())) {\r\n                            choices.get(k).addVoter(voters.get(j));\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n        } while (choices.size() > 1);\r\n\r\n\r\n        Date date = new Date();\r\n        Result r = new Result(choices.get(0), users, copy, date);\r\n        theatre.setResult(r);\r\n        return;\r\n\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/BackStage.java	(revision a6d088af64f69dd96e46688e0832c1435d1affe8)
++++ app/src/main/java/com/example/whatdoyouwannawatch/BackStage.java	(date 1605299270204)
+@@ -16,8 +16,8 @@
+ public class BackStage {
+     private static Theatre theatre;
+ 
+-    public BackStage() {
+-    }
++//    public BackStage() {
++//    }
+ 
+     public BackStage(Theatre t) {
+         this.theatre = t;
+@@ -40,61 +40,10 @@
+             }
+         }
+ 
+-        //returnList.add(minTime);
+-        //returnList.add(maxTime);
+         theatre.setMinTime(minTime);
+         theatre.setMaxTime(maxTime);
+     }
+ 
+-
+-
+-    /*
+-    private void vote() {
+-        Result result;
+-        Date date = new Date();
+-        //copy the list of options
+-        List<Media> vOptions = new ArrayList<>();
+-        for (Media m : theatre.getOptions()) {
+-            vOptions.add(m);
+-        }
+-
+-        //first round
+-        for (int i = 0; i < 5; i++) {
+-            for (User u : theatre.getUsers()) {
+-                if (u.getRankings().get(i).equals(vOptions.get(0))) {
+-                    vOptions.get(0).addVoter(u);
+-                } else if (u.getRankings().get(i).equals(vOptions.get(1))) {
+-                    vOptions.get(1).addVoter(u);
+-                } else if (u.getRankings().get(i).equals(vOptions.get(2))) {
+-                    vOptions.get(2).addVoter(u);
+-                } else if (u.getRankings().get(i).equals(vOptions.get(3))) {
+-                    vOptions.get(3).addVoter(u);
+-                } else if (u.getRankings().get(i).equals(vOptions.get(4))) {
+-                    vOptions.get(4).addVoter(u);
+-                }
+-            }
+-        }
+-
+-        //four more rounds to eliminate other options until only one left
+-        for (int j = 1; j < 5; j++) {
+-            //sort options by voter size
+-            Collections.sort(vOptions);
+-            //remove first option and assign it to removedOption
+-            List<User> removedOption = vOptions.remove(0).getCurrentVoters();
+-            //choose the jth option in the removed users and cast their vote to the next choice
+-            for (User u : removedOption) {
+-                for (Media m : vOptions) {
+-                    u.getRankings().get(j).equalTo(m);
+-                    m.addVoter(u);
+-                }
+-            }
+-        }
+-        //return the last one as recommendation
+-        result = new Result(vOptions.get(0), theatre.getUsers(), theatre.getOptions(), date);
+-
+-//        return result;
+-    }*/
+-
+     public static void calcGenre () {
+         List<User> users = theatre.getUsers();
+         HashMap<String, Integer> hashMap = new HashMap<>();
+Index: app/src/test/java/com/example/whatdoyouwannawatch/BackStageUnitTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport org.junit.Test;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\nimport static org.junit.Assert.assertEquals;\r\n\r\npublic class BackStageUnitTest {\r\n\r\n    @Test\r\n    public void TestCalcLength() {\r\n        Theatre t1 = new Theatre(\"123\");\r\n        //BackStage b1 = t1.getBackstage();\r\n        BackStage b1 = new BackStage(t1);\r\n\r\n        User u1= new User(\"1\",\"1\", \"1\");\r\n        int u1t1 = 55;\r\n        int u1t2 = 2;\r\n        u1.setMinLength(u1t1);\r\n        u1.setMaxLength(u1t2);\r\n\r\n        User u2= new User(\"2\",\"2\",\"2\");\r\n        int u2t1 = 50;\r\n        int u2t2 = 121;\r\n        u2.setMinLength(u2t1);\r\n        u2.setMaxLength(u2t2);\r\n\r\n        List<User> users = new ArrayList<User>();\r\n        users.add(u1);\r\n        users.add(u2);\r\n\r\n        t1.setUsers(users);\r\n\r\n        b1.calcLength();\r\n        assertEquals(u1t1, t1.getMinTime());\r\n        assertEquals(u2t2, t1.getMaxTime());\r\n\r\n    }\r\n\r\n    @Test\r\n    public void TestCalcGenre() {\r\n        Theatre t1 = new Theatre(\"123\");\r\n        BackStage b1 = new BackStage(t1);\r\n        User u1= new User(\"1\",\"1\", \"1\");\r\n        u1.addGenres(\"Horror\");\r\n        u1.addGenres(\"Fantasy\");\r\n        u1.addGenres(\"Drama\");\r\n\r\n        User u2= new User(\"2\",\"2\",\"2\");\r\n        u2.addGenres(\"Horror\");\r\n        u2.addGenres(\"Comedy\");\r\n\r\n        User u3= new User(\"3\",\"3\",\"3\");\r\n        u3.addGenres(\"Horror\");\r\n        u3.addGenres(\"Foreign\");\r\n        u3.addGenres(\"Drama\");\r\n\r\n        t1.addUser(u1);\r\n        t1.addUser(u2);\r\n        t1.addUser(u3);\r\n\r\n        b1.calcGenre();\r\n\r\n        assertEquals(\"First choice\",\"Horror\", t1.getGenres().get(0));\r\n        assertEquals(\"Second choice\",\"Drama\", t1.getGenres().get(1));\r\n\r\n    }\r\n\r\n    @Test\r\n    public void TestCalcResultMultiUser() {\r\n        Theatre t1 = new Theatre(\"123\");\r\n        //BackStage b1 = t1.getBackstage();\r\n        BackStage b1 = new BackStage(t1);\r\n\r\n        Media a = new Media(\"A\");\r\n        Media b = new Media(\"B\");\r\n        Media c = new Media(\"C\");\r\n        Media d = new Media(\"D\");\r\n        Media e = new Media( \"E\");\r\n\r\n        User u1= new User(\"1\",\"1\", \"1\");\r\n        User u2= new User(\"2\",\"2\",\"2\");\r\n        User u3= new User(\"3\",\"3\",\"3\");\r\n        User u4 = new User(\"4\", \"4\",\"4\");\r\n        User u5 = new User(\"5\", \"5\",\"5\");\r\n\r\n        t1.addUser(u1);\r\n        t1.addUser(u2);\r\n        t1.addUser(u3);\r\n        t1.addUser(u4);\r\n        t1.addUser(u5);\r\n\r\n        u1.addRankingToEnd(a);\r\n        u1.addRankingToEnd(b);\r\n        u1.addRankingToEnd(c);\r\n        u1.addRankingToEnd(d);\r\n        u1.addRankingToEnd(e);\r\n\r\n        u2.addRankingToEnd(c);\r\n        u2.addRankingToEnd(d);\r\n        u2.addRankingToEnd(e);\r\n        u2.addRankingToEnd(b);\r\n        u2.addRankingToEnd(a);\r\n\r\n        u3.addRankingToEnd(b);\r\n        u3.addRankingToEnd(c);\r\n        u3.addRankingToEnd(e);\r\n        u3.addRankingToEnd(a);\r\n        u3.addRankingToEnd(d);\r\n\r\n        u4.addRankingToEnd(b);\r\n        u4.addRankingToEnd(e);\r\n        u4.addRankingToEnd(c);\r\n        u4.addRankingToEnd(d);\r\n        u4.addRankingToEnd(a);\r\n\r\n        u5.addRankingToEnd(a);\r\n        u5.addRankingToEnd(c);\r\n        u5.addRankingToEnd(b);\r\n        u5.addRankingToEnd(e);\r\n        u5.addRankingToEnd(d);\r\n\r\n        List<Media> choices = new ArrayList<>();\r\n        choices.add(a);\r\n        choices.add(b);\r\n        choices.add(c);\r\n        choices.add(d);\r\n        choices.add(e);\r\n\r\n        b1.calcResult(choices);\r\n\r\n        assertEquals(\"Media Result\", b.getId(), t1.getResult().getFinalDecision().getId());\r\n\r\n    }\r\n\r\n    @Test\r\n    public void TestCalcResultSingleUser() {\r\n        Theatre t2 = new Theatre(\"1234\");\r\n        //BackStage b1 = t1.getBackstage();\r\n        BackStage b1 = new BackStage(t2);\r\n\r\n        Media a = new Media(\"A\");\r\n        Media b = new Media(\"B\");\r\n        Media c = new Media(\"C\");\r\n        Media d = new Media(\"D\");\r\n        Media e = new Media( \"E\");\r\n\r\n        User u1= new User(\"1\",\"1\", \"1\");\r\n\r\n        t2.addUser(u1);\r\n\r\n        u1.addRankingToEnd(c);\r\n        u1.addRankingToEnd(b);\r\n        u1.addRankingToEnd(a);\r\n        u1.addRankingToEnd(d);\r\n        u1.addRankingToEnd(e);\r\n\r\n        List<Media> choices = new ArrayList<>();\r\n        choices.add(a);\r\n        choices.add(b);\r\n        choices.add(c);\r\n        choices.add(d);\r\n        choices.add(e);\r\n\r\n        b1.calcResult(choices);\r\n\r\n        assertEquals(\"Media Result\", c.getId(), t2.getResult().getFinalDecision().getId());\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/example/whatdoyouwannawatch/BackStageUnitTest.java	(revision a6d088af64f69dd96e46688e0832c1435d1affe8)
++++ app/src/test/java/com/example/whatdoyouwannawatch/BackStageUnitTest.java	(date 1605299270215)
+@@ -12,7 +12,6 @@
+     @Test
+     public void TestCalcLength() {
+         Theatre t1 = new Theatre("123");
+-        //BackStage b1 = t1.getBackstage();
+         BackStage b1 = new BackStage(t1);
+ 
+         User u1= new User("1","1", "1");
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'com.google.gms.google-services'\r\n\r\nandroid {\r\n    compileSdkVersion 29\r\n\r\n    buildToolsVersion \"29.0.3\"\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.whatdoyouwannawatch\"\r\n        minSdkVersion 25\r\n        targetSdkVersion 29\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        multiDexEnabled true\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    // for v4.x :\r\n    implementation 'com.squareup.okhttp3:okhttp:4.9.0'\r\n    implementation 'org.conscrypt:conscrypt-android:2.5.1'\r\n    implementation 'com.android.support:multidex:1.0.3'\r\n    implementation platform('com.google.firebase:firebase-bom:25.12.0')\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.firebase:firebase-database'\r\n    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'\r\n    implementation 'com.google.firebase:firebase-auth:20.0.0'\r\n    implementation 'com.google.firebase:firebase-storage'\r\n    implementation 'com.google.firebase:firebase-messaging:20.2.3'\r\n\r\n    implementation fileTree(dir: \"libs\", include: [\"*.jar\"])\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'\r\n    implementation 'androidx.recyclerview:recyclerview:1.1.0'\r\n    implementation files('libs\\\\unirest-java-1.4.9.jar')\r\n    implementation files('libs\\\\commons-codec-1.6.jar')\r\n    implementation files('libs\\\\commons-logging-1.1.3.jar')\r\n    implementation 'androidx.cardview:cardview:1.0.0'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    testImplementation 'junit:junit:4.13.1'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.2'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\r\n\r\n    // firebase login UI dependencies\r\n    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'\r\n    implementation 'com.google.firebase:firebase-auth:20.0.0'\r\n\r\n    // RangeSeekBar\r\n    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision a6d088af64f69dd96e46688e0832c1435d1affe8)
++++ app/build.gradle	(date 1605299770827)
+@@ -22,6 +22,10 @@
+             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
++    // avoid method is not mocked error
++    testOptions {
++        unitTests.returnDefaultValues = true
++    }
+ }
+ 
+ dependencies {
