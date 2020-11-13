@@ -22,16 +22,17 @@ public class FAQActivity extends AppCompatActivity {
         listItems =  new ArrayList<String>();
 
         listItems.add("How do I create a new Theatre?\n\n" +
-                "To create a new Theatre, click the 'Watch Now' button, and then the 'Create Theatre' button. " +
-                "You will now be in your newly created Theatre!\n");
+                "To create a new Theatre, click the 'Watch Now' button, then the 'Create Theatre' button. " +
+                "You will now be in your newly created Theatre! Your username will appear at the top of the screen, and" +
+                "will act as the join code for your friends.\n");
 
         listItems.add("How do I join my friend's Theatre?\n\n" +
-                "From the home screen, click the 'Watch Now' button, and then click the 'Join Theatre button. From" +
-                "here, you will be prompted to enter a code, which you will need to get from the host of the Theatre. Once" +
+                "From the home screen, click the 'Watch Now' button, and then click the 'Join Theatre' button. From" +
+                "here, you will be prompted to enter a join code, which you will need to get from the host of the Theatre. Once" +
                 "you enter the code, click the 'Join Theatre' button, and you will be added to your friend's Theatre!\n");
 
-        listItems.add("How do we begin once everyone has joined the Theatre?\n\n" +
-                "Once everyone in your group has joined the Theatre, the host can click the 'I'm all set' button, and the " +
+        listItems.add("How do we begin once all of our friends have joined the Theatre?\n\n" +
+                "Once everyone in your group has joined the Theatre, click the 'I'm all set' button, and the " +
                 "ranking process will begin!\n");
 
         listItems.add("How do I log out of my account?\n\n" +
@@ -43,8 +44,8 @@ public class FAQActivity extends AppCompatActivity {
                 "selecting your favorite genres, click the 'Save' button and your preferences are saved!\n");
 
         listItems.add("How do I add a profile image?\n\n" +
-                "To add a profile image, click on the 'Profile' button from the home screen. You will be navigated to your profile" +
-                "page, and you can click on the profile image. You will be prompted to upload an image from your device.\n");
+                "To add a profile image, click on the 'Profile' button from the home screen, and you will be navigated to your profile" +
+                "page. Click on the profile image and you will be prompted to upload an image from your device.\n");
 
 
         arrayAdapter = new ArrayAdapter<String>(this,
