@@ -35,6 +35,16 @@ public class User {
         this.options = new ArrayList<>();
     }
 
+    User(String uid) {
+        this.isGuest = true;
+        this.UID = uid;
+        this.username = uid;
+        this.genres = new ArrayList<>();
+        this.rankings = new ArrayList<>();
+        this.preferences = new ArrayList<>();
+        this.options = new ArrayList<>();
+    }
+
     //Constructor for registered user
     User(String email, String username, String uid){
         this.isGuest = false;
@@ -54,7 +64,6 @@ public class User {
     public List<String> getGenres() {return this.genres;}
     public void addGenres(String g) {this.genres.add(g);}
     public void removeGenres(String g) {this.genres.remove(g);}
-
 
     //Start voting process
     //get options from database
@@ -103,9 +112,35 @@ public class User {
     public int getMaxLength(){return this.maxLength;}
 
     //add, remove friend and get friend list
-    public void addFriend(User f){friends.add(f);}
-    public void removeFriend(User f){friends.remove(f);}
+    public void addFriend(User f){
+        boolean found = false;
+        if(friends!= null) {
+            for (int i = 0; i < friends.size(); i++) {
+                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                friends.add(f);
+            }
+        }
+        else{
+            ArrayList<User> temp = new ArrayList<User>();
+            temp.add(f);
+            this.setFriends(temp);
+        }
+    }
+    public void removeFriend(User f){
+        if(friends!=null) {
+            for (int i = 0; i < friends.size(); i++) {
+                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                    friends.remove(i);
+                }
+            }
+        }
+    }
     public List<User> getFriends() {return friends;}
+    public void setFriends(List<User>friends) {this.friends = friends;}
 
     //add, remove history. Get and clear history list
     public void addHistory(Result r){this.history.add(r);}
@@ -157,6 +192,7 @@ public class User {
         result.put("genres", getGenres());
         result.put("rankings", getRankings());
         result.put("preferences", getPreferences());
+        result.put("guest", isGuest());
 
         return result;
     }

@@ -10,7 +10,7 @@
         android:id="@+id/textView_displayTheatreID"
         android:layout_width="290dp"
         android:layout_height="97dp"
-        android:text="TextView"
+        android:text="Welcome to Your Theatre!"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

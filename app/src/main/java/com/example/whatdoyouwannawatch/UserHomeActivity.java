@@ -25,7 +25,9 @@ public class UserHomeActivity extends AppCompatActivity {
         //Toast.makeText(UserHomeActivity.this, "Welcome " + FBuser.getDisplayName(), Toast.LENGTH_SHORT).show();
 
         TextView welcome = findViewById(R.id.textView_Welcome);
+
         welcome.setText("Welcome, " + FBuser.getDisplayName());
+
 
     }
 

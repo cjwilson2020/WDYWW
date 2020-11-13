@@ -22,6 +22,9 @@ public class Media implements Comparable<Media>, Serializable {
     private String description;
     private URL poster;
     private Double rating;
+    private String year;
+    private String type;
+    private String language;
 
 
     public Media(){

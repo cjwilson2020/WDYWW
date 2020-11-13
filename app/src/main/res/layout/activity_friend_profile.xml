@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserProfileActivity">
+    tools:context=".FriendProfileActivity">
 
     <ImageView
         android:id="@+id/profileImage"
@@ -46,6 +46,35 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.313" />
 
+    <Button
+        android:id="@+id/textView13"
+        android:layout_width="104dp"
+        android:layout_height="45dp"
+        android:background="#EA0303"
+        android:gravity="center"
+        android:onClick="onClickUnfriend"
+        android:text="Unfriend"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.771"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.927" />
+
+    <Button
+        android:id="@+id/textView14"
+        android:layout_width="104dp"
+        android:layout_height="45dp"
+        android:background="#4CAF50"
+        android:gravity="center"
+        android:onClick="onClickFriend"
+        android:text="Friend"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.185"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.927" />
 
     <TextView
         android:id="@+id/textView"

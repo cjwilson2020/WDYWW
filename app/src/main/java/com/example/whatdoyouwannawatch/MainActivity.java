@@ -13,8 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,11 +57,13 @@ MainActivity extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     static void removeUserFromTheatre(String hostID, final String username) {
@@ -110,7 +118,7 @@ MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
+    public static Object data = null;
     static Object pullData(char type, String id, final DataCallback dcb) {
         String t = "theatres";
         String u = "users";
@@ -120,7 +128,7 @@ MainActivity extends AppCompatActivity {
             myRef = database.getReference().child(u).child(id);
             Log.d("pull", myRef.toString());
 
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            ValueEventListener userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
@@ -130,45 +138,86 @@ MainActivity extends AppCompatActivity {
                         if (user.getUID() == null) {
                             dcb.onCallback(null);
                         } else {
+                            MainActivity.data = user;
                             dcb.onCallback(user);
                         }
                     }
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
                     Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
                 }
-            });
+            };
+
+            myRef.addListenerForSingleValueEvent(userListener);
+            myRef.removeEventListener(userListener);
         } else if (type == 't') {
             myRef = database.getReference().child(t).child(id);
             Log.d("pull", myRef.toString());
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            ValueEventListener theatreListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("pull", "theatre datasnapshot: " + dataSnapshot.toString());
                     Theatre theatre = dataSnapshot.getValue(Theatre.class);
-
                     if (theatre == null) {
                         dcb.onCallback(null);
                     } else {
                         if (theatre.getHostID() == null) {
                             dcb.onCallback(null);
                         } else {
+                            MainActivity.data = theatre;
                             dcb.onCallback(theatre);
                         }
                     }
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
-                    Log.i("PullData", "Failed to Load Theatre from Firebase", databaseError.toException());
+                    Log.i("PullData", "Failed to Load User from Firebase", databaseError.toException());
                 }
-            });
+            };
+
+            myRef.addListenerForSingleValueEvent(theatreListener);
+            myRef.removeEventListener(theatreListener);
+        }
+        if (data != null){
+            return (Object)data;
         }
         return null;
+    }
+
+    static void deleteData(Object obj){
+        // A HashMap is used to upload information to firebase, the String is the location in
+        // firebase and the Object is the Object to be put in firebase
+        HashMap<String, Object> map = new HashMap<>();
+        myRef = database.getReference();
+        if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.User")) {
+            User tmp = (User) obj;
+            String u = "users";
+
+            String folder = u + "/" + (tmp).getUsername();
+            map.put(folder.toLowerCase(), null);
+        } else if (obj.getClass().getName().equals("com.example.whatdoyouwannawatch.Theatre")) {
+            Theatre tmp = (Theatre) obj;
+            String t = "theatres";
+
+            String folder = t + "/" + (tmp).getHostID();
+            map.put(folder.toLowerCase(), null);
+        }
+        myRef.updateChildren(map)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("delete", "Error deleting User/Theatre", e);
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        Log.d("delete", "Successfully deleted from firebase");
+                    }
+                });
     }
 
     public void onClickLogIn(View v) {
@@ -179,6 +228,45 @@ MainActivity extends AppCompatActivity {
     public void onClickSignUp(View v) {
         Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickContinueAsGuest(View v) {
+        // create anonymous user
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            setGuestUsername(user, "Guest " + user.getUid());
+                        }
+                    }
+                });
+    }
+
+    private void setGuestUsername(final FirebaseUser user, String username) {
+        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .build();
+        user.updateProfile(userProfileChangeRequest)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object usr) {
+                                    if(usr== null){
+                                        User newUser = new User(user.getDisplayName());
+                                        MainActivity.pushData(newUser);
+                                    }
+                                }
+                            });
+                            Intent intent = new Intent(MainActivity.this, JoinTheatre.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
     }
 
     // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
@@ -207,9 +295,14 @@ MainActivity extends AppCompatActivity {
         */
 
         String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?";
-        address = address.concat("Genres=");
+
         String gl[] = genres.split(",");
+        Log.d("search","gl[0]: " + gl[0]);
+        if (gl == null || gl[0].equals("")) {
+            gl = new String[]{};
+        }
         if (gl.length > 0) {
+            address = address.concat("Genres=");
             for (String g : gl) {
                 if (gl[gl.length - 1].equals(g)) {
                     address = address.concat(g + "&");
@@ -219,11 +312,17 @@ MainActivity extends AppCompatActivity {
             }
         }
 
+
         address = address.concat("SortBy=Relevance&");
         address = address.concat("Includes=Images%2CGenres%2CDescriptions&");
-        address = address.concat("ProgramTypes=");
+
         String pt[] = progTypes.split(",");
+
+        if (pt == null || pt[0].equals("")) {
+            pt = new String[]{};
+        }
         if (pt.length > 0) {
+            address = address.concat("ProgramTypes=");
             for (String p : pt) {
                 if (pt[pt.length - 1].equals(p)) {
                     address = address.concat(p + "&");
@@ -232,9 +331,13 @@ MainActivity extends AppCompatActivity {
                 }
             }
         }
-        address = address.concat("Providers=%20");
+
         String prv[] = providers.split(",");
+        if (prv == null || prv[0].equals("")) {
+            prv = new String[]{};
+        }
         if (prv.length > 0) {
+            address = address.concat("Providers=%20");
             for (String p : prv) {
                 if (prv[prv.length - 1].equals(p)) {
                     address = address.concat(p);
@@ -244,18 +347,12 @@ MainActivity extends AppCompatActivity {
             }
         }
 
-
         Request request = new Request.Builder()
                 .url(address)
                 .get()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("X-RapidAPI-Key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
                 .addHeader("X-RapidAPI-Host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
-//                .addHeader("Genres", genres)
-//                .addHeader("SortBy", "Relevance")// This is the query we build
-//                .addHeader("Includes", "Images,Genres,Descriptions")
-//                .addHeader("ProgramTypes", progTypes)
-//                .addHeader("Providers", providers)
                 .build();
 
         Log.d("search", request.toString());

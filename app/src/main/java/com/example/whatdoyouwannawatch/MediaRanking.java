@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +45,7 @@ public class MediaRanking extends AppCompatActivity {
     private String genreList = null;
     private String streamingServiceList = null;
     private String theatreID;
+    private static ArrayList<URL> im;
     FirebaseUser fbUser;
 
     private static final String TAG = "MediaRanking";
@@ -69,14 +71,6 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-//        Log.d(TAG, "titles: " + titles.toString());
-
-//        ArrayList<String> fill = new ArrayList<String>();
-//        fill.add("title1");
-//        fill.add("title2");
-//        fill.add("title3");
-//        fill.add("title4");
-//        fill.add("title5");
 
         RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
         MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
@@ -89,12 +83,6 @@ public class MediaRanking extends AppCompatActivity {
         recyclerView.setAdapter(mediaRankingAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//        String res = "";
-//        for (String s : titles) {
-//            res = res + s + ", ";
-//        }
-//        res = res.trim();
-//        Toast.makeText(this, res, Toast.LENGTH_LONG);
     }
 
     private void retrieveData() {
@@ -104,14 +92,6 @@ public class MediaRanking extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        Log.d(TAG, "retrieveData: mediaList size: " + m.size());
-//                        Iterator i = mediaList.iterator();
-//                        ArrayList<String> tmp = new ArrayList<>(5);
-//                        while (i.hasNext()) {
-//                            Media j = (Media) i.next();
-//                            tmp.add(j.getTitle());
-//                        }
-//                        Log.d(TAG, "retrieveDate: " + tmp.toString());
 
                         initRecyclerView();
                     }
@@ -312,6 +292,19 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
                 Log.d(TAG, "onClick: " + mediaList.get(position));
             }
         });
+
+        holder.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MediaDetails.class);
+                Gson gson = new Gson();
+                String json = gson.toJson(mediaList.get(position));
+                intent.putExtra("data", json);
+                context.startActivity(intent);
+
+                Toast.makeText(context, mediaList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public ArrayList<Media> getMediaList() {
@@ -334,6 +327,10 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
     public void setTouchHelper(ItemTouchHelper helper) {
         this.itemTouchHelper = helper;
     }
+
+
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {
         TextView text;

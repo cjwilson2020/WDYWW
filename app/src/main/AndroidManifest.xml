@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WatchPreferencesActivity"></activity>
+        <activity android:name=".FAQActivity"></activity>
+        <activity android:name=".FriendProfileActivity" />
+        <activity android:name=".AddFriendActivity" />
+        <activity android:name=".WatchPreferencesActivity" />
         <activity android:name=".ContactUsActivity" />
         <activity android:name=".ChooseStreamingServicesActivity" />
         <activity android:name=".TheatreUserLandingPage" />
@@ -20,6 +23,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ResultActivity" />
         <activity android:name=".MediaRanking" />
+        <activity android:name=".MediaDetails" />
         <activity android:name=".DurationSelection" />
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".FriendListActivity" />

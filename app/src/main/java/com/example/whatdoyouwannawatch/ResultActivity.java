@@ -76,8 +76,41 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void onClickDone(View v){
-        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
-        startActivity(intent);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if (obj != null) {
+                    User u = (User) obj;
+                    Log.i("Guest", u.getUsername());
+                    Log.i("Guest", Boolean.toString(u.isGuest()));
+                    if (u.isGuest()) {
+                        // delete user
+                        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
+                            @Override
+                            public void onCallback(Object obj) {
+                                if (obj != null) {
+                                    User u = (User) obj;
+                                    MainActivity.deleteData(u);
+                                }
+                            }
+                        });
+                        //Delete guest in FB Auth
+                        FirebaseAuth.getInstance().getCurrentUser().delete();
+
+                        Intent intent = new Intent(ResultActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
+                        startActivity(intent);
+                    }
+                }
+                else{
+                    Log.i("Guest", "Guest is null");
+                }
+            }
+        });
+
 
         // TODO add result to history
     }

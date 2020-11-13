@@ -3,12 +3,11 @@ package com.example.whatdoyouwannawatch;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TheatreUnitTest {
     List<User> userList;
