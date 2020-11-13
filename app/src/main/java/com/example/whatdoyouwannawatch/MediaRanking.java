@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -291,6 +292,19 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
                 Log.d(TAG, "onClick: " + mediaList.get(position));
             }
         });
+
+        holder.btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MediaDetails.class);
+                Gson gson = new Gson();
+                String json = gson.toJson(mediaList.get(position));
+                intent.putExtra("data", json);
+                context.startActivity(intent);
+
+                Toast.makeText(context, mediaList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public ArrayList<Media> getMediaList() {
@@ -313,6 +327,10 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
     public void setTouchHelper(ItemTouchHelper helper) {
         this.itemTouchHelper = helper;
     }
+
+
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {
         TextView text;
