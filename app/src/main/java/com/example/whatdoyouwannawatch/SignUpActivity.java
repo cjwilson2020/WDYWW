@@ -49,6 +49,11 @@ public class SignUpActivity extends AppCompatActivity {
         }
         EditText editTextUsername = findViewById(R.id.editText_username);
         final String username = editTextUsername.getText().toString();
+        if (!inputValidator.usernameIsValid(username)) {
+            Toast.makeText(this, "You've entered an invalid username. " +
+                    "Please try again." , Toast.LENGTH_SHORT).show();
+            return;
+        }
         MainActivity.pullData( 'u', username, new DataCallback() {
             @Override
             public void onCallback(Object usr) {
