@@ -54,8 +54,9 @@ public class FriendListActivity extends AppCompatActivity {
         });
     }
 
-    protected void onClickAdd() {
-
+    protected void onClickAdd(View v) {
+        Intent intent = new Intent(FriendListActivity.this, AddFriendActivity.class);
+        startActivity(intent);
     }
 
     protected void onClickFriend(List<User> fList, int i) {
