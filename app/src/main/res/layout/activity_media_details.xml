@@ -24,6 +24,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Title"
+        android:textColor="@color/colorText"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="year and type"
+        android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_title" />
 
@@ -45,6 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Directed By"
+        android:textColor="@color/colorText"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_language" />
@@ -55,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="director"
+        android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_directed_by" />
 
@@ -64,6 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="length"
+        android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_year_type" />
 
@@ -73,6 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="language"
+        android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="@+id/detail_title"
         app:layout_constraintTop_toBottomOf="@+id/detail_length" />
 
@@ -84,6 +90,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:text="Descriptions"
+        android:textColor="@color/colorText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
