@@ -14,7 +14,7 @@ Users will be required to sign up for an account. Please provide your email and 
 
 After sign-up, a corresponding User object will be added to firebase and the user will be directed to the User Home where they can select what they'd like to do
 
-For iteration 1, we have implemented the following functionality:
+For iteration 1 and 2, we have implemented the following functionality:
 
 1) Watch Now
 
@@ -53,6 +53,7 @@ For iteration 1, we have implemented the following functionality:
 3) Log in
 
   a) After creating an account and signing out, a user may log in using their email and password by clicking "Log in"
+  b) A User is now able to "Log in" as a Guest. Guest Users are only able to join Theatres, and are not able to save any preferences or history.
   
 4) Profile
 
@@ -68,10 +69,14 @@ For iteration 1, we have implemented the following functionality:
   
 7) Settings
 
-  a) Watch Preferences
-  b) FAQ
+  a) Watch Preferences 
+    i) User is able to edit which genres they prefer to watch, which they are able to use while in the theatre rather than selecting genres each time.
+  b) FAQ 
+    i) User is able to look through a set of questions that are frequently asked. For example, they could find the answer for how to edit their watch preferences. 
   c) Contact Us
-  d) Delete Account
+    i) Each group member's name, picture, and GitHub link is listed. 
+  d) Delete Account 
+    i) User is able to delete their account from the application and Firebase. 
 
 
 ## Run Tests
