@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.whatdoyouwannawatch">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FAQActivity"></activity>
+        <activity
+            android:name=".StreamingPreferencesActivity"
+            android:label="@string/title_activity_streaming_preferences">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".FAQActivity" />
         <activity android:name=".FriendProfileActivity" />
         <activity android:name=".AddFriendActivity" />
         <activity android:name=".WatchPreferencesActivity" />

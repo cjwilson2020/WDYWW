@@ -65,35 +65,37 @@ public class ChooseGenresActivity extends AppCompatActivity {
         MainActivity.pullData('u', username, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                final User user = (User) obj;
-                if(!user.isGuest()) {
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(ChooseGenresActivity.this);
-                    builder1.setMessage("Would you like to use your saved genre preferences?");
-                    builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            existingUserPreferences = user.getPreferences();
-                            for(int i = 0; i < arrayAdapter.getCount(); i++) {
-                                if(existingUserPreferences.contains(listView.getItemAtPosition(i))) {
-                                    listView.setItemChecked(i, true);
+                if (obj != null) {
+                    final User user = (User) obj;
+                    if (!user.isGuest()) {
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ChooseGenresActivity.this);
+                        builder1.setMessage("Would you like to use your saved genre preferences?");
+                        builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                existingUserPreferences = user.getPreferences();
+                                for (int i = 0; i < arrayAdapter.getCount(); i++) {
+                                    if (existingUserPreferences.contains(listView.getItemAtPosition(i))) {
+                                        listView.setItemChecked(i, true);
+                                    }
                                 }
+                                Button button = findViewById(R.id.button_selectGenres);
+                                button.performClick();
+                                existingUserPreferences = user.getPreferences();
+                                dialog.cancel();
                             }
-                            Button button = findViewById(R.id.button_selectGenres);
-                            button.performClick();
-                            existingUserPreferences = user.getPreferences();
-                            dialog.cancel();
-                        }
-                    });
+                        });
 
-                    builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                        builder1.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
 
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+                    }
                 }
             }
         });
@@ -121,7 +123,6 @@ public class ChooseGenresActivity extends AppCompatActivity {
                 }
             }
         });
-
         String genreList = "";
         for (String genre : selectedGenres) {
             genreList += genre + ", ";

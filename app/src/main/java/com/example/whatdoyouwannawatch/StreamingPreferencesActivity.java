@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,9 +17,11 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WatchPreferencesActivity extends AppCompatActivity {
-    private String genres[] = {"Biography", "Thriller", "Horror", "Comedy", "Romance", "Crime", "Action-Adventure", "Mystery-Suspense", "Fantasy",
-            "Sports", "Drama", "Historical"};
+public class StreamingPreferencesActivity extends AppCompatActivity {
+
+    private String genres[] = {"Amazon Instant Video", "NBC", "ABC", "FOX",
+            "Fandango Movies", "Google Play", "Nickelodeon", "Discovery Channel",
+            "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private List<String> existingUserPreferences;
@@ -43,9 +44,9 @@ public class WatchPreferencesActivity extends AppCompatActivity {
         MainActivity.pullData('u', username, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
-                if (obj != null) {
+                if(obj!= null) {
                     User user = (User) obj;
-                    existingUserPreferences = user.getPreferences();
+                    existingUserPreferences = user.getServices();
                     for (int i = 0; i < arrayAdapter.getCount(); i++) {
                         if (existingUserPreferences.contains(listView.getItemAtPosition(i))) {
                             listView.setItemChecked(i, true);
@@ -74,11 +75,11 @@ public class WatchPreferencesActivity extends AppCompatActivity {
             public void onCallback(Object obj) {
                 if(obj != null){
                     User u = (User) obj;
-                    u.setPreferences(userGenres);
+                    u.setServices(userGenres);
                     MainActivity.pushData(u);
 
                     // tell user their preferences have been saved
-                    android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(WatchPreferencesActivity.this);
+                    android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(StreamingPreferencesActivity.this);
                     builder1.setMessage("Your genre preferences have been saved.");
                     builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override

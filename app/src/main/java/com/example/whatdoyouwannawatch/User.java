@@ -23,6 +23,7 @@ public class User {
     private List<String> preferences;
     private List<Media> rankings;
     private List<Media> options;
+    private List<String> services;
     private int minLength;
     private int maxLength;
 
@@ -33,6 +34,7 @@ public class User {
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
         this.options = new ArrayList<>();
+        this.services = new ArrayList<>();
     }
 
     User(String uid) {
@@ -43,6 +45,7 @@ public class User {
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
         this.options = new ArrayList<>();
+        this.services = new ArrayList<>();
     }
 
     //Constructor for registered user
@@ -58,6 +61,7 @@ public class User {
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
         this.options = new ArrayList<>();
+        this.services = new ArrayList<>();
     }
 
     //set and get genres
@@ -168,6 +172,24 @@ public class User {
 //    public void setGuest(boolean bool){
 //        this.isGuest = bool;
 //    }
+
+    public List<String> getServices() {
+        return services;
+    }
+
+    public void setServices(List<String> services) {
+        this.services = services;
+    }
+
+    public void addService(String s){
+        if(!this.services.contains(s)) {
+            this.services.add(s);
+        }
+    }
+
+    public void removeService(String s){
+        this.services.remove(s);
+    }
 
     public String toString(){
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
