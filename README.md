@@ -70,13 +70,20 @@ For iteration 1 and 2, we have implemented the following functionality:
 7) Settings
 
   a) Watch Preferences 
-    i) User is able to edit which genres they prefer to watch, which they are able to use while in the theatre rather than selecting genres each time.
+  
+      i) User is able to edit which genres they prefer to watch, which they are able to use while in the theatre rather than selecting genres each time.
+      
   b) FAQ 
-    i) User is able to look through a set of questions that are frequently asked. For example, they could find the answer for how to edit their watch preferences. 
+  
+      i) User is able to look through a set of questions that are frequently asked. For example, they could find the answer for how to edit their watch preferences. 
+      
   c) Contact Us
-    i) Each group member's name, picture, and GitHub link is listed. 
+  
+      i) Each group member's name, picture, and GitHub link is listed. 
+      
   d) Delete Account 
-    i) User is able to delete their account from the application and Firebase. 
+  
+      i) User is able to delete their account from the application and Firebase.
 
 
 ## Run Tests
