@@ -87,6 +87,7 @@ MainActivity extends AppCompatActivity {
     }
 
     static void pushData(Object obj) {
+        Log.d("pushData", obj.getClass().getName());
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
@@ -104,19 +105,23 @@ MainActivity extends AppCompatActivity {
             String folder = t + "/" + (tmp).getHostID();
             map.put(folder.toLowerCase(), obj);
         }
-        myRef.updateChildren(map)
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("pushData", "Error Adding User/Theatre", e);
-                    }
-                })
-                .addOnSuccessListener(new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        Log.d("pushData", "Successfully added user to firebase");
-                    }
-                });
+        try {
+            myRef.updateChildren(map)
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("pushData", "Error Adding User/Theatre", e);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            Log.d("pushData", "Successfully added user to firebase");
+                        }
+                    });
+        }catch (RuntimeException re){
+            re.printStackTrace();
+        }
     }
     public static Object data = null;
     static Object pullData(char type, String id, final DataCallback dcb) {
@@ -401,8 +406,6 @@ MainActivity extends AppCompatActivity {
                 .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
                 .addHeader("accept", "application/json")
                 .addHeader("filepath", path) //String title
-                .addHeader("providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
-                .addHeader("expirationminutes", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
                 .build();
 
         Log.d("search", request.toString());

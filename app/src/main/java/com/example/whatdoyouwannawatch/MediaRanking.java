@@ -131,7 +131,7 @@ public class MediaRanking extends AppCompatActivity {
     }
 
     public static void getMediaList(String progTypes, String genreList, String streamingServiceList, final MediaCallback mcb) {
-        ArrayList<Media> mediaList = new ArrayList<Media>();
+        final ArrayList<Media> mediaList = new ArrayList<Media>();
 
         try {
             MainActivity.apiCallSearch(progTypes, genreList, streamingServiceList, new ApiCallback() {
@@ -158,7 +158,7 @@ public class MediaRanking extends AppCompatActivity {
                         String director = "";
                         String writer = "";
                         String desc = "";
-                        final URL[] im = {null};
+                        String img = "";
                         Double rat = 0.0;
 
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
@@ -196,6 +196,12 @@ public class MediaRanking extends AppCompatActivity {
                                 } else {
                                     desc = ("No " + info[j] + " available");
                                 }
+                            } else if ("Runtime".equals(info[j])) { // Description
+                                //  Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
+                                if (result_info.has("Runtime")) {
+                                    dur = Integer.parseInt(result_info.getString(info[j]));
+
+                                }
                             } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
                                 if (result_info.has("Contributors") && result_info.getJSONArray("Contributors").length() > 0) {
                                     JSONArray temp = result_info.getJSONArray("Contributors");
@@ -209,51 +215,62 @@ public class MediaRanking extends AppCompatActivity {
                                 } else {
                                     director = "no Director available";
                                 }
-                            }
-                            if (result_info.has(info[j]))
-                                Log.d("search", info[j] + ": " + result_info.getString(info[j]));
-                        }
+                            } else if ("Image".equals(info[j])) {
+                                if (result_info.has("Images") && result_info.getJSONArray("Images").length() > 0) {
+                                    JSONArray temp = result_info.getJSONArray("Images");
+                                    if (temp.getJSONObject(0) != null) {
+                                        img = temp.getJSONObject(0).getString("FilePath");
 
-                        String img = null;
-                        if (result_info.has("Images") && result_info.getJSONArray("Images").length() > 0) {
-                            JSONArray temp = result_info.getJSONArray("Images");
-                            if (temp.getJSONObject(0) != null)
-                                img = temp.getJSONObject(0).getString("FilePath");
+                                    }
 
-                            if (img != null)
-                                Log.d("search", "poster found");
-                                //m.setPoster(img);
-                            else
-                                Log.d("search", "no poster");
+                                    if (img != null) {
+                                        Log.d("search", "poster found");
+                                        Log.d("search", img);
+                                    }else {
+                                        Log.d("search", "no poster");
+                                    }
 
-                            MainActivity.apiCallImage(img, new ApiCallback() {
-                                @Override
-                                public void onCallback(String res) throws JSONException, MalformedURLException {
-                                    Log.d("img", res);
-                                    //res gets the image URL
-                                    JSONObject obj = new JSONObject(res); //make it a JSON object
-                                    String addr = obj.getString("Url");
-                                    Log.d("img", "addr: " + addr);
-                                    im[0] = new URL(addr);
-                                    Log.d("img", "im[0]: " + im[0]);
                                 }
-                            });
-                        }
-                        Log.d("img", "im[0] after downloading: ");
-                        Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);
 
-                        Log.d("search", "m.Title = " + m.getTitle());
+                                if (result_info.has(info[j]))
+                                    Log.d("search", info[j] + ": " + result_info.getString(info[j]));
+                            }
+                        }
+
+                        Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, img, rat);
+                        Log.d("search", "m.Image = " + m.getPoster());
+                        MediaRanking.loadPoster(m);
                         MediaRanking.mediaList.add(m);
 
                         Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+
                         mcb.onCallback(MediaRanking.mediaList);
                     }
                 }
             });
+
+
         } catch (
                 IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void loadPoster(final Media m) throws IOException {
+        final String link = m.getPoster();
+        MainActivity.apiCallImage(link, new ApiCallback() {
+            @Override
+            public void onCallback(String res) throws JSONException, MalformedURLException {
+                Log.d("img", res);
+                //res gets the image URL
+                JSONObject obj = new JSONObject(res); //make it a JSON object
+                String addr = obj.getString("Url");
+                addr = addr.replace("{filepath}/", "");
+                Log.d("img", "addr: " + addr);
+                m.setPosterImg(new URL(addr));
+                Log.d("img", "media poster url: " + link);
+            }
+        });
     }
 }
 
@@ -327,9 +344,6 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
     public void setTouchHelper(ItemTouchHelper helper) {
         this.itemTouchHelper = helper;
     }
-
-
-
 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {

@@ -1,14 +1,9 @@
 package com.example.whatdoyouwannawatch;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
-
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +39,7 @@ public class BackStage {
         theatre.setMaxTime(maxTime);
     }
 
-    public static void calcGenre () {
+    public static void calcGenre() {
         List<User> users = theatre.getUsers();
         HashMap<String, Integer> hashMap = new HashMap<>();
         for (int i = 0; i < users.size(); i++) {
@@ -87,21 +82,25 @@ public class BackStage {
         //return returnList;
     }
 
-    public static void calcResult (List <Media> choices) {
+    public static void calcResult(List<Media> choices) {
         List<User> users = theatre.getUsers();
         int majority = (int) (users.size() / 2.0) + 1;
-        ArrayList copy = new ArrayList(choices);
-        if(users.size() ==1){
+        ArrayList<Media> copy = new ArrayList<>(choices);
+        if (users.size() == 1) {
             Date date = new Date();
-            Result r = new Result(users.get(0).getRankings().get(0), users, copy, date);
-            theatre.setResult(r);
+            if (users.get(0).getRankings().size() > 0) {
+                Result r = new Result(users.get(0).getRankings().get(0), users, copy, date);
+                theatre.setResult(r);
+            }
         }
 
         for (int i = 0; i < users.size(); i++) {
             for (int j = 0; j < choices.size(); j++) {
-                Media firstChoice = users.get(i).getRankings().get(0);
-                if (firstChoice.getId().equals(choices.get(j).getId())) {
-                    choices.get(j).addVoter(users.get(i));
+                if (users.get(0).getRankings().size() > 0) {
+                    Media firstChoice = users.get(i).getRankings().get(0);
+                    if (firstChoice.getId().equals(choices.get(j).getId())) {
+                        choices.get(j).addVoter(users.get(i));
+                    }
                 }
             }
         }

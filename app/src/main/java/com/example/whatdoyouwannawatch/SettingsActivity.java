@@ -20,10 +20,9 @@ public class SettingsActivity extends AppCompatActivity {
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
 
         delete = findViewById(R.id.delete_button);
-        delete.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener v = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
                     @Override
                     public void onCallback(Object obj1) {
@@ -31,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
                             //delete user in Database
                             User u = (User) obj1;
                             MainActivity.deleteData(u);
-                            
+
                             //delete User in FB Auth
                             FirebaseAuth.getInstance().getCurrentUser().delete();
 
@@ -48,13 +47,14 @@ public class SettingsActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
                             startActivity(intent);
-
                         }
                     }
                 });
 
             }
-        });
+        };
+        delete.setOnClickListener(v);
+
     }
 
 
