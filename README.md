@@ -64,7 +64,7 @@ For iteration 1, we have implemented the following functionality:
 
 ## Run Tests
 
-Tests can be found by beginning in the java folder under app> src> com.example.whatdoyouwannawatch (AndroidTest)
+Tests can be found by beginning in the java folder under app> src> com.example.whatdoyouwannawatch (Test)
 
 Run files by right-clicking on them and selecting "Run"
 
