@@ -13,8 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StreamingPreferencesActivity"
-            android:label="@string/title_activity_streaming_preferences">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,7 +43,8 @@
         <activity android:name=".JoinTheatre" />
         <activity android:name=".TheatreHostLandingPage" />
         <activity android:name=".CreateJoinTheatre" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".StreamingPreferencesActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
