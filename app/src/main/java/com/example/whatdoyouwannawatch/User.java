@@ -181,15 +181,15 @@ public class User {
         this.services = services;
     }
 
-    public void addService(String s){
-        if(!this.services.contains(s)) {
-            this.services.add(s);
-        }
-    }
-
-    public void removeService(String s){
-        this.services.remove(s);
-    }
+//    public void addService(String s){
+//        if(!this.services.contains(s)) {
+//            this.services.add(s);
+//        }
+//    }
+//
+//    public void removeService(String s){
+//        this.services.remove(s);
+//    }
 
     public String toString(){
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
