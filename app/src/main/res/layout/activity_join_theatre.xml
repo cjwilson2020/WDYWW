@@ -29,10 +29,11 @@
 
         <TextView
             android:id="@+id/textView_enterPasteCode"
-            android:layout_width="wrap_content"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Enter or paste theatre code here:"
+            android:textAlignment="center"
+            android:text="Join your friend's theatre by entering their user name"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
