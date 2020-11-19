@@ -1,7 +1,7 @@
 # WDYWW User Guide 
 
 ## General Instructions
-Begin by downloading the most recent version of Androidn Studio for your device. From there, click VCS> Get From Version Control and enter the link to our repository when prompted.
+Begin by downloading the most recent version of Android Studio for your device. From there, click VCS> Get From Version Control and enter the link to our repository when prompted.
 
 If you are accidentally directed to the master branch, you can switch to the test branch by clicking the "master" button in the bottom right corner and selecting checkout "test"
 
