@@ -64,6 +64,43 @@ MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        deleteCurrentGuest();
+    }
+
+    // For cleaning up leftover guest sessions
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteCurrentGuest();
+    }
+
+    public void deleteCurrentGuest() {
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // if leftover guest session, delete guest and do not redirect to homepage
+            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    if (obj != null) {
+                        User u = (User) obj;
+                        if (u.isGuest()) {
+                            // delete user
+                            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object obj) {
+                                    if (obj != null) {
+                                        User u = (User) obj;
+                                        MainActivity.deleteData(u);
+                                    }
+                                }
+                            });
+                            //Delete guest in FB Auth
+                            FirebaseAuth.getInstance().getCurrentUser().delete();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     static void removeUserFromTheatre(String hostID, final String username) {
