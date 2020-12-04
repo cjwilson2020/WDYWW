@@ -64,6 +64,43 @@ MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
+        deleteCurrentGuest();
+    }
+
+    // For cleaning up leftover guest sessions
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteCurrentGuest();
+    }
+
+    public void deleteCurrentGuest() {
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // if leftover guest session, delete guest and do not redirect to homepage
+            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    if (obj != null) {
+                        User u = (User) obj;
+                        if (u.isGuest()) {
+                            // delete user
+                            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                                @Override
+                                public void onCallback(Object obj) {
+                                    if (obj != null) {
+                                        User u = (User) obj;
+                                        MainActivity.deleteData(u);
+                                    }
+                                }
+                            });
+                            //Delete guest in FB Auth
+                            FirebaseAuth.getInstance().getCurrentUser().delete();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     static void removeUserFromTheatre(String hostID, final String username) {
@@ -283,76 +320,17 @@ MainActivity extends AppCompatActivity {
         Log.d("search", "genres: " + genres);
         Log.d("search", "providers: " + providers);
         Log.d("search", "progTypes: " + progTypes);
-        /*
-            .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/
-            search/?
-            Genres=Crime%2CDrama&
-            SortBy=Relevance&
-            Includes=Images%2CGenres%2CDescriptions&
-            ProgramTypes=Movie%2CShow&
-            Providers=AmazonPrimeVideo%2c
-            ")
-        */
-
-        String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?";
-
-        String gl[] = genres.split(",");
-        Log.d("search","gl[0]: " + gl[0]);
-        if (gl == null || gl[0].equals("")) {
-            gl = new String[]{};
-        }
-        if (gl.length > 0) {
-            address = address.concat("Genres=");
-            for (String g : gl) {
-                if (gl[gl.length - 1].equals(g)) {
-                    address = address.concat(g + "&");
-                } else {
-                    address = address.concat(g + "%2C");
-                }
-            }
-        }
-
-
-        address = address.concat("SortBy=Relevance&");
-        address = address.concat("Includes=Images%2CGenres%2CDescriptions&");
-
-        String pt[] = progTypes.split(",");
-
-        if (pt == null || pt[0].equals("")) {
-            pt = new String[]{};
-        }
-        if (pt.length > 0) {
-            address = address.concat("ProgramTypes=");
-            for (String p : pt) {
-                if (pt[pt.length - 1].equals(p)) {
-                    address = address.concat(p + "&");
-                } else {
-                    address = address.concat(p + "%2C");
-                }
-            }
-        }
-
-        String prv[] = providers.split(",");
-        if (prv == null || prv[0].equals("")) {
-            prv = new String[]{};
-        }
-        if (prv.length > 0) {
-            address = address.concat("Providers=%20");
-            for (String p : prv) {
-                if (prv[prv.length - 1].equals(p)) {
-                    address = address.concat(p);
-                } else {
-                    address = address.concat(p + "%2C");
-                }
-            }
-        }
 
         Request request = new Request.Builder()
-                .url(address)
+                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/")
                 .get()
-                .addHeader("Content-Type", "application/json")
-                .addHeader("X-RapidAPI-Key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
-                .addHeader("X-RapidAPI-Host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                .addHeader("content-type", "application/json")
+                .addHeader("x-rapidapi-key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
+                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                .addHeader("Genres", genres)
+                .addHeader("ProgramTypes", progTypes)
+                .addHeader("Providers", providers)
+                .addHeader("Includes", "Descriptions,Images,Genres,Contributors")
                 .build();
 
         Log.d("search", request.toString());

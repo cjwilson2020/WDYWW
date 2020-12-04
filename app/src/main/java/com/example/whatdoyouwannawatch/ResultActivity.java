@@ -86,6 +86,7 @@ public class ResultActivity extends AppCompatActivity {
                     Log.i("Guest", Boolean.toString(u.isGuest()));
                     if (u.isGuest()) {
                         // delete user
+                        /*
                         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
                             @Override
                             public void onCallback(Object obj) {
@@ -97,7 +98,7 @@ public class ResultActivity extends AppCompatActivity {
                         });
                         //Delete guest in FB Auth
                         FirebaseAuth.getInstance().getCurrentUser().delete();
-
+                        */
                         Intent intent = new Intent(ResultActivity.this, MainActivity.class);
                         startActivity(intent);
                     } else {
@@ -110,6 +111,8 @@ public class ResultActivity extends AppCompatActivity {
                 }
             }
         });
+
+
 
 
         // TODO add result to history
