@@ -34,11 +34,11 @@ public class FriendListActivity extends AppCompatActivity {
             public void onCallback(Object obj) {
                 if (obj != null) {
                     User u = (User) obj;
-                    final ArrayList<User> fList = (ArrayList<User>) u.getFriends();
+                    final ArrayList<String> fList = (ArrayList<String>) u.getFriends();
                     List<String> nameList = new ArrayList<String>();
                     if (fList != null && fList.size()>0) {
                         for (int i = 0; i < fList.size(); i++) {
-                            nameList.add(fList.get(i).getUsername());
+                            nameList.add(fList.get(i));
                         }
                         ArrayAdapter arrayAdapter = new ArrayAdapter(FriendListActivity.this,
                                 android.R.layout.simple_list_item_1, nameList);
@@ -72,11 +72,11 @@ public class FriendListActivity extends AppCompatActivity {
             public void onCallback(Object obj) {
                 if (obj != null) {
                     User u = (User) obj;
-                    final ArrayList<User> fList = (ArrayList<User>) u.getFriends();
+                    final ArrayList<String> fList = (ArrayList<String>) u.getFriends();
                     List<String> nameList = new ArrayList<String>();
                     if (fList != null && fList.size()>0) {
                         for (int i = 0; i < fList.size(); i++) {
-                            nameList.add(fList.get(i).getUsername());
+                            nameList.add(fList.get(i));
                         }
                         ArrayAdapter arrayAdapter = new ArrayAdapter(FriendListActivity.this,
                                 android.R.layout.simple_list_item_1, nameList);
@@ -104,9 +104,9 @@ public class FriendListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void onClickFriend(List<User> fList, int i) {
+    public void onClickFriend(List<String> fList, int i) {
         Intent intent = new Intent(FriendListActivity.this, FriendProfileActivity.class);
-        intent.putExtra("username", fList.get(i).getUsername());
+        intent.putExtra("username", fList.get(i));
         startActivity(intent);
     }
 
