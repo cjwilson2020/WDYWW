@@ -19,7 +19,7 @@ public class User {
     private List<String> genres;
     private List<User> friends;
     private List<User> friendRequests;
-    private List<Result> history;
+    private ArrayList<String> history;
     private List<String> preferences;
     private List<Media> rankings;
     private List<Media> options;
@@ -143,10 +143,10 @@ public class User {
     public void setFriends(List<User>friends) {this.friends = friends;}
 
     //add, remove history. Get and clear history list
-    public void addHistory(Result r){ this.history.add(r);}
-    public void setHistory(ArrayList<Result> results){this.history = results;}
-    public void removeHistory(Result r){this.history.remove(r);}
-    public List<Result> getHistory() {return this.history;}
+    public void addHistory(String r){ this.history.add(r);}
+    public void setHistory(ArrayList<String> results){this.history = results;}
+    public void removeHistory(String r){this.history.remove(r);}
+    public ArrayList<String> getHistory() {return this.history;}
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID

@@ -42,13 +42,13 @@ public class WatchHistoryActivity extends AppCompatActivity {
                     TextView title = (TextView)findViewById(R.id.textView1);
                     ListView historyView = (ListView)findViewById(R.id.listView_history);
                     User u = (User) obj;
-                    List<Result> watchHistory = u.getHistory();
+                    ArrayList<String> watchHistory = u.getHistory();
                     if (watchHistory == null || watchHistory.size() == 0){
                         title.setText("No history available");
 
                     } else{
                         title.setText("Watch History");
-                        ArrayAdapter historyAdapter = new ArrayAdapter<Result>(WatchHistoryActivity.this, android.R.layout.simple_list_item_1, watchHistory);
+                        ArrayAdapter historyAdapter = new ArrayAdapter<String>(WatchHistoryActivity.this, android.R.layout.simple_list_item_1, watchHistory);
                         historyView.setAdapter(historyAdapter);}
                 }
             }
