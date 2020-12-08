@@ -145,7 +145,7 @@ public class MediaRanking extends AppCompatActivity {
                     JSONArray hits = obj.getJSONArray("Hits"); //The hits are the actual result listings
                     //Log.d("search", hits.toString(2));
 
-                    // public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
+                    //public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
                     final int len = hits.length();
                     Log.d("search", "number of results: " + len);
 
@@ -162,43 +162,41 @@ public class MediaRanking extends AppCompatActivity {
 
                         Double rat = 0.0;
 
-                        JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
-                        //Log.d("search", result_info.toString());
+                        JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this listing
 
                         String[] info = {"Id", "Title", "Cast", "Runtime", "Director", "Description", "Image", "IvaRating"};
                         final int siz = info.length;
-                        for (int j = 0; j < siz; j = j + 1) { //each piece of info about current listing
-                            Log.d("search", "Info[" + j + "]: " + info[j]);
+
+                        for (int j = 0; j < siz; j = j + 1) { //each piece of info we want about current listing
+                            Log.d("search", info[j]);
                             if ("Id".equals(info[j])) {  //Id
                                 if (result_info.has(info[j])) {
-                                    //Translate String to desired datatype
                                     iden = ((String) result_info.getString(info[j]));
                                 } else {
                                     iden = ("No " + info[j] + " available");
                                 }
+                                Log.d("search", info[j] + ": " + iden);
                             } else if ("Title".equals(info[j])) { //Title
                                 if (result_info.has(info[j])) {
                                     tit = (String) result_info.getString(info[j]);
-                                    Log.d("search", info[j] + ": " + tit);
-
                                 } else {
                                     tit = ("No " + info[j] + " available");
                                 }
+                                Log.d("search", info[j] + ": " + tit);
                             } else if ("IvaRating".equals(info[j])) { //Rating
                                 if (result_info.has(info[j])) {
                                     rat = ((double) Integer.parseInt(result_info.getString(info[j])));
-                                    Log.d("search", info[j] + ": " + rat);
                                 } else {
                                     rat = (0.0);
                                 }
+                                Log.d("search", info[j] + ": " + rat);
                             } else if ("Description".equals(info[j])) { // Description
                                 if (result_info.has("Descriptions") && result_info.getJSONArray("Descriptions").length() > 0) {
-                                    Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                     desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
-                                    Log.d("search", info[j] + ": " + desc);
                                 } else {
                                     desc = ("No " + info[j] + " available");
                                 }
+                                Log.d("search", info[j] + ": " + desc);
                             } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
                                 if (result_info.has("Contributors") && result_info.getJSONArray("Contributors").length() > 0) {
                                     JSONArray temp = result_info.getJSONArray("Contributors");
@@ -213,10 +211,9 @@ public class MediaRanking extends AppCompatActivity {
                                     }
                                 } else {
                                     director = "No Director information available";
+                                    cas.add("No Cast information available");
                                 }
                             }
-                            if (result_info.has(info[j]))
-                                Log.d("search", info[j] + ": " + result_info.getString(info[j]));
                         }
 
                         String img = null;
@@ -226,26 +223,23 @@ public class MediaRanking extends AppCompatActivity {
                                 img = temp.getJSONObject(0).getString("FilePath");
 
                             if (img != null) {
-                                Log.d("search", "poster found");
-
-                                //m.setPoster(img);
+                                Log.d("search", "Poster found");
+                                MainActivity.apiCallImage(img, new ApiCallback() {
+                                    @Override
+                                    public void onCallback(String res) throws JSONException, MalformedURLException {
+                                        Log.d("img", res);
+                                        //res gets the image URL
+                                        JSONObject obj = new JSONObject(res); //make it a JSON object
+                                        String addr = obj.getString("Url");
+                                        Log.d("img", "addr: " + addr);
+                                        im.add(new URL(addr));
+                                        Log.d("search", "Poster" + ": " + im.get(im.size()-1));
+                                        Log.d("img", "im[0]: " + im.get(im.size()-1));
+                                    }
+                                });
                             } else{
-                                Log.d("search", "no poster");
+                                Log.d("search", "No poster found");
                             }
-
-                            MainActivity.apiCallImage(img, new ApiCallback() {
-                                @Override
-                                public void onCallback(String res) throws JSONException, MalformedURLException {
-                                    Log.d("img", res);
-                                    //res gets the image URL
-                                    JSONObject obj = new JSONObject(res); //make it a JSON object
-                                    String addr = obj.getString("Url");
-                                    Log.d("img", "addr: " + addr);
-                                    im.add(new URL(addr));
-                                    Log.d("search", "Poster" + ": " + im.get(im.size()-1));
-                                    Log.d("img", "im[0]: " + im.get(im.size()-1));
-                                }
-                            });
                         }
 
                         Log.d("img", "im[0] after downloading: ");
