@@ -73,8 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 throw task.getException();
                             } catch (Exception e) {
-                                Toast.makeText(LoginActivity.this, "Log in failed. " +
-                                        e, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Log in failed. User does not exist. " +
+                                        "Please try again or sign up.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
