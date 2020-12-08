@@ -14,8 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class ChooseStreamingServicesActivity extends AppCompatActivity {
-    private String streamingServices[] = {"Amazon Instant Video", "NBC", "ABC", "FOX",
-            "Fandango Movies", "Google Play", "Nickelodeon", "Discovery Channel",
+    private String streamingServices[] = {"Google Play",
             "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
