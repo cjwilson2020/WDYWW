@@ -48,10 +48,10 @@ public class AddFriendActivity extends AppCompatActivity {
                                     MainActivity.pushData(us);
                                     Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
                                 }else{
-                                    ArrayList<User> friends = (ArrayList<User>) us.getFriends();
+                                    ArrayList<String> friends = (ArrayList<String>) us.getFriends();
                                     boolean found =false;
                                     for(int i = 0; i< friends.size(); i++){
-                                        if(friends.get(i).getUsername().equals(friend.getUsername())){
+                                        if(friends.get(i).equals(friend.getUsername())){
                                             found =true;
                                         }
                                     }

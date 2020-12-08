@@ -42,7 +42,7 @@ public class Result {
     //add the media to history
     public void addToHistory(List<User> users){
         for(User u: users){
-            u.addHistory(this);
+            u.addHistory(this.getFinalDecision().getTitle());
         }
     }
 

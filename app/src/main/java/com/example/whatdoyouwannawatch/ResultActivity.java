@@ -169,11 +169,11 @@ public class ResultActivity extends AppCompatActivity {
                     if (obj != null) {
                         User us = (User)obj;
                         if (us.getHistory() == null || us.getHistory().size() < 1) {
-                            ArrayList<Result> history = new ArrayList<Result>();
-                            history.add(result);
+                            ArrayList<String> history = new ArrayList<String>();
+                            history.add(result.getFinalDecision().getTitle());
                             us.setHistory(history);
                         } else {
-                            us.addHistory(result);
+                            us.addHistory(result.getFinalDecision().getTitle());
                         }
                         MainActivity.pushData(us);
                     }

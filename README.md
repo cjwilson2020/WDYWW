@@ -1,6 +1,13 @@
 # WDYWW User Guide 
 
 ## General Instructions
+Begin by downloading the most recent version of Android Studio for your device. From there, click VCS> Get From Version Control and enter the link to our repository when prompted.
+
+If you are accidentally directed to the master branch, you can switch to the test branch by clicking the "master" button in the bottom right corner and selecting checkout "test"
+
+Start by downloading the most recent version of Android Studio for your device. From there, click VCS> Get From Version Control and enter the link to this branch.
+
+Start by downloading the most recent version of Android Studio for your device. From there, click VCS> Get From Version Control and enter the link to this branch.
 
 After pulling the tagged branch from github, you may need to sync your project with the gradle files using File> Sync Project with Gradle Files
 
@@ -14,7 +21,7 @@ Users will be required to sign up for an account. Please provide your email and 
 
 After sign-up, a corresponding User object will be added to firebase and the user will be directed to the User Home where they can select what they'd like to do
 
-For iteration 1, we have implemented the following functionality:
+For iteration 1 and 2, we have implemented the following functionality:
 
 1) Watch Now
 
@@ -53,14 +60,38 @@ For iteration 1, we have implemented the following functionality:
 3) Log in
 
   a) After creating an account and signing out, a user may log in using their email and password by clicking "Log in"
+  b) A User is now able to "Log in" as a Guest. Guest Users are only able to join Theatres, and are not able to save any preferences or history.
   
 4) Profile
 
-  a) After entering a Theatre for the first time and selecting preferred genres, users will be able to see their preferred genres in the User Profile page
+  a) Users will be able to see their preferred genres in the User Profile page after either entering a Theatre for the first time, or editing their watch preferences in the settings.
   
-5) Watch History, Friends List, Settings
+5) Watch History
 
-  a) The front-end activities for these actions are done, but they currently display dummy data
+  a) Users will be able to see all media they have previously watched through What Do You Wanna Watch.
+
+6) Friends List 
+
+  a) Users will be able see all of their friends and add new friends by username. 
+  
+7) Settings
+
+  a) Watch Preferences 
+  
+      i) User is able to edit which genres they prefer to watch, which they are able to use while in the theatre rather than selecting genres each time.
+      
+  b) FAQ 
+  
+      i) User is able to look through a set of questions that are frequently asked. For example, they could find the answer for how to edit their watch preferences. 
+      
+  c) Contact Us
+  
+      i) Each group member's name, picture, and GitHub link is listed. 
+      
+  d) Delete Account 
+  
+      i) User is able to delete their account from the application and Firebase.
+
 
 ## Run Tests
 

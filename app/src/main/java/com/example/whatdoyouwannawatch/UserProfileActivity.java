@@ -34,7 +34,7 @@ public class UserProfileActivity extends AppCompatActivity {
         final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
         //final String uid = FBuser.getUid();
         uName = FBuser.getDisplayName();
-       // profImg = findViewById(R.id.profileImage);
+        // profImg = findViewById(R.id.profileImage);
         TextView name = findViewById(R.id.textView_Name);
         name.setText(FBuser.getDisplayName());
         MainActivity.checkProfileImg(new CheckCallBack() {

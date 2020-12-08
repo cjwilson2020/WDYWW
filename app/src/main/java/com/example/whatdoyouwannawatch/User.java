@@ -17,9 +17,9 @@ public class User {
     private Image userAvatar;
     private boolean isGuest;
     private List<String> genres;
-    private List<User> friends;
+    private List<String> friends;
     private List<User> friendRequests;
-    private List<Result> history;
+    private ArrayList<String> history;
     private List<String> preferences;
     private List<Media> rankings;
     private List<Media> options;
@@ -116,37 +116,37 @@ public class User {
         boolean found = false;
         if(friends!= null) {
             for (int i = 0; i < friends.size(); i++) {
-                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                if (friends.get(i).equals(f.getUsername())) {
                     found = true;
                 }
             }
             if (!found) {
-                friends.add(f);
+                friends.add(f.getUsername());
             }
         }
         else{
-            ArrayList<User> temp = new ArrayList<User>();
-            temp.add(f);
+            ArrayList<String> temp = new ArrayList<String>();
+            temp.add(f.getUsername());
             this.setFriends(temp);
         }
     }
     public void removeFriend(User f){
         if(friends!=null) {
             for (int i = 0; i < friends.size(); i++) {
-                if (friends.get(i).getUsername().equals(f.getUsername())) {
+                if (friends.get(i).equals(f.getUsername())) {
                     friends.remove(i);
                 }
             }
         }
     }
-    public List<User> getFriends() {return friends;}
-    public void setFriends(List<User>friends) {this.friends = friends;}
+    public List<String> getFriends() {return friends;}
+    public void setFriends(List<String>friends) {this.friends = friends;}
 
     //add, remove history. Get and clear history list
-    public void addHistory(Result r){ this.history.add(r);}
-    public void setHistory(ArrayList<Result> results){this.history = results;}
-    public void removeHistory(Result r){this.history.remove(r);}
-    public List<Result> getHistory() {return this.history;}
+    public void addHistory(String r){ this.history.add(r);}
+    public void setHistory(ArrayList<String> results){this.history = results;}
+    public void removeHistory(String r){this.history.remove(r);}
+    public ArrayList<String> getHistory() {return this.history;}
     public void clearHistory(){ this.history = new ArrayList<>(); }
 
     //Generate and return a random unique ID
