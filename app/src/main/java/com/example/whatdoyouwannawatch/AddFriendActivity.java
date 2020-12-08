@@ -28,36 +28,42 @@ public class AddFriendActivity extends AppCompatActivity {
         warning.setText("");
         EditText editTextTheatreCode = (EditText) findViewById(R.id.editTextNumber_theatreCode);
         final String username = editTextTheatreCode.getText().toString();
+
+        final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userName = FBuser.getDisplayName();
+        if (userName.equalsIgnoreCase(username)) {
+            warning.setText("You cannot add yourself as a friend.");
+        }
+        else{
         MainActivity.pullData('u', username, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
                 if (obj == null) {
                     TextView warning = findViewById(R.id.textView_Warning);
                     warning.setText("Warning: User " + username + " does not exist.");
-                }else {
+                } else {
                     final User friend = (User) obj;
-                    final FirebaseUser FBuser = FirebaseAuth.getInstance().getCurrentUser();
-                    final String userName = FBuser.getDisplayName();
+
                     MainActivity.pullData('u', userName, new DataCallback() {
                         @Override
                         public void onCallback(Object obj) {
-                            if(obj != null){
+                            if (obj != null) {
                                 User us = (User) obj;
-                                if(us.getFriends()== null || us.getFriends().size()<1) {
+                                if (us.getFriends() == null || us.getFriends().size() < 1) {
                                     us.addFriend(friend);
                                     MainActivity.pushData(us);
                                     Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
-                                }else{
+                                } else {
                                     ArrayList<String> friends = (ArrayList<String>) us.getFriends();
-                                    boolean found =false;
-                                    for(int i = 0; i< friends.size(); i++){
-                                        if(friends.get(i).equals(friend.getUsername())){
-                                            found =true;
+                                    boolean found = false;
+                                    for (int i = 0; i < friends.size(); i++) {
+                                        if (friends.get(i).equals(friend.getUsername())) {
+                                            found = true;
                                         }
                                     }
-                                    if(found) {
+                                    if (found) {
                                         Toast.makeText(getApplicationContext(), "You are already friends with this user", Toast.LENGTH_SHORT).show();
-                                    }else {
+                                    } else {
                                         us.addFriend(friend);
                                         MainActivity.pushData(us);
                                         Toast.makeText(getApplicationContext(), "Friend successfully added", Toast.LENGTH_SHORT).show();
@@ -70,5 +76,6 @@ public class AddFriendActivity extends AppCompatActivity {
                 return;
             }
         });
+    }
     }
 }
