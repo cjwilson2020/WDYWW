@@ -86,7 +86,7 @@ public class DurationSelection extends AppCompatActivity {
         if (progTypes.startsWith(",")) {
             progTypes = progTypes.substring(1);
         }
-        Toast.makeText(this, "Minimum: " + minimum + ", Maximum: " + maximum, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Minimum: " + minimum + ", Maximum: " + maximum, Toast.LENGTH_SHORT).show();
         intent.putExtra("progType", progTypes);
         intent.putExtra("theatreID", theatreID);
         startActivity(intent);

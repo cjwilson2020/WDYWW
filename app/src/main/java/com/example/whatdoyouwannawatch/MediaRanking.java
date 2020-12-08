@@ -107,7 +107,7 @@ public class MediaRanking extends AppCompatActivity {
         for (Media e : mediaList) {
             toasts.add(e.getTitle());
         }
-        Toast.makeText(MediaRanking.this, "" + toasts.toString(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(MediaRanking.this, "" + toasts.toString(), Toast.LENGTH_SHORT).show();
 
         MainActivity.pullData('t', theatreID, new DataCallback() {
             @Override
@@ -314,7 +314,7 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
                 intent.putExtra("data", json);
                 context.startActivity(intent);
 
-                Toast.makeText(context, mediaList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, mediaList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
     }
