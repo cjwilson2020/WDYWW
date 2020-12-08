@@ -179,7 +179,7 @@ public class MediaRanking extends AppCompatActivity {
                             } else if ("Title".equals(info[j])) { //Title
                                 if (result_info.has(info[j])) {
                                     tit = (String) result_info.getString(info[j]);
-                                    //Log.d("search", tit);
+                                    Log.d("search", info[j] + ": " + tit);
 
                                 } else {
                                     tit = ("No " + info[j] + " available");
@@ -187,6 +187,7 @@ public class MediaRanking extends AppCompatActivity {
                             } else if ("IvaRating".equals(info[j])) { //Rating
                                 if (result_info.has(info[j])) {
                                     rat = ((double) Integer.parseInt(result_info.getString(info[j])));
+                                    Log.d("search", info[j] + ": " + rat);
                                 } else {
                                     rat = (0.0);
                                 }
@@ -194,6 +195,7 @@ public class MediaRanking extends AppCompatActivity {
                                 if (result_info.has("Descriptions") && result_info.getJSONArray("Descriptions").length() > 0) {
                                     Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                     desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
+                                    Log.d("search", info[j] + ": " + desc);
                                 } else {
                                     desc = ("No " + info[j] + " available");
                                 }
@@ -203,8 +205,10 @@ public class MediaRanking extends AppCompatActivity {
                                     for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satisfies condition
                                         if (temp.getJSONObject(k).getString("Job").equals("Director")) {
                                             director.concat(temp.getJSONObject(k).getString("PersonName") + ",");
+                                            Log.d("search", info[j] + ": " + director);
                                         } else if (temp.getJSONObject(k).getString("Job").equals("Actor")) {
                                             cas.add(temp.getJSONObject(k).getString("PersonName"));
+                                            Log.d("search", info[j] + ": " + cas);
                                         }
                                     }
                                 } else {
@@ -221,11 +225,13 @@ public class MediaRanking extends AppCompatActivity {
                             if (temp.getJSONObject(0) != null)
                                 img = temp.getJSONObject(0).getString("FilePath");
 
-                            if (img != null)
+                            if (img != null) {
                                 Log.d("search", "poster found");
+
                                 //m.setPoster(img);
-                            else
+                            } else{
                                 Log.d("search", "no poster");
+                            }
 
                             MainActivity.apiCallImage(img, new ApiCallback() {
                                 @Override
@@ -236,7 +242,7 @@ public class MediaRanking extends AppCompatActivity {
                                     String addr = obj.getString("Url");
                                     Log.d("img", "addr: " + addr);
                                     im.add(new URL(addr));
-
+                                    Log.d("search", "Poster" + ": " + im.get(im.size()-1));
                                     Log.d("img", "im[0]: " + im.get(im.size()-1));
                                 }
                             });
