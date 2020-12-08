@@ -73,7 +73,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
 
     public void onClickNextHost(View v) {
         Intent intent = new Intent(this, ChooseGenresActivity.class);
-        intent.putExtra("theatreCode", fbUser.getDisplayName());
+        intent.putExtra("theatreID", fbUser.getDisplayName());
         startActivity(intent);
     }
 
