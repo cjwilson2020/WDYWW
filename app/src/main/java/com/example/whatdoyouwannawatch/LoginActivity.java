@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
@@ -72,6 +74,12 @@ public class LoginActivity extends AppCompatActivity {
                             // If log in fails, display a message to the user.
                             try {
                                 throw task.getException();
+                            } catch (FirebaseAuthInvalidUserException e) {
+                                    Toast.makeText(LoginActivity.this, "Log in failed. " +
+                                            "This user does not exist." , Toast.LENGTH_SHORT).show();
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                    Toast.makeText(LoginActivity.this, "Log in failed. " +
+                                            "You have entered invalid credentials.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, "Log in failed. " +
                                         e, Toast.LENGTH_SHORT).show();
