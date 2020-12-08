@@ -98,7 +98,7 @@ public class TheatreHostLandingPage extends AppCompatActivity {
                 if(theatre != null){
                     Theatre currTheatre = (Theatre) theatre;
                     TextView displayTheatreID = (TextView) findViewById(R.id.textView_displayTheatreID);
-                    displayTheatreID.setText("You are in " + currTheatre.getHostID() + "'s theatre ");
+                    displayTheatreID.setText(currTheatre.getHostID() + "'s theatre ");
 //                    theatreCode = currTheatre.getHostID();
                 }
             }
