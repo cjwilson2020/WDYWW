@@ -26,15 +26,32 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="0dp"
+            android:fontFamily="@font/bangers"
+            android:gravity="center"
+            android:text="What Do You\nWanna Watch"
+            android:textColor="@color/colorAccent"
+            android:textSize="48sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <Button
             android:id="@+id/button_login"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="96dp"
             android:backgroundTint="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
             android:onClick="onClickLogIn"
             android:text="Log In"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,12 +59,14 @@
 
         <Button
             android:id="@+id/button_signup"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/lato_bold"
             android:onClick="onClickSignUp"
             android:text="Sign Up"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,14 +74,15 @@
 
         <Button
             android:id="@+id/button_continueAsGuest"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/lato_bold"
             android:onClick="onClickContinueAsGuest"
             android:text="Continue As Guest"
-            android:textSize="18sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_signup" />
 

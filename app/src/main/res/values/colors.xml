@@ -4,6 +4,7 @@
     <color name="colorSecondary">#f77c01</color>
     <color name="colorDark">#25353c</color>
     <color name="colorAccent">#01c796</color>
+<!--    <color name="colorAccent">#F44336</color>-->
     <color name="colorText">#222222</color>
     <color name="colorWhite">#eeeeee</color>
 </resources>
