@@ -330,6 +330,7 @@ MainActivity extends AppCompatActivity {
                 .addHeader("Genres", genres)
                 .addHeader("ProgramTypes", progTypes)
                 .addHeader("Providers", providers)
+                .addHeader("SortBy", "Relevance")
                 .addHeader("Includes", "Descriptions,Images,Genres,Contributors")
                 .build();
 
