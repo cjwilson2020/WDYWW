@@ -191,8 +191,8 @@ public class MediaRanking extends AppCompatActivity {
                                     rat = (0.0);
                                 }
                             } else if ("Description".equals(info[j])) { // Description
-                                //  Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                 if (result_info.has("Descriptions") && result_info.getJSONArray("Descriptions").length() > 0) {
+                                    Log.d("search", "Has Descriptions: " + result_info.getJSONArray("Descriptions"));
                                     desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
                                 } else {
                                     desc = ("No " + info[j] + " available");
