@@ -74,7 +74,7 @@ public class ChooseGenresActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
                             existingUserPreferences = user.getPreferences();
                             for(int i = 0; i < arrayAdapter.getCount(); i++) {
-                                if(existingUserPreferences.contains(listView.getItemAtPosition(i))) {
+                                if(existingUserPreferences != null && existingUserPreferences.contains(listView.getItemAtPosition(i))) {
                                     listView.setItemChecked(i, true);
                                 }
                             }

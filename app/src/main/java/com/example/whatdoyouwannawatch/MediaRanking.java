@@ -45,7 +45,8 @@ public class MediaRanking extends AppCompatActivity {
     private String genreList = null;
     private String streamingServiceList = null;
     private String theatreID;
-    private static ArrayList<URL> im;
+    public static ArrayList<URL> im;
+
     FirebaseUser fbUser;
 
     private static final String TAG = "MediaRanking";
@@ -158,7 +159,7 @@ public class MediaRanking extends AppCompatActivity {
                         String director = "";
                         String writer = "";
                         String desc = "";
-                        final URL[] im = {null};
+
                         Double rat = 0.0;
 
                         JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this lisiting
@@ -234,19 +235,30 @@ public class MediaRanking extends AppCompatActivity {
                                     JSONObject obj = new JSONObject(res); //make it a JSON object
                                     String addr = obj.getString("Url");
                                     Log.d("img", "addr: " + addr);
-                                    im[0] = new URL(addr);
-                                    Log.d("img", "im[0]: " + im[0]);
+                                    im.add(new URL(addr));
+
+                                    Log.d("img", "im[0]: " + im.get(im.size()-1));
                                 }
                             });
                         }
+
                         Log.d("img", "im[0] after downloading: ");
-                        Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);
+                        if(im.size() > 0) {
+                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im.get(im.size() - 1), rat);
+                            Log.d("search", "m.Title = " + m.getTitle());
+                            MediaRanking.mediaList.add(m);
 
-                        Log.d("search", "m.Title = " + m.getTitle());
-                        MediaRanking.mediaList.add(m);
+                            Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+                            mcb.onCallback(MediaRanking.mediaList);
+                        }else{
+                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);
+                            Log.d("search", "m.Title = " + m.getTitle());
+                            MediaRanking.mediaList.add(m);
 
-                        Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
-                        mcb.onCallback(MediaRanking.mediaList);
+                            Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+                            mcb.onCallback(MediaRanking.mediaList);
+                        }
+
                     }
                 }
             });
