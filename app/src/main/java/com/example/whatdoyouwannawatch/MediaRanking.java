@@ -311,18 +311,8 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
             }
         });
 
-        holder.btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, MediaDetails.class);
-                Gson gson = new Gson();
-                String json = gson.toJson(mediaList.get(position));
-                intent.putExtra("data", json);
-                context.startActivity(intent);
+        holder.media = mediaList.get(position);
 
-               // Toast.makeText(context, mediaList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public ArrayList<Media> getMediaList() {
@@ -340,6 +330,12 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
         mediaList.remove(fromPosition);
         mediaList.add(toPosition, media);
         notifyItemMoved(fromPosition, toPosition);
+
+        String list = "";
+        for (Media m : mediaList) {
+            list += m.getTitle();
+        }
+        Toast.makeText(context, list, Toast.LENGTH_SHORT).show();
     }
 
     public void setTouchHelper(ItemTouchHelper helper) {
@@ -355,13 +351,26 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
         Button btn;
         RelativeLayout layout;
         GestureDetector gestureDetector;
+        Media media;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             text = itemView.findViewById(R.id.text_candidate_media);
-            btn = itemView.findViewById(R.id.btn_media_details);
             layout = itemView.findViewById(R.id.media_ranking_layout);
+
+
+            btn = itemView.findViewById(R.id.btn_media_details);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, MediaDetails.class);
+                    Gson gson = new Gson();
+                    String json = gson.toJson(media);
+                    intent.putExtra("data", json);
+                    context.startActivity(intent);
+                }
+            });
 
             gestureDetector = new GestureDetector(itemView.getContext(), this);
             itemView.setOnTouchListener(this);
