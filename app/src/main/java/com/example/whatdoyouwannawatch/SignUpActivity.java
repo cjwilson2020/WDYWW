@@ -54,6 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
+        Toast.makeText(SignUpActivity.this, "Trying to sign up. Please wait... ", Toast.LENGTH_SHORT).show();
         MainActivity.pullData( 'u', username, new DataCallback() {
             @Override
             public void onCallback(Object usr) {
