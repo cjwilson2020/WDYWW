@@ -75,7 +75,7 @@ public class ResultUnitTest {
 
     @Test
     public void TestToString() {
-        assertTrue(test.toString() == null);
+        assertTrue(test.toString() == "33");
         test.getFinalDecision().setTitle("movie11");
         assertEquals(test.toString(), "movie11");
     }

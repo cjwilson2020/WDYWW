@@ -41,7 +41,7 @@ public class InputValidatorUnitTest {
         String un2 = "short";
         String un3 = "CAP";
         String un4 = "Some quite long username, what do you think";
-        assertTrue(iv.usernameIsValid(un1));
+        assertTrue(!iv.usernameIsValid(un1));
         assertTrue(iv.usernameIsValid(un2));
         assertTrue(iv.usernameIsValid(un3));
         assertTrue(iv.usernameIsValid(un4));
