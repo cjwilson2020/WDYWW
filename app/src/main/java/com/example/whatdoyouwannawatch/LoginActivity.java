@@ -81,8 +81,8 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.makeText(LoginActivity.this, "Log in failed. " +
                                             "You have entered invalid credentials.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
-                                Toast.makeText(LoginActivity.this, "Log in failed. " +
-                                        e, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Log in failed. User does not exist. " +
+                                        "Please try again or sign up.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
