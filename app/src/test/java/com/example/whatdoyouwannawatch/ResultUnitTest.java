@@ -68,9 +68,9 @@ public class ResultUnitTest {
     @Test
     public void addToHistory() {
         test.addToHistory(userList);
-        assertEquals(userList.get(0).getHistory().get(0), test);
-        assertEquals(userList.get(1).getHistory().get(0), test);
-        assertEquals(userList.get(2).getHistory().get(0), test);
+        assertEquals(userList.get(0).getHistory().get(0), "33");
+        assertEquals(userList.get(1).getHistory().get(0), "33");
+        assertEquals(userList.get(2).getHistory().get(0), "33");
     }
 
     @Test
