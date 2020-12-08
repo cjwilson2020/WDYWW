@@ -39,9 +39,6 @@ public class BackStage {
                 maxTime = u.getMaxLength();
             }
         }
-
-        theatre.setMinTime(minTime);
-        theatre.setMaxTime(maxTime);
     }
 
     public static void calcGenre () {
