@@ -243,7 +243,7 @@ public class MediaRanking extends AppCompatActivity {
                         }
 
                         Log.d("img", "im[0] after downloading: ");
-                        if(im.size() > 0) {
+                        if(im != null && im.size() > 0) {
                             Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im.get(im.size() - 1), rat);
                             Log.d("search", "m.Title = " + m.getTitle());
                             MediaRanking.mediaList.add(m);
