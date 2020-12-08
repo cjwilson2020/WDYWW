@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ResultUnitTest {
     List<User> userList;
@@ -70,5 +71,12 @@ public class ResultUnitTest {
         assertEquals(userList.get(0).getHistory().get(0), test);
         assertEquals(userList.get(1).getHistory().get(0), test);
         assertEquals(userList.get(2).getHistory().get(0), test);
+    }
+
+    @Test
+    public void TestToString() {
+        assertTrue(test.toString() == null);
+        test.getFinalDecision().setTitle("movie11");
+        assertEquals(test.toString(), "movie11");
     }
 }

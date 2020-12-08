@@ -13,7 +13,7 @@ public class TheatreUnitTest {
     List<User> userList;
     List<Media> options;
     List<String> genres;
-    Date date;
+//    Date date;
     Result result;
     Theatre t;
     User user1;
@@ -57,6 +57,13 @@ public class TheatreUnitTest {
     }
 
     @Test
+    public void TestConstructor(){
+        Theatre t2 = new Theatre();
+        t2.setHostID("333");
+        assertEquals(t2.getHostID(), "333");
+    }
+
+    @Test
     public void TestGetUID() {
         assertEquals(t.getHostID(), "123");
     }
@@ -77,6 +84,21 @@ public class TheatreUnitTest {
         assertEquals(t.getOptions().get(2), m3);
         assertEquals(t.getOptions().get(3), m4);
         assertEquals(t.getOptions().get(4), m5);
+    }
+
+    @Test
+    public void TestAddOptions() {
+        Media m6 = new Media("66");
+        t.addOption(m6);
+        assertEquals(t.getOptions().get(0), m6);
+    }
+
+    @Test
+    public void TestRemoveOptions() {
+        t.addOption(m1);
+        t.addOption(m2);
+        t.removeOption(m1);
+        assertEquals(t.getOptions().get(0), m2);
     }
 
     @Test
@@ -128,5 +150,17 @@ public class TheatreUnitTest {
         t.setUsers(userList);
         t.removeUser(user1.getUsername());
         assertEquals(t.getUsers().get(0), user2);
+    }
+
+    @Test
+    public void TestSetGetHostId(){
+        t.setHostID("123456");
+        assertEquals(t.getHostID(), "123456");
+    }
+
+    @Test
+    public void TestToString(){
+        t.setHostID("123456");
+        assertEquals(t.toString(), "HostID: 123456");
     }
 }

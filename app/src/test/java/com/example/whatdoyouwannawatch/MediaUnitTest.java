@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MediaUnitTest {
 
@@ -26,6 +27,7 @@ public class MediaUnitTest {
     String description;
     URL poster;
     Double rating;
+    Media m2;
 
     @Before
     public void setUp() throws Exception {
@@ -49,7 +51,7 @@ public class MediaUnitTest {
         currentVoters.add(u1);
         currentVoters.add(u2);
         m.setCurrentVoters(currentVoters);
-
+        m2 = new Media(title, genres, length, poster);
     }
 
     @Test
@@ -64,6 +66,13 @@ public class MediaUnitTest {
         assertEquals(m.getTitle(), "some movie");
         m.setTitle("another movie");
         assertEquals(m.getTitle(), "another movie");
+    }
+
+    @Test
+    public void TestConstructor() {
+        assertEquals(m2.getTitle(), "some movie");
+        assertEquals(m2.getGenres().get(0), "g1");
+        assertEquals(m2.getLength(), 120);
     }
 
     @Test
@@ -126,4 +135,27 @@ public class MediaUnitTest {
         assertEquals(m.getCurrentVoters().size(), 3);
         assertEquals(m.getCurrentVoters().get(2), u3);
     }
+
+    @Test
+    public void TestSetGenres(){
+        m.setGenres(genres);
+        assertEquals(m.getGenres().get(0), "g1");
+    }
+
+    @Test
+    public void TestCompareTo() {
+        Media m1 = new Media();
+        Media m2 = new Media();
+        ArrayList<User> users1 = new ArrayList<>();
+        users1.add(u1);
+        users1.add(u3);
+        ArrayList<User> users2 = new ArrayList<>();
+        users2.add(u1);
+        users2.add(u3);
+        m1.setCurrentVoters(users1);
+        m2.setCurrentVoters(users2);
+        assertTrue(m1.compareTo(m2) == 0);
+    }
+
+
 }
