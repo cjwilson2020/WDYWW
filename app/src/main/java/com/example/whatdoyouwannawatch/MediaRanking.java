@@ -45,7 +45,7 @@ public class MediaRanking extends AppCompatActivity {
     private String genreList = null;
     private String streamingServiceList = null;
     private String theatreID;
-    public static ArrayList<URL> im;
+    public static ArrayList<URL> im = new ArrayList<>();
 
     FirebaseUser fbUser;
 
@@ -200,7 +200,7 @@ public class MediaRanking extends AppCompatActivity {
                             } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
                                 if (result_info.has("Contributors") && result_info.getJSONArray("Contributors").length() > 0) {
                                     JSONArray temp = result_info.getJSONArray("Contributors");
-                                    for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satosfies condition
+                                    for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satisfies condition
                                         if (temp.getJSONObject(k).getString("Job").equals("Director")) {
                                             director.concat(temp.getJSONObject(k).getString("PersonName") + ",");
                                         } else if (temp.getJSONObject(k).getString("Job").equals("Actor")) {
@@ -208,7 +208,7 @@ public class MediaRanking extends AppCompatActivity {
                                         }
                                     }
                                 } else {
-                                    director = "no Director available";
+                                    director = "No Director information available";
                                 }
                             }
                             if (result_info.has(info[j]))

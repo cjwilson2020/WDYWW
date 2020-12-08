@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
+        Toast.makeText(this, "Logging you in. Hang on tight...", Toast.LENGTH_SHORT).show();
         logInUser(email, password);
     }
 

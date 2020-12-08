@@ -16,8 +16,6 @@ public class Theatre {
     private List<User> users;
     private List<String> genres;
     private List<Media> options;
-    private int minTime;
-    private int maxTime;
     //private LocalTime timeCreated;
     private Result result;
 
@@ -85,18 +83,6 @@ public class Theatre {
     }
     public void removeOption(Media m){ this.options.remove(m); }
 
-    public int getMinTime() {
-        return minTime;
-    }
-
- //   public void setMinTime() { this.minTime = backstage.calcLength().get(0);    }
-    public void setMinTime(int t) { this.minTime = t;    }
-
-    public int getMaxTime() {    return maxTime;    }
-
-//    public void setMaxTime() {     this.maxTime = backstage.calcLength().get(1);    }
-    public void setMaxTime(int t) {     this.maxTime = t;    }
-
 //    public LocalTime getTimeCreated() {
 //        return timeCreated;
 //    }
@@ -125,8 +111,6 @@ public class Theatre {
         result.put("result", getResult());
         result.put("genres", getGenres());
         result.put("options", getOptions());
-        result.put("mintime", getMinTime());
-        result.put("maxtime", getMaxTime());
  //       result.put("timecreated", getTimeCreated());
 
         return result;
