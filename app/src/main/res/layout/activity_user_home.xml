@@ -21,6 +21,7 @@
             android:id="@+id/textView_Welcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_bold"
             android:textColor="@color/colorText"
             android:textSize="36sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,12 +30,16 @@
 
         <Button
             android:id="@+id/button"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="64dp"
             android:backgroundTint="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
+            android:letterSpacing=".1"
             android:onClick="goToCreateJoinTheatreOnClick"
             android:text="Watch Now"
-            android:layout_marginTop="32dp"
+            android:textColor="@color/colorWhite"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,11 +47,14 @@
 
         <Button
             android:id="@+id/button2"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/lato_bold"
+            android:letterSpacing=".1"
             android:onClick="goToFriendsListOnClick"
             android:text="Friend List"
-            android:layout_marginTop="16dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,11 +63,13 @@
 
         <Button
             android:id="@+id/button3"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing=".1"
             android:onClick="goToWatchHistoryOnClick"
             android:text="Watch History"
-            android:layout_marginTop="16dp"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,11 +77,13 @@
 
         <Button
             android:id="@+id/button11"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing=".1"
             android:onClick="goToProfileOnClick"
             android:text="Profile"
-            android:layout_marginTop="16dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -80,11 +92,13 @@
 
         <Button
             android:id="@+id/button4"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:letterSpacing=".1"
             android:onClick="goToSettingsOnClick"
             android:text="Settings"
-            android:layout_marginTop="16dp"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -93,12 +107,14 @@
 
         <Button
             android:id="@+id/button_logout"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="300dp"
             android:layout_height="60dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/colorPrimary"
+            android:letterSpacing=".1"
             android:onClick="onClickLogOut"
             android:text="Log Out"
-            android:layout_marginTop="16dp"
             android:textColor="@color/colorWhite"
             android:textSize="18sp" />
 
