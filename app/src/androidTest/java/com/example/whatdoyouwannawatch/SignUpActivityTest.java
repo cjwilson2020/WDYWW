@@ -62,7 +62,7 @@ public class SignUpActivityTest {
         onView(withId(R.id.button_login)).perform(click());
         onView(withText(usernameMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         onView(withId(R.id.editText_username)).perform(typeText("someone1"));
-        onView(withId(R.id.button_login)).perform(click());
+//        onView(withId(R.id.button_login)).perform(click());
 //        onView(withId(R.id.button_login)).perform(click());
 //        onView(withText(dupeMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 
