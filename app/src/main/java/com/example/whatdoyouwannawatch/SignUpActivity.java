@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -54,6 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                     "Please try again." , Toast.LENGTH_SHORT).show();
             return;
         }
+        Toast.makeText(SignUpActivity.this, "Trying to sign up. Please wait... ", Toast.LENGTH_SHORT).show();
         MainActivity.pullData( 'u', username, new DataCallback() {
             @Override
             public void onCallback(Object usr) {
@@ -88,6 +90,9 @@ public class SignUpActivity extends AppCompatActivity {
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 Toast.makeText(SignUpActivity.this, "Sign up failed. " +
                                         "You have entered invalid credentials.", Toast.LENGTH_SHORT).show();
+                            } catch (FirebaseAuthUserCollisionException e) {
+                                Toast.makeText(SignUpActivity.this, "Sign up failed. " +
+                                        "This email address is already in use by another account.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 Toast.makeText(SignUpActivity.this, "Sign up failed. " +
                                         e, Toast.LENGTH_SHORT).show();

@@ -21,6 +21,7 @@ public class User {
     private List<User> friendRequests;
     private ArrayList<String> history;
     private List<String> preferences;
+    private List<String> services;
     private List<Media> rankings;
     private List<Media> options;
     private int minLength;
@@ -32,6 +33,7 @@ public class User {
         this.genres = new ArrayList<>();
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
+        this.services = new ArrayList<>();
         this.options = new ArrayList<>();
     }
 
@@ -42,6 +44,7 @@ public class User {
         this.genres = new ArrayList<>();
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
+        this.services = new ArrayList<>();
         this.options = new ArrayList<>();
     }
 
@@ -57,6 +60,7 @@ public class User {
         this.genres = new ArrayList<>();
         this.rankings = new ArrayList<>();
         this.preferences = new ArrayList<>();
+        this.services = new ArrayList<>();
         this.options = new ArrayList<>();
     }
 
@@ -103,6 +107,13 @@ public class User {
     public List<String> getPreferences() {return this.preferences;}
     public void setPreferences(List<String> prefs){
         this.preferences = prefs;
+    }
+
+    public List<String> getServices() {
+        return services;
+    }
+    public void setServices(List<String> services) {
+        this.services = services;
     }
 
     //set and get length

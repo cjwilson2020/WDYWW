@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,12 @@ public class ResultActivity extends AppCompatActivity {
         if (extras != null) { //extra passed into this
             mediaList = (ArrayList<Media>) extras.getSerializable("mediaList");
             theatreID = extras.getString("theatreID");
+        }
+        if(theatreID!= null && !theatreID.equalsIgnoreCase(fbUser.getDisplayName())){
+            Button button = (Button) findViewById(R.id.calcResultButton);
+            button.setVisibility(View.GONE);
+            TextView displayTitle = findViewById(R.id.textView19);
+            displayTitle.setText("Please wait for the result to be calculated");
         }
          waitForResult();
     }

@@ -72,4 +72,9 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(SettingsActivity.this, FAQActivity.class);
         startActivity(intent);
     }
+
+    public void onClickServiceSettings(View view){
+        Intent intent = new Intent(SettingsActivity.this, ServicePreferencesActivity.class);
+        startActivity(intent);
+    }
 }
