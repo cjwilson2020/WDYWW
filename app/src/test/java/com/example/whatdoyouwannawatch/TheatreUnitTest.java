@@ -115,25 +115,25 @@ public class TheatreUnitTest {
         assertEquals(t.getResult(), result);
     }
 
-    @Test
-    public void TestSetGetMinTime() {
-        t.setMinTime(0);
-        assertEquals(t.getMinTime(), 0);
-        t.setMinTime(-1000);
-        assertEquals(t.getMinTime(), -1000);
-        t.setMinTime(1000);
-        assertEquals(t.getMinTime(), 1000);
-    }
-
-    @Test
-    public void TestSetGetMaxTime() {
-        t.setMaxTime(0);
-        assertEquals(t.getMaxTime(), 0);
-        t.setMaxTime(10000);
-        assertEquals(t.getMaxTime(), 10000);
-        t.setMaxTime(-10000);
-        assertEquals(t.getMaxTime(), -10000);
-    }
+//    @Test
+//    public void TestSetGetMinTime() {
+//        t.setMinTime(0);
+//        assertEquals(t.getMinTime(), 0);
+//        t.setMinTime(-1000);
+//        assertEquals(t.getMinTime(), -1000);
+//        t.setMinTime(1000);
+//        assertEquals(t.getMinTime(), 1000);
+//    }
+//
+//    @Test
+//    public void TestSetGetMaxTime() {
+//        t.setMaxTime(0);
+//        assertEquals(t.getMaxTime(), 0);
+//        t.setMaxTime(10000);
+//        assertEquals(t.getMaxTime(), 10000);
+//        t.setMaxTime(-10000);
+//        assertEquals(t.getMaxTime(), -10000);
+//    }
 
     @Test
     public void TestAddUser() {
