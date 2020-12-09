@@ -3,6 +3,7 @@ package com.example.whatdoyouwannawatch;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,8 +25,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
 
-@RunWith(AndroidJUnit4.class)
-public class MainActivityTest extends TestCase {
+@RunWith(AndroidJUnit4ClassRunner.class)
+public class MainActivityTest {
 //    public ActivityScenario mainActivity;
 //    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public FirebaseAuth mAuth;

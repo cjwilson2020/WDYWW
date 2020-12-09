@@ -22,11 +22,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+        testCoverageEnabled = true
+        }
     }
     // avoid method is not mocked error
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    // Jacoco
+
 }
 
 dependencies {
@@ -66,12 +71,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Espresso
-//    def androidx_test_espresso = "3.1.1"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
 
     // androidx.test
-//    def androidx_test = "1.1.0"
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test:rules:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
