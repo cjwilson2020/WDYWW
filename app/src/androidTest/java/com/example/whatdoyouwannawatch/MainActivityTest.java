@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -54,15 +55,15 @@ public class MainActivityTest {
         onView(withId(R.id.button_continueAsGuest)).check(matches(withText("Continue As Guest")));
     }
 
-//    @Test
-//    public void deleteCurrentGuest() {
-//        onView(withId(R.id.button_continueAsGuest)).perform(click());
-//        mAuth = FirebaseAuth.getInstance();
-//        currentUser = mAuth.getCurrentUser();
-//        assertTrue(currentUser.isAnonymous());
-//        deleteCurrentGuest();
-//        assertNull(mAuth.getCurrentUser());
-//    }
+    @Test
+    public void deleteCurrentGuest() {
+        onView(withId(R.id.button_continueAsGuest)).perform(click());
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        assertTrue(currentUser.isAnonymous());
+        pressBack();
+        assertNull(mAuth.getCurrentUser());
+    }
 
 //    @Test
 //    public void removeUserFromTheatre() {
