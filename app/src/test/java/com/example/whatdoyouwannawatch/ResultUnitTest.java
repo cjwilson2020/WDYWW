@@ -58,6 +58,15 @@ public class ResultUnitTest {
     }
 
     @Test
+    public void TestSetUsers(){
+        User user4 = new User();
+        userList.add(user4);
+        test.setUsers(userList);
+        assertEquals(test.getUsers().get(3), user4);
+
+    }
+
+    @Test
     public void TestGetOptions() {
         assertEquals(test.getOptions().get(0), m1);
         assertEquals(test.getOptions().get(1), m2);

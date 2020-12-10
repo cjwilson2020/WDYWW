@@ -255,22 +255,24 @@ public class UserUnitTest {
     }
 
     @Test
-    public void testSetService(){
+    public void testService(){
         ArrayList<String> services = new ArrayList<>();
         services.add("Amazon Prime");
         services.add("Netflix");
         user1.setServices(services);
-        ArrayList<String> services
-        assertEquals();
-    }
-
-    @Test
-    public void testgetService(){
-
+        ArrayList<String> services2 = (ArrayList<String>) user1.getServices();
+        assertEquals(services.get(0), services2.get(0));
+        assertEquals(services.get(1), services2.get(1));
     }
 
     @Test
     public void testSetHistory(){
-
+        ArrayList<String> result = new ArrayList<>();
+        result.add("movie1");
+        result.add("movie2");
+        user1.setHistory(result);
+        ArrayList<String> result2 = user1.getHistory();
+        assertEquals(result.get(0), result2.get(0));
+        assertEquals(result.get(1), result2.get(1));
     }
 }

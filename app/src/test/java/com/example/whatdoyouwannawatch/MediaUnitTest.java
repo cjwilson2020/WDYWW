@@ -156,5 +156,37 @@ public class MediaUnitTest {
         assertTrue(m1.compareTo(m2) == 0);
     }
 
+    @Test
+    public void testSetGetPoster(){
+        m.setPoster("poster1");
+        assertEquals(m.getPoster(), "poster1");
+    }
 
+    @Test
+    public void testSetGetLanguage(){
+        m.setLanguage("Polish");
+        assertEquals(m.getLanguage(), "Polish");
+    }
+
+    @Test
+    public void testSetGetType(){
+        m.setType("horror");
+        assertEquals(m.getType(), "horror");
+    }
+
+    @Test
+    public void testSetGetYear(){
+        m.setYear("1987");
+        assertEquals(m.getYear(), "1987");
+    }
+
+    @Test
+    public void testSetGetCast(){
+        ArrayList<String> cast = new ArrayList<>();
+        cast.add("Tom");
+        cast.add("Emma");
+        m.setCast(cast);
+        assertEquals(m.getCast().get(0), "Tom");
+        assertEquals(m.getCast().get(1), "Emma");
+    }
 }
