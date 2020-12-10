@@ -1,13 +1,14 @@
 package com.example.whatdoyouwannawatch;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.*;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -30,20 +31,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -58,6 +53,9 @@ MainActivity extends AppCompatActivity {
     public static DatabaseReference myRef = database.getReference();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private FirebaseAuth mAuth;
+    static String r; //result from API Call
+    ProgressDialog p;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +153,9 @@ MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     public static Object data = null;
+
     static Object pullData(char type, String id, final DataCallback dcb) {
         String t = "theatres";
         String u = "users";
@@ -180,6 +180,7 @@ MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
@@ -208,6 +209,7 @@ MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     // Getting User failed, log a message
@@ -218,13 +220,13 @@ MainActivity extends AppCompatActivity {
             myRef.addListenerForSingleValueEvent(theatreListener);
             myRef.removeEventListener(theatreListener);
         }
-        if (data != null){
-            return (Object)data;
+        if (data != null) {
+            return (Object) data;
         }
         return null;
     }
 
-    static void deleteData(Object obj){
+    static void deleteData(Object obj) {
         // A HashMap is used to upload information to firebase, the String is the location in
         // firebase and the Object is the Object to be put in firebase
         HashMap<String, Object> map = new HashMap<>();
@@ -290,10 +292,10 @@ MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {
+                            MainActivity.pullData('u', user.getDisplayName(), new DataCallback() {
                                 @Override
                                 public void onCallback(Object usr) {
-                                    if(usr== null){
+                                    if (usr == null) {
                                         User newUser = new User(user.getDisplayName());
                                         MainActivity.pushData(newUser);
                                     }
@@ -306,117 +308,69 @@ MainActivity extends AppCompatActivity {
                 });
     }
 
-    // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
-    // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
-    // To implement this method, I need to use a callback function
-    public static void apiCallSearch(String progTypes, String genres, String providers, final ApiCallback acb) throws IOException {
+    public static void apiCallImage( String path, final ApiCallback acb) throws IOException, JSONException {
+        if(path != null && path.length() > 0) {
+            OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
+            //Log.d("search", "Title: " + title );
 
-        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
-        //Log.d("search", "Title: " + title );
-        genres = genres.replaceAll("\\s+", "");
-        providers = providers.replaceAll("\\s+", "");
+            String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/" + path + "/Redirect?Redirect=True";
+            Request request = new Request.Builder() // This is the query we build
+                    .url(address)
+                    .get()
+                    .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+                    .addHeader("accept", "application/json")
+                    .addHeader("filepath", path) //String title
+                    .addHeader("expirationminutes", "60") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+                    .build();
 
 
-        Log.d("search", "genres: " + genres);
-        Log.d("search", "providers: " + providers);
-        Log.d("search", "progTypes: " + progTypes);
+            Log.d("search", request.toString());
 
-        Request request = new Request.Builder()
-                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/")
-                .get()
-                .addHeader("content-type", "application/json")
-                .addHeader("x-rapidapi-key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
-                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
-                .addHeader("Genres", genres)
-                .addHeader("ProgramTypes", progTypes)
-                .addHeader("Providers", providers)
-                .addHeader("SortBy", "Relevance")
-                .addHeader("Includes", "Descriptions,Images,Genres,Contributors")
-                .build();
-
-        Log.d("search", request.toString());
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //Call
-                Log.d("search", "call from response: " + call.request().toString());
-
-                //A Response has a headers and a body
-                //Headers just contain info or metadata about the response like number of calls left for the free trial
-                // or the Access control methods allowed like GET, POST, PUT, etc
-
-                //The body has all of the data about the shows and movies found, if any..
-                try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Unexpected code " + response);
-                    }
-                    String results = responseBody.string();
-                    try {
-                        acb.onCallback(results);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } catch (IOException i) {
-                    i.printStackTrace();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
                 }
-            }
-        });
+
+                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    //A Response has a headers and a body
+                    //Headers just contain info or metadata about the response like number of calls left for the free trial
+                    // or the Access control methods allowed like GET, POST, PUT, etc
+
+                    //The body has all of the data about the shows and movies found, if any..
+                    try (ResponseBody responseBody = response.body()) {
+                        if (!response.isSuccessful()) {
+                            throw new IOException("Unexpected code " + response);
+                        }
+
+                        InputStream inputStream = responseBody.byteStream();
+                        Bitmap image = BitmapFactory.decodeStream(inputStream);
+
+                        try {
+                            acb.onCallback(image);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (IOException i) {
+                        i.printStackTrace();
+                        try {
+                            acb.onCallback(null);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }else{
+            acb.onCallback(null);
+        }
+
     }
 
-    public static void apiCallImage(String path, final ApiCallback acb) throws IOException {
-        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
-        //Log.d("search", "Title: " + title );
-        Request request = new Request.Builder() // This is the query we build
-                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/%7Bfilepath%7D/Redirect?Redirect=false")
-                .get()
-                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
-                .addHeader("accept", "application/json")
-                .addHeader("filepath", path) //String title
-                .addHeader("providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
-                .addHeader("expirationminutes", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
-                .build();
-
-        Log.d("search", request.toString());
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //A Response has a headers and a body
-                //Headers just contain info or metadata about the response like number of calls left for the free trial
-                // or the Access control methods allowed like GET, POST, PUT, etc
-
-                //The body has all of the data about the shows and movies found, if any..
-                try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Unexpected code " + response);
-                    }
-//
-                    //Here is where we get the query results
-                    String results = responseBody.string();
-                    try {
-                        acb.onCallback(results);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } catch (IOException i) {
-                    i.printStackTrace();
-                }
-            }
-        });
-    }
 
     static void checkProfileImg(final CheckCallBack ccb, final String username) {
         Log.d("img", "In checkProfileImg");
@@ -489,6 +443,6 @@ MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }
+
+

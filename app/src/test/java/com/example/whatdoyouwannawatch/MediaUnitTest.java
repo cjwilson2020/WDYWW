@@ -3,7 +3,6 @@ package com.example.whatdoyouwannawatch;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class MediaUnitTest {
     String director;
     String writer;
     String description;
-    URL poster;
+    String poster;
     Double rating;
 
     @Before

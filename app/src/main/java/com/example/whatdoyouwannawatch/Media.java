@@ -2,11 +2,7 @@ package com.example.whatdoyouwannawatch;
 
 
 
-import android.media.Image;
-
 import java.io.Serializable;
-import java.net.URL;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +16,7 @@ public class Media implements Comparable<Media>, Serializable {
     private String director;
     private String writer;
     private String description;
-    private URL poster;
+    private String poster;
     private Double rating;
     private String year;
     private String type;
@@ -38,7 +34,7 @@ public class Media implements Comparable<Media>, Serializable {
     }
 
     //constructor1
-    public Media(String title, List<String> genres, int length, URL poster) {
+    public Media(String title, List<String> genres, int length, String poster) {
         this.title = title;
         this.genres = genres;
         this.length = length;
@@ -47,7 +43,7 @@ public class Media implements Comparable<Media>, Serializable {
     }
 
     //constructor2, TODO make some parameters optional depends on what info we can get from stream service
-    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, URL poster, Double rating) {
+    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, String poster, Double rating) {
         this.id = id;
         this.title = title;
         this.genres = genres;
@@ -125,11 +121,11 @@ public class Media implements Comparable<Media>, Serializable {
         this.description = description;
     }
 
-    public URL getPoster() {
+    public String getPoster() {
         return poster;
     }
 
-    public void setPoster(URL poster) {
+    public void setPoster(String poster) {
         this.poster = poster;
     }
 
