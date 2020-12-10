@@ -2,6 +2,7 @@ package com.example.whatdoyouwannawatch;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,10 +21,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ public class ResultActivity extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference myRef = database.getReference();
     ImageView resultImg;
+    ProgressDialog p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +128,10 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     public void onClickCalcResult(View v){
+        p = new ProgressDialog(ResultActivity.this);
+        p.setMessage("Getting Media details...");
+        p.setCancelable(false);
+        p.show();
         if(fbUser.getDisplayName().equals(theatreID)) {
             MainActivity.pullData('t', theatreID, new DataCallback() {
                 @Override
@@ -141,24 +147,28 @@ public class ResultActivity extends AppCompatActivity {
                         TextView displayTitle = findViewById(R.id.textView19);
                         displayTitle.setText(t.getResult().getFinalDecision().getTitle());
 
-                        URL url = null;
-                        if(t.getResult().getFinalDecision().getPoster() != null) {
-                            try {
-                                url = new URL(t.getResult().getFinalDecision().getPoster().toString());
-                                if (url != null) {
-                                    HttpURLConnection connection = null;
-                                    connection = (HttpURLConnection) url.openConnection();
-                                    connection.setDoInput(true);
-                                    connection.connect();
-                                    InputStream input = connection.getInputStream();
-                                    Bitmap poster = BitmapFactory.decodeStream(input);
-                                    resultImg.setImageBitmap(poster);
-                                } else {
-                                    Log.d("result", "No poster available for this result.");
+                        Media m = t.getResult().getFinalDecision();
+                        try {
+                            MainActivity.apiCallImage(m.getPoster(), new ApiCallback() {
+                                @Override
+                                public void onCallback(final Bitmap result) throws JSONException, IOException {
+                                    if (result != null) {
+                                        Log.d("search", "Image found, downloading from API");
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                resultImg.setImageBitmap(result);
+                                                p.dismiss();
+                                            }
+                                        });
+                                    } else {
+                                        Log.d("search", "No image downloaded");
+                                        p.dismiss();
+                                    }
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            });
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 }

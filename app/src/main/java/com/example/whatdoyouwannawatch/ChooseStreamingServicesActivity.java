@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChooseStreamingServicesActivity extends AppCompatActivity {
-    private String streamingServices[] = {"Google Play",
-            "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
+    private String streamingServices[] = {"HBO", "Hulu", "Amazon Prime Video", "Netflix"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     String genreList = null;
