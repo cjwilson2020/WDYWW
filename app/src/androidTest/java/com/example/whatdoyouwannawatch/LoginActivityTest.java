@@ -14,36 +14,47 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class LoginActivityTest {
+    @Rule
     public ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
 
     @Before
     public void setUp() throws Exception {
-        //TODO push a new user
     }
 
     @After
     public void tearDown() throws Exception {
-        //TODO delete the user
     }
 
-//    @Test
-//    public void onCreate() {
-//        assertNotNull(loginRule.getScenario());
-//    }
+    @Test
+    public void onCreate() {
+        assertNotNull(loginRule.getScenario());
+        onView(withId(R.id.textView_promptForEmail)).check(matches(withText("Email")));
+        onView(withId(R.id.textView_promptForPassword)).check(matches(withText("Password")));
+        onView(withId(R.id.button_loginLoginPage)).check(matches(withText("Login")));
+    }
 
     @Test
     public void onClickLogIn() {
-
+        onView(withId(R.id.editTextEmailAddressLogin)).perform(typeText("c1@gmail.com"));
+        onView(withId(R.id.editTextPasswordLogin)).perform(typeText("123456"));
+        closeSoftKeyboard();
+        onView(withId(R.id.button_loginLoginPage)).perform(click());
+        //TODO wait for the dupeMessage
+        onView(withText("Logging you in. Hang on tight...")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+//        UserHomeActivity.onClickLogOut();
     }
 }

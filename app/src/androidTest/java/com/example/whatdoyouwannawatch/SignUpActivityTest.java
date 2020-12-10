@@ -111,6 +111,6 @@ public class SignUpActivityTest extends TestCase {
         closeSoftKeyboard();
         onView(withId(R.id.button_login)).perform(click());
         //TODO wait for the dupeMessage
-        onView(withText(signupMessgae)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        onView(withText(dupeMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 }
