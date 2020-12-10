@@ -1,5 +1,6 @@
 package com.example.whatdoyouwannawatch;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 
@@ -23,22 +24,24 @@ import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class LoginActivityTest {
-//    @Rule
-//    public ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
+    ActivityScenario scenario;
+    @Rule
+    public ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
 
     @Before
     public void setUp() {
+        scenario = loginRule.getScenario();
     }
 
     @After
     public void tearDown() {
         FirebaseAuth.getInstance().signOut();
+//        scenario.recreate();
     }
 
     @Test
     public void onCreate() {
-        ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
-        assertNotNull(loginRule.getScenario());
+        assertNotNull(scenario);
         onView(withId(R.id.textView_promptForEmail)).check(matches(withText("Email")));
         onView(withId(R.id.textView_promptForPassword)).check(matches(withText("Password")));
         onView(withId(R.id.button_loginLoginPage)).check(matches(withText("Log In")));
@@ -46,7 +49,6 @@ public class LoginActivityTest {
 
     @Test
     public void onClickLogIn() {
-        ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
         onView(withId(R.id.editTextEmailAddressLogin)).perform(typeText("c1@gmail.com"));
         onView(withId(R.id.editTextPasswordLogin)).perform(typeText("123456"));
         closeSoftKeyboard();
