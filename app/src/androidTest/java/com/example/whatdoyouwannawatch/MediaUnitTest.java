@@ -47,12 +47,12 @@ public class MediaUnitTest {
         director = "sb11";
         description = "bad movie";
         rating = 1.0;
-        m = new Media(id, title, genres, cast, length, director, writer, description, poster, rating);
+        m = new Media(id, title, genres, cast, length, director, writer, description, null, rating);
         currentVoters = new ArrayList<>();
         currentVoters.add(u1);
         currentVoters.add(u2);
         m.setCurrentVoters(currentVoters);
-        m2 = new Media(title, genres, length, poster);
+        m2 = new Media(title, genres, length, null);
     }
 
     @Test
