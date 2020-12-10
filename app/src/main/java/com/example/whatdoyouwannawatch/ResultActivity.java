@@ -7,8 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
     FirebaseUser fbUser;
@@ -37,6 +41,62 @@ public class ResultActivity extends AppCompatActivity {
     public static DatabaseReference myRef = database.getReference();
     ImageView resultImg;
     ProgressDialog p;
+
+    private void refresh(int miliseconds){
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                content();
+            }
+        };
+        handler.postDelayed(runnable, miliseconds);
+    }
+
+    public void content() {
+        MainActivity.pullData('t', theatreID, new DataCallback() {
+            @Override
+            public void onCallback(Object obj) {
+                if (obj != null) {
+                    Log.i("Null", "Not null");
+                    Theatre t = (Theatre) obj;
+                    TextView displayTitle = findViewById(R.id.textView19);
+                    displayTitle.setText(t.getResult().getFinalDecision().getTitle());
+                    if (t.getResult() != null) {
+                        Media m = t.getResult().getFinalDecision();
+                        try {
+                            MainActivity.apiCallImage(m.getPoster(), new ApiCallback() {
+                                @Override
+                                public void onCallback(final Bitmap result) throws JSONException, IOException {
+                                    if (result != null) {
+                                        Log.d("search", "Image found, downloading from API");
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                resultImg.setImageBitmap(result);
+                                             //   p.dismiss();
+                                            }
+                                        });
+                                    } else {
+                                        Log.d("search", "No image downloaded");
+
+                                        // p.dismiss();
+                                    }
+                                }
+                            });
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Log.i("Null", "Null");
+                }
+
+            }
+        });
+
+        refresh(1000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,33 +116,23 @@ public class ResultActivity extends AppCompatActivity {
             TextView displayTitle = findViewById(R.id.textView19);
             displayTitle.setText("Please wait for the result to be calculated");
         }
-         waitForResult();
-    }
 
-    private void waitForResult() {
-        myRef = database.getReference();
-        DatabaseReference tRef =myRef.child("theatres").child(theatreID).child("result");
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot dataSnapshotRes = dataSnapshot.child("result");
-
-                for (DataSnapshot valueRes : dataSnapshotRes.getChildren()){
-                    Result r =dataSnapshot.getValue(Result.class);
-                    TextView displayTitle = findViewById(R.id.textView19);
-
-                    displayTitle.setText(r.getFinalDecision().getTitle());
+            public void onCallback(Object obj) {
+                User u = (User) obj;
+                if (u != null){
+                    if(!u.getUsername().equals(theatreID)){
+                        //If current user is not the host,
+                        // Start checking firebase to update screen
+                        content();
+                    }
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
         });
-
+        content();
     }
+
 
     public void onClickDone(View v){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
