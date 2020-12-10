@@ -4,32 +4,42 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 public class TheatreHostLandingPage extends AppCompatActivity {
     private FirebaseUser fbUser;
+    public static  FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference myRef = database.getReference();
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
-//    private String theatreCode;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_theatre_host_landing_page);
+   private void refresh(int miliseconds){
+       final Handler handler = new Handler();
+       final Runnable runnable = new Runnable() {
+           @Override
+           public void run() {
+               content();
+           }
+       };
+       handler.postDelayed(runnable, miliseconds);
+   }
 
-        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+    public void content(){
         MainActivity.pullData('t', fbUser.getDisplayName(), new DataCallback() {
             @Override
             public void onCallback(Object obj) {
@@ -59,6 +69,19 @@ public class TheatreHostLandingPage extends AppCompatActivity {
 
             }
         });
+
+        refresh(1000);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_theatre_host_landing_page);
+
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference theatreRef = myRef.child("theatres");
+
+        content();
         displayTheatreID();
 
 //

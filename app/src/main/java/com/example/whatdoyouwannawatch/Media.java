@@ -30,6 +30,7 @@ public class Media implements Comparable<Media>, Serializable {
     //constructor
     public Media(String s) {
         this.id = s;
+        this.title = s;
         this.currentVoters = new ArrayList<User>();
     }
 

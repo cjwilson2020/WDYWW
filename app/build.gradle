@@ -2,32 +2,26 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'jacoco'
 
-def coverageSourceDirs = [
-        '../app/src/main/java'
-]
-
-task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
-
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
+task jacocoTestReport(type: JacocoReport) {
     reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-    classDirectories.from = fileTree(
-            dir: './build/intermediates/classes/debug',
-            includes: ['**/*$MainActivity.class' ])
-    sourceDirectories.from = files(coverageSourceDirs)
-    executionData.from = files("$buildDir/jacoco/testDebug.exec")
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
+        xml {
+            enabled true // coveralls plugin depends on xml format report
+        }
+
+        html {
+            enabled true
         }
     }
+
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['com.example.whatyouwannawatch.MediaRanking/**'])
+        })
+    }
+}
+jacoco {
+    toolVersion = "0.7.5.201505241946"
 }
 
 android {
@@ -62,14 +56,7 @@ android {
     // avoid method is not mocked error
     testOptions {
         unitTests.returnDefaultValues = true
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
-            }
-        }
     }
-    // Jacoco
-
 }
 
 dependencies {

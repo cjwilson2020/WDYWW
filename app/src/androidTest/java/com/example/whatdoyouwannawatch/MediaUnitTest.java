@@ -3,6 +3,7 @@ package com.example.whatdoyouwannawatch;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class MediaUnitTest {
         genres.add("g2");
         genres.add("g3");
         length = 120;
+        poster = "";
         cast = new ArrayList<>();
         cast.add("sb1");
         cast.add("sb2");
