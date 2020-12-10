@@ -489,7 +489,7 @@ public class MediaRanking extends AppCompatActivity implements AsyncResponse {
             MediaRanking.r = r;
             Log.d("search", "Canceled, returned: " + r);
             p.cancel();
-            Toast.makeText(MediaRanking.this, "AsyncTask is stopped", Toast.LENGTH_LONG).show();
+            //Toast.makeText(MediaRanking.this, "AsyncTask is stopped", Toast.LENGTH_LONG).show();
             this.cancel(true);
 
         }
@@ -580,7 +580,7 @@ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewH
         for (Media m : mediaList) {
             list += m.getTitle();
         }
-        Toast.makeText(context, list, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, list, Toast.LENGTH_SHORT).show();
     }
 
     public void setTouchHelper(ItemTouchHelper helper) {
