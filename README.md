@@ -81,6 +81,7 @@ For iteration 1 and 2, we have implemented the following functionality:
       i) User is able to edit which genres they prefer to watch. They are then able to use these genres while in the theatre rather than selecting genres each time.
   
   b) Streaming Preferences
+  
       i) User is able to edit which streaming services they have available. They are then able to use these preferences while in the theatre rather than selecting genres each time.
       
   c) FAQ 
