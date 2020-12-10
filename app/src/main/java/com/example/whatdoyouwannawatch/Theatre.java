@@ -72,7 +72,7 @@ public class Theatre {
             this.genres.add(s);
         }
     }
-    public void removeGenre(String s){ this.genres.remove(s); }
+//    public void removeGenre(String s){ this.genres.remove(s); }
 
     public List<Media> getOptions() { return options; }
     public void setOptions(List<Media> options) { this.options = options; }
@@ -104,15 +104,15 @@ public class Theatre {
         return "HostID: " + hostID;
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("hostid", getHostID());
-        result.put("result", getResult());
-        result.put("genres", getGenres());
-        result.put("options", getOptions());
- //       result.put("timecreated", getTimeCreated());
-
-        return result;
-    }
+//    @Exclude
+//    public Map<String, Object> toMap() {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("hostid", getHostID());
+//        result.put("result", getResult());
+//        result.put("genres", getGenres());
+//        result.put("options", getOptions());
+// //       result.put("timecreated", getTimeCreated());
+//
+//        return result;
+//    }
 }

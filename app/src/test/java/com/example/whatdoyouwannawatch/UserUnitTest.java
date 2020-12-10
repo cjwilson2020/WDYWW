@@ -3,6 +3,7 @@ package com.example.whatdoyouwannawatch;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,6 +251,26 @@ public class UserUnitTest {
         user1.setUsername("2");
         user1.setEmail("3@g.com");
         assertEquals(user1.toString(), "User Name: " + "2" + "\nEmail: " + "3@g.com" + "\nUID: " + "1");
+
+    }
+
+    @Test
+    public void testSetService(){
+        ArrayList<String> services = new ArrayList<>();
+        services.add("Amazon Prime");
+        services.add("Netflix");
+        user1.setServices(services);
+        ArrayList<String> services
+        assertEquals();
+    }
+
+    @Test
+    public void testgetService(){
+
+    }
+
+    @Test
+    public void testSetHistory(){
 
     }
 }

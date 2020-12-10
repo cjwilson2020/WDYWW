@@ -24,22 +24,22 @@ public class BackStage {
     }
 
     //public static List<LocalTime> calcLength() {
-    @SuppressLint("NewApi")
-    public static void calcLength() {
-        List<User> users = theatre.getUsers();
-        int minTime = -1;
-        int maxTime = 999;
-
-        for (int i = 0; i < users.size(); i++) {
-            User u = users.get(i);
-            if (u.getMinLength() > (minTime) && u.getMinLength() < (maxTime)) {
-                minTime = u.getMinLength();
-            }
-            if (u.getMaxLength() < (maxTime) && u.getMaxLength() > (minTime)) {
-                maxTime = u.getMaxLength();
-            }
-        }
-    }
+//    @SuppressLint("NewApi")
+//    public static void calcLength() {
+//        List<User> users = theatre.getUsers();
+//        int minTime = -1;
+//        int maxTime = 999;
+//
+//        for (int i = 0; i < users.size(); i++) {
+//            User u = users.get(i);
+//            if (u.getMinLength() > (minTime) && u.getMinLength() < (maxTime)) {
+//                minTime = u.getMinLength();
+//            }
+//            if (u.getMaxLength() < (maxTime) && u.getMaxLength() > (minTime)) {
+//                maxTime = u.getMaxLength();
+//            }
+//        }
+//    }
 
     public static void calcGenre () {
         List<User> users = theatre.getUsers();

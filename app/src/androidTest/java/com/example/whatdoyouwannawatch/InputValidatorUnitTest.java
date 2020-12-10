@@ -25,15 +25,15 @@ public class InputValidatorUnitTest {
         assertTrue(iv.passwordIsValid(pw3));
     }
 
-//    @Test
-//    public void emailIsValid() {
-//        String e1 = "";
-//        String e2 = "someone@somesite";
-//        String e3 = "avalidemail@gmail.com";
-//        assertTrue(!iv.emailIsValid(e1));
-//        assertTrue(iv.emailIsValid(e2));
-//        assertTrue(iv.emailIsValid(e3));
-//    }
+    @Test
+    public void emailIsValid() {
+        String e1 = "";
+        String e2 = "someone@somesite";
+        String e3 = "avalidemail@gmail.com";
+        assertTrue(!iv.emailIsValid(e1));
+        assertTrue(iv.emailIsValid(e2));
+        assertTrue(iv.emailIsValid(e3));
+    }
 
     @Test
     public void usernameIsValid() {

@@ -149,19 +149,19 @@ public class Media implements Comparable<Media>, Serializable {
     public void addVoter(User u){
         this.currentVoters.add(u);
     }
-    public void removeVoter(User u){
-        this.currentVoters.remove(u);
-    }
+//    public void removeVoter(User u){
+//        this.currentVoters.remove(u);
+//    }
 
     public int getNumVoters(){
         return this.currentVoters.size();
     }
 
-    public void setNumVoters(int i){
-        while(this.currentVoters.size() > i ){
-            this.currentVoters.remove(this.currentVoters.size()-1);
-        }
-    }
+//    public void setNumVoters(int i){
+//        while(this.currentVoters.size() > i ){
+//            this.currentVoters.remove(this.currentVoters.size()-1);
+//        }
+//    }
 
     public String getLanguage() {  return language;  }
 
@@ -175,7 +175,7 @@ public class Media implements Comparable<Media>, Serializable {
 
     public void setYear(String year) { this.year = year; }
 
-    public boolean equalTo(Media m){ return this.title == m.title; }
+//    public boolean equalTo(Media m){ return this.title == m.title; }
 
     @Override
     public int compareTo(Media m) {
