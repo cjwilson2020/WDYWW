@@ -1,7 +1,40 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'jacoco'
+
+def coverageSourceDirs = [
+        '../app/src/main/java'
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
+
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    classDirectories.from = fileTree(
+            dir: './build/intermediates/classes/debug',
+            includes: ['**/*$MainActivity.class' ])
+    sourceDirectories.from = files(coverageSourceDirs)
+    executionData.from = files("$buildDir/jacoco/testDebug.exec")
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    doFirst {
+        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+}
 
 android {
+    jacoco {
+        version = '0.7.3.201502191951'
+    }
+
     compileSdkVersion 29
 
     buildToolsVersion "29.0.3"
@@ -22,11 +55,21 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled = true
+        }
     }
     // avoid method is not mocked error
     testOptions {
         unitTests.returnDefaultValues = true
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
     }
+    // Jacoco
+
 }
 
 dependencies {
@@ -65,4 +108,13 @@ dependencies {
 
     // Convert object to JSON
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // Espresso
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
+
+    // androidx.test
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
