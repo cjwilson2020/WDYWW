@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class LoginActivityTest {
-    @Rule
-    public ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
+//    @Rule
+//    public ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
 
     @Before
     public void setUp() {
@@ -37,6 +37,7 @@ public class LoginActivityTest {
 
     @Test
     public void onCreate() {
+        ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
         assertNotNull(loginRule.getScenario());
         onView(withId(R.id.textView_promptForEmail)).check(matches(withText("Email")));
         onView(withId(R.id.textView_promptForPassword)).check(matches(withText("Password")));
@@ -45,11 +46,11 @@ public class LoginActivityTest {
 
     @Test
     public void onClickLogIn() {
+        ActivityScenarioRule loginRule = new ActivityScenarioRule(LoginActivity.class);
         onView(withId(R.id.editTextEmailAddressLogin)).perform(typeText("c1@gmail.com"));
         onView(withId(R.id.editTextPasswordLogin)).perform(typeText("123456"));
         closeSoftKeyboard();
         onView(withId(R.id.button_loginLoginPage)).perform(click());
-        //TODO wait for the dupeMessage
         onView(withText("Logging you in. Hang on tight...")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
         FirebaseAuth.getInstance().signOut();
     }
