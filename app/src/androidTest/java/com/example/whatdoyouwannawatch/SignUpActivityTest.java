@@ -74,14 +74,6 @@ public class SignUpActivityTest extends TestCase {
     public void onClickSignUp1() {
         onView(withId(R.id.button_login)).perform(click());
         onView(withText(emailMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editTextPassword)).perform(typeText("123456"));
-//        closeSoftKeyboard();
-//        onView(withId(R.id.button_login)).perform(click());
-//        onView(withText(usernameMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editText_username)).perform(typeText("someone1"));
-//        closeSoftKeyboard();
-//        onView(withId(R.id.button_login)).perform(click());
-//        onView(withText(signupMessgae)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
     @Test
@@ -90,14 +82,6 @@ public class SignUpActivityTest extends TestCase {
         closeSoftKeyboard();
         onView(withId(R.id.button_login)).perform(click());
         onView(withText(pwMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editTextPassword)).perform(typeText("123456"));
-//        closeSoftKeyboard();
-//        onView(withId(R.id.button_login)).perform(click());
-//        onView(withText(usernameMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editText_username)).perform(typeText("someone1"));
-//        closeSoftKeyboard();
-//        onView(withId(R.id.button_login)).perform(click());
-//        onView(withText(signupMessgae)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
     @Test
@@ -107,10 +91,6 @@ public class SignUpActivityTest extends TestCase {
         closeSoftKeyboard();
         onView(withId(R.id.button_login)).perform(click());
         onView(withText(usernameMessage)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
-//        onView(withId(R.id.editText_username)).perform(typeText("someone1"));
-//        closeSoftKeyboard();
-//        onView(withId(R.id.button_login)).perform(click());
-//        onView(withText(signupMessgae)).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
     }
 
     @Test
