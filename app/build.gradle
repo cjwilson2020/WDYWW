@@ -1,5 +1,28 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'jacoco'
+
+task jacocoTestReport(type: JacocoReport) {
+    reports {
+        xml {
+            enabled true // coveralls plugin depends on xml format report
+        }
+
+        html {
+            enabled true
+        }
+    }
+
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ['com.example.whatyouwannawatch.MediaRanking/**'])
+        })
+    }
+}
+jacoco {
+    toolVersion = "0.7.5.201505241946"
+}
 
 android {
     compileSdkVersion 29

@@ -1,5 +1,6 @@
 package com.example.whatdoyouwannawatch;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -84,37 +85,63 @@ public class MainActivityTest {
 //    public void deleteData() {
 //    }
 //
-    @Test
-    public void onClickLogIn() {
-        onView(withId(R.id.button_login)).perform(click());
-        intended(hasComponent(LoginActivity.class.getName()));
-    }
-
-    @Test
-    public void onClickSignUp() {
-        onView(withId(R.id.button_signup)).perform(click());
-        intended(hasComponent(SignUpActivity.class.getName()));
-    }
-
-
-    //TODO some times work
 //    @Test
-//    public void onClickContinueAsGuest() {
-//        onView(withId(R.id.button_continueAsGuest)).perform(click());
-//        mAuth = FirebaseAuth.getInstance();
-//        currentUser = mAuth.getCurrentUser();
-//        assertTrue(currentUser.isAnonymous());
+//    public void onClickLogIn() {
+//        onView(withId(R.id.button_login)).perform(click());
+//        intended(hasComponent(LoginActivity.class.getName()));
 //    }
 //
 //    @Test
-//    public void onResume() {
-//        onView(withId(R.id.button_continueAsGuest)).perform(click());
-//        mAuth = FirebaseAuth.getInstance();
-//        currentUser = mAuth.getCurrentUser();
-////        assertTrue(currentUser.isAnonymous());
-//        pressBack();
-//        assertNull(mAuth.getCurrentUser());
+//    public void onClickSignUp() {
+//        onView(withId(R.id.button_signup)).perform(click());
+//        intended(hasComponent(SignUpActivity.class.getName()));
 //    }
+
+
+    //TODO some times work
+    @Test
+    public void onClickContinueAsGuest() {
+        onView(withId(R.id.button_continueAsGuest)).perform(click());
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    User u = (User) obj;
+                    if (u != null){
+                        assertTrue(u.isGuest());
+                    }else{
+                        assertEquals("Not currently signed in as anyone", currentUser, null);
+                    }
+                }
+            });
+        }else{
+            assertEquals("Not currently signed in as anyone", currentUser, null);
+        }
+    }
+
+    @Test
+    public void onResume() {
+        onView(withId(R.id.button_continueAsGuest)).perform(click());
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+//        assertTrue(currentUser.isAnonymous());
+//        pressBack();
+        if (currentUser != null) {
+            String uname = currentUser.getDisplayName();
+            MainActivity.pullData('u', uname, new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    User u = (User) obj;
+                    assertNull(u);
+                }
+            });
+        }else{
+            assertNull(currentUser);
+        }
+    }
 
 
 

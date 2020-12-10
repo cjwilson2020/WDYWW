@@ -25,7 +25,7 @@ public class MediaUnitTest {
     String director;
     String writer;
     String description;
-    URL poster;
+    String poster;
     Double rating;
     Media m2;
 
@@ -38,6 +38,7 @@ public class MediaUnitTest {
         genres.add("g2");
         genres.add("g3");
         length = 120;
+        poster = "";
         cast = new ArrayList<>();
         cast.add("sb1");
         cast.add("sb2");

@@ -277,7 +277,8 @@ MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            setGuestUsername(user, "Guest " + user.getUid());
+                            if(user != null)
+                                setGuestUsername(user, "Guest " + user.getUid());
                         }
                     }
                 });
