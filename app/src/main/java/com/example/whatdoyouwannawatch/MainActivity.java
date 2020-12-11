@@ -326,7 +326,7 @@ MainActivity extends AppCompatActivity {
                     .build();
 
 
-            Log.d("search", request.toString());
+            //Log.d("search", request.toString());
 
             client.newCall(request).enqueue(new Callback() {
                 @Override

@@ -8,13 +8,18 @@
 
     <TextView
         android:id="@+id/textView_chooseYourStreamingServices"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
+        android:drawableLeft="@drawable/stream"
+        android:drawablePadding="20dp"
+        android:fontFamily="@font/lato_black"
         android:text="Choose Your Streaming Services"
-        android:textSize="24sp"
+        android:textAlignment="viewStart"
+        android:textColor="@color/colorText"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,9 +28,7 @@
         android:id="@+id/listView_displayStreamingServices"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/button_selectStreamingServices"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,8 +41,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/colorAccent"
+        android:fontFamily="@font/lato_bold"
+        android:letterSpacing=".1"
         android:onClick="onClickSelectStreamingServices"
         android:text="Next"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

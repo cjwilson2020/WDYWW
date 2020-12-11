@@ -1,0 +1,1462 @@
+Index: app/src/main/java/com/example/whatdoyouwannawatch/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport android.content.Intent;\r\nimport android.media.Image;\r\nimport android.net.Uri;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.*;\r\nimport android.view.View;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.RequiresApi;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.auth.UserProfileChangeRequest;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\nimport com.google.firebase.storage.FirebaseStorage;\r\nimport com.google.firebase.storage.StorageReference;\r\nimport com.google.firebase.storage.UploadTask;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.Iterator;\r\nimport java.util.List;\r\nimport java.util.Map;\r\n\r\nimport okhttp3.Call;\r\nimport okhttp3.Callback;\r\nimport okhttp3.Headers;\r\nimport okhttp3.MediaType;\r\nimport okhttp3.OkHttpClient;\r\nimport okhttp3.Request;\r\nimport okhttp3.Response;\r\nimport okhttp3.ResponseBody;\r\n\r\npublic class\r\nMainActivity extends AppCompatActivity {\r\n    // Write info to the Realtime database\r\n    private static final String TAG = \"MainActivity\";\r\n    public static FirebaseDatabase database = FirebaseDatabase.getInstance();\r\n    public static DatabaseReference myRef = database.getReference();\r\n    public static final MediaType JSON = MediaType.parse(\"application/json; charset=utf-8\");\r\n    private FirebaseAuth mAuth;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n        mAuth = FirebaseAuth.getInstance();\r\n        deleteCurrentGuest();\r\n    }\r\n\r\n    // For cleaning up leftover guest sessions\r\n    @Override\r\n    public void onResume() {\r\n        super.onResume();\r\n        deleteCurrentGuest();\r\n    }\r\n\r\n    public void deleteCurrentGuest() {\r\n        final FirebaseUser currentUser = mAuth.getCurrentUser();\r\n        if (currentUser != null) {\r\n            // if leftover guest session, delete guest and do not redirect to homepage\r\n            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {\r\n                @Override\r\n                public void onCallback(Object obj) {\r\n                    if (obj != null) {\r\n                        User u = (User) obj;\r\n                        if (u.isGuest()) {\r\n                            // delete user\r\n                            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {\r\n                                @Override\r\n                                public void onCallback(Object obj) {\r\n                                    if (obj != null) {\r\n                                        User u = (User) obj;\r\n                                        MainActivity.deleteData(u);\r\n                                    }\r\n                                }\r\n                            });\r\n                            //Delete guest in FB Auth\r\n                            FirebaseAuth.getInstance().getCurrentUser().delete();\r\n                        }\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n\r\n    static void removeUserFromTheatre(String hostID, final String username) {\r\n        myRef = database.getReference();\r\n        pullData('t', hostID, new DataCallback() {\r\n            @Override\r\n            public void onCallback(Object obj) {\r\n                if (obj != null) {\r\n                    Theatre t = (Theatre) obj;\r\n                    t.removeUser(username);\r\n                    pushData(t);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    static void removeTheatre(String hostID) {\r\n        myRef = database.getReference();\r\n        DatabaseReference tRef = myRef.child(\"theatres\").child(hostID);\r\n        tRef.removeValue();\r\n    }\r\n\r\n    static void pushData(Object obj) {\r\n        // A HashMap is used to upload information to firebase, the String is the location in\r\n        // firebase and the Object is the Object to be put in firebase\r\n        HashMap<String, Object> map = new HashMap<>();\r\n        myRef = database.getReference();\r\n        if (obj.getClass().getName().equals(\"com.example.whatdoyouwannawatch.User\")) {\r\n            User tmp = (User) obj;\r\n            String u = \"users\";\r\n\r\n            String folder = u + \"/\" + (tmp).getUsername();\r\n            map.put(folder.toLowerCase(), obj);\r\n        } else if (obj.getClass().getName().equals(\"com.example.whatdoyouwannawatch.Theatre\")) {\r\n            Theatre tmp = (Theatre) obj;\r\n            String t = \"theatres\";\r\n\r\n            String folder = t + \"/\" + (tmp).getHostID();\r\n            map.put(folder.toLowerCase(), obj);\r\n        }\r\n        myRef.updateChildren(map)\r\n                .addOnFailureListener(new OnFailureListener() {\r\n                    @Override\r\n                    public void onFailure(@NonNull Exception e) {\r\n                        Log.w(\"pushData\", \"Error Adding User/Theatre\", e);\r\n                    }\r\n                })\r\n                .addOnSuccessListener(new OnSuccessListener() {\r\n                    @Override\r\n                    public void onSuccess(Object o) {\r\n                        Log.d(\"pushData\", \"Successfully added user to firebase\");\r\n                    }\r\n                });\r\n    }\r\n    public static Object data = null;\r\n    static Object pullData(char type, String id, final DataCallback dcb) {\r\n        String t = \"theatres\";\r\n        String u = \"users\";\r\n        id = id.toLowerCase().trim();\r\n\r\n        if (type == 'u') {\r\n            myRef = database.getReference().child(u).child(id);\r\n            Log.d(\"pull\", myRef.toString());\r\n\r\n            ValueEventListener userListener = new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(DataSnapshot dataSnapshot) {\r\n                    User user = dataSnapshot.getValue(User.class);\r\n                    if (user == null) {\r\n                        dcb.onCallback(null);\r\n                    } else {\r\n                        if (user.getUID() == null) {\r\n                            dcb.onCallback(null);\r\n                        } else {\r\n                            MainActivity.data = user;\r\n                            dcb.onCallback(user);\r\n                        }\r\n                    }\r\n                }\r\n                @Override\r\n                public void onCancelled(DatabaseError databaseError) {\r\n                    // Getting User failed, log a message\r\n                    Log.i(\"PullData\", \"Failed to Load User from Firebase\", databaseError.toException());\r\n                }\r\n            };\r\n\r\n            myRef.addListenerForSingleValueEvent(userListener);\r\n            myRef.removeEventListener(userListener);\r\n        } else if (type == 't') {\r\n            myRef = database.getReference().child(t).child(id);\r\n            Log.d(\"pull\", myRef.toString());\r\n\r\n            ValueEventListener theatreListener = new ValueEventListener() {\r\n                @Override\r\n                public void onDataChange(DataSnapshot dataSnapshot) {\r\n                    Theatre theatre = dataSnapshot.getValue(Theatre.class);\r\n                    if (theatre == null) {\r\n                        dcb.onCallback(null);\r\n                    } else {\r\n                        if (theatre.getHostID() == null) {\r\n                            dcb.onCallback(null);\r\n                        } else {\r\n                            MainActivity.data = theatre;\r\n                            dcb.onCallback(theatre);\r\n                        }\r\n                    }\r\n                }\r\n                @Override\r\n                public void onCancelled(DatabaseError databaseError) {\r\n                    // Getting User failed, log a message\r\n                    Log.i(\"PullData\", \"Failed to Load User from Firebase\", databaseError.toException());\r\n                }\r\n            };\r\n\r\n            myRef.addListenerForSingleValueEvent(theatreListener);\r\n            myRef.removeEventListener(theatreListener);\r\n        }\r\n        if (data != null){\r\n            return (Object)data;\r\n        }\r\n        return null;\r\n    }\r\n\r\n    static void deleteData(Object obj){\r\n        // A HashMap is used to upload information to firebase, the String is the location in\r\n        // firebase and the Object is the Object to be put in firebase\r\n        HashMap<String, Object> map = new HashMap<>();\r\n        myRef = database.getReference();\r\n        if (obj.getClass().getName().equals(\"com.example.whatdoyouwannawatch.User\")) {\r\n            User tmp = (User) obj;\r\n            String u = \"users\";\r\n\r\n            String folder = u + \"/\" + (tmp).getUsername();\r\n            map.put(folder.toLowerCase(), null);\r\n        } else if (obj.getClass().getName().equals(\"com.example.whatdoyouwannawatch.Theatre\")) {\r\n            Theatre tmp = (Theatre) obj;\r\n            String t = \"theatres\";\r\n\r\n            String folder = t + \"/\" + (tmp).getHostID();\r\n            map.put(folder.toLowerCase(), null);\r\n        }\r\n        myRef.updateChildren(map)\r\n                .addOnFailureListener(new OnFailureListener() {\r\n                    @Override\r\n                    public void onFailure(@NonNull Exception e) {\r\n                        Log.w(\"delete\", \"Error deleting User/Theatre\", e);\r\n                    }\r\n                })\r\n                .addOnSuccessListener(new OnSuccessListener() {\r\n                    @Override\r\n                    public void onSuccess(Object o) {\r\n                        Log.d(\"delete\", \"Successfully deleted from firebase\");\r\n                    }\r\n                });\r\n    }\r\n\r\n    public void onClickLogIn(View v) {\r\n        Intent intent = new Intent(MainActivity.this, LoginActivity.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public void onClickSignUp(View v) {\r\n        Intent intent = new Intent(MainActivity.this, SignUpActivity.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public void onClickContinueAsGuest(View v) {\r\n        // create anonymous user\r\n        mAuth.signInAnonymously()\r\n                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {\r\n                    @Override\r\n                    public void onComplete(@NonNull Task<AuthResult> task) {\r\n                        if (task.isSuccessful()) {\r\n                            FirebaseUser user = mAuth.getCurrentUser();\r\n                            setGuestUsername(user, \"Guest \" + user.getUid());\r\n                        }\r\n                    }\r\n                });\r\n    }\r\n\r\n    private void setGuestUsername(final FirebaseUser user, String username) {\r\n        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()\r\n                .setDisplayName(username)\r\n                .build();\r\n        user.updateProfile(userProfileChangeRequest)\r\n                .addOnCompleteListener(new OnCompleteListener<Void>() {\r\n                    @Override\r\n                    public void onComplete(@NonNull Task<Void> task) {\r\n                        if (task.isSuccessful()) {\r\n                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {\r\n                                @Override\r\n                                public void onCallback(Object usr) {\r\n                                    if(usr== null){\r\n                                        User newUser = new User(user.getDisplayName());\r\n                                        MainActivity.pushData(newUser);\r\n                                    }\r\n                                }\r\n                            });\r\n                            Intent intent = new Intent(MainActivity.this, JoinTheatre.class);\r\n                            startActivity(intent);\r\n                        }\r\n                    }\r\n                });\r\n    }\r\n\r\n    // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,\r\n    // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response\r\n    // To implement this method, I need to use a callback function\r\n    public static void apiCallSearch(String progTypes, String genres, String providers, final ApiCallback acb) throws IOException {\r\n\r\n        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online\r\n        //Log.d(\"search\", \"Title: \" + title );\r\n        genres = genres.replaceAll(\"\\\\s+\", \"\");\r\n        providers = providers.replaceAll(\"\\\\s+\", \"\");\r\n\r\n\r\n        Log.d(\"search\", \"genres: \" + genres);\r\n        Log.d(\"search\", \"providers: \" + providers);\r\n        Log.d(\"search\", \"progTypes: \" + progTypes);\r\n\r\n        Request request = new Request.Builder()\r\n                .url(\"https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/\")\r\n                .get()\r\n                .addHeader(\"content-type\", \"application/json\")\r\n                .addHeader(\"x-rapidapi-key\", \"4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5\")\r\n                .addHeader(\"x-rapidapi-host\", \"ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com\")\r\n                .addHeader(\"Genres\", genres)\r\n                .addHeader(\"ProgramTypes\", progTypes)\r\n                .addHeader(\"Providers\", providers)\r\n                .addHeader(\"SortBy\", \"Relevance\")\r\n                .addHeader(\"Includes\", \"Descriptions,Images,Genres,Contributors\")\r\n                .build();\r\n\r\n        Log.d(\"search\", request.toString());\r\n\r\n        client.newCall(request).enqueue(new Callback() {\r\n            @Override\r\n            public void onFailure(Call call, IOException e) {\r\n                e.printStackTrace();\r\n            }\r\n\r\n            @RequiresApi(api = Build.VERSION_CODES.KITKAT)\r\n            @Override\r\n            public void onResponse(Call call, Response response) throws IOException {\r\n                //Call\r\n                Log.d(\"search\", \"call from response: \" + call.request().toString());\r\n\r\n                //A Response has a headers and a body\r\n                //Headers just contain info or metadata about the response like number of calls left for the free trial\r\n                // or the Access control methods allowed like GET, POST, PUT, etc\r\n\r\n                //The body has all of the data about the shows and movies found, if any..\r\n                try (ResponseBody responseBody = response.body()) {\r\n                    if (!response.isSuccessful()) {\r\n                        throw new IOException(\"Unexpected code \" + response);\r\n                    }\r\n                    String results = responseBody.string();\r\n                    try {\r\n                        acb.onCallback(results);\r\n                    } catch (JSONException e) {\r\n                        e.printStackTrace();\r\n                    }\r\n                } catch (IOException i) {\r\n                    i.printStackTrace();\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    public static void apiCallImage(String path, final ApiCallback acb) throws IOException {\r\n        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online\r\n        //Log.d(\"search\", \"Title: \" + title );\r\n        Request request = new Request.Builder() // This is the query we build\r\n                .url(\"https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/%7Bfilepath%7D/Redirect?Redirect=false\")\r\n                .get()\r\n                .addHeader(\"x-rapidapi-host\", \"ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com\")\r\n                .addHeader(\"x-rapidapi-key\", \"0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd\")\r\n                .addHeader(\"accept\", \"application/json\")\r\n                .addHeader(\"filepath\", path) //String title\r\n                .addHeader(\"providers\", \"Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes\")\r\n                .addHeader(\"expirationminutes\", \"Relevance\") //Options: Relevance, Timestamp, IvaRating, ReleaseDate\r\n                .build();\r\n\r\n        Log.d(\"search\", request.toString());\r\n        client.newCall(request).enqueue(new Callback() {\r\n            @Override\r\n            public void onFailure(Call call, IOException e) {\r\n                e.printStackTrace();\r\n            }\r\n\r\n            @RequiresApi(api = Build.VERSION_CODES.KITKAT)\r\n            @Override\r\n            public void onResponse(Call call, Response response) throws IOException {\r\n                //A Response has a headers and a body\r\n                //Headers just contain info or metadata about the response like number of calls left for the free trial\r\n                // or the Access control methods allowed like GET, POST, PUT, etc\r\n\r\n                //The body has all of the data about the shows and movies found, if any..\r\n                try (ResponseBody responseBody = response.body()) {\r\n                    if (!response.isSuccessful()) {\r\n                        throw new IOException(\"Unexpected code \" + response);\r\n                    }\r\n//\r\n                    //Here is where we get the query results\r\n                    String results = responseBody.string();\r\n                    try {\r\n                        acb.onCallback(results);\r\n                    } catch (JSONException e) {\r\n                        e.printStackTrace();\r\n                    }\r\n                } catch (IOException i) {\r\n                    i.printStackTrace();\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    static void checkProfileImg(final CheckCallBack ccb, final String username) {\r\n        Log.d(\"img\", \"In checkProfileImg\");\r\n        Log.d(\"img\", username);\r\n        FirebaseStorage storage = FirebaseStorage.getInstance();\r\n\r\n        ///Urw3ICjs0edn1hsM7ACFPWDMTeG3/profile_image.jpg\r\n        StorageReference storageRef = storage.getReference();\r\n\r\n        StorageReference userRef = storageRef.child(username);\r\n        final StorageReference picRef = storageRef.child(username).child(\"profile_image.jpg\");\r\n        Log.d(\"img\", picRef.toString());\r\n        picRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {\r\n            @Override\r\n            public void onSuccess(Uri uri) {\r\n                ccb.onCallback(true);\r\n            }\r\n        }).addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception e) {\r\n\r\n                Log.d(\"img\", \"Something went wrong\");\r\n                ccb.onCallback(false);\r\n            }\r\n        });\r\n    }\r\n\r\n    static void setProfileImg(String username, byte[] data) {\r\n        Log.d(\"img\", \"In setProfileImg\");\r\n\r\n        FirebaseStorage storage = FirebaseStorage.getInstance();\r\n        StorageReference storageRef = storage.getReference();\r\n        StorageReference profileRef = storageRef.child(username);\r\n        StorageReference profileImgRef = storageRef.child(username + \"/profile_image.jpg\");\r\n        Log.d(\"img\", \"Reference created: \" + profileImgRef);\r\n\r\n        UploadTask uploadTask = profileImgRef.putBytes(data);\r\n        uploadTask.addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception exception) {\r\n                // Handle unsuccessful uploads\r\n                Log.d(\"file\", \"upload FAILED\");\r\n            }\r\n        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {\r\n            @Override\r\n            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {\r\n                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.\r\n                // ...\r\n                Log.d(\"file\", \"upload SUCCESSFUL\");\r\n            }\r\n        });\r\n    }\r\n\r\n    public static void downloadProfileImg(final ImageCallBack icb, String username) {\r\n        FirebaseStorage storage = FirebaseStorage.getInstance();\r\n        StorageReference storageRef = storage.getReference();\r\n        StorageReference imageRef = storageRef.child(username + \"/profile_image.jpg\");\r\n        Log.d(\"file\", \"Downloading profile image\");\r\n        final long ONE_MEGABYTE = 1024 * 1024;\r\n        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {\r\n            @Override\r\n            public void onSuccess(byte[] bytes) {\r\n                icb.onCallback(bytes);\r\n            }\r\n        }).addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception exception) {\r\n                // Handle any errors\r\n                Log.d(\"check\", \"No Profile Image\");\r\n            }\r\n        });\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/MainActivity.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/MainActivity.java	(date 1607563903927)
+@@ -1,13 +1,14 @@
+ package com.example.whatdoyouwannawatch;
+ 
++import android.app.ProgressDialog;
+ import android.content.Intent;
+-import android.media.Image;
++import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
+ import android.net.Uri;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.util.*;
+ import android.view.View;
+-import android.widget.Toast;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.RequiresApi;
+@@ -30,20 +31,14 @@
+ import com.google.firebase.storage.StorageReference;
+ import com.google.firebase.storage.UploadTask;
+ 
+-import org.json.JSONArray;
+ import org.json.JSONException;
+-import org.json.JSONObject;
+ 
+ import java.io.IOException;
+-import java.util.ArrayList;
++import java.io.InputStream;
+ import java.util.HashMap;
+-import java.util.Iterator;
+-import java.util.List;
+-import java.util.Map;
+ 
+ import okhttp3.Call;
+ import okhttp3.Callback;
+-import okhttp3.Headers;
+ import okhttp3.MediaType;
+ import okhttp3.OkHttpClient;
+ import okhttp3.Request;
+@@ -58,6 +53,9 @@
+     public static DatabaseReference myRef = database.getReference();
+     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+     private FirebaseAuth mAuth;
++    static String r; //result from API Call
++    ProgressDialog p;
++
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -155,7 +153,9 @@
+                     }
+                 });
+     }
++
+     public static Object data = null;
++
+     static Object pullData(char type, String id, final DataCallback dcb) {
+         String t = "theatres";
+         String u = "users";
+@@ -180,6 +180,7 @@
+                         }
+                     }
+                 }
++
+                 @Override
+                 public void onCancelled(DatabaseError databaseError) {
+                     // Getting User failed, log a message
+@@ -208,6 +209,7 @@
+                         }
+                     }
+                 }
++
+                 @Override
+                 public void onCancelled(DatabaseError databaseError) {
+                     // Getting User failed, log a message
+@@ -218,13 +220,13 @@
+             myRef.addListenerForSingleValueEvent(theatreListener);
+             myRef.removeEventListener(theatreListener);
+         }
+-        if (data != null){
+-            return (Object)data;
++        if (data != null) {
++            return (Object) data;
+         }
+         return null;
+     }
+ 
+-    static void deleteData(Object obj){
++    static void deleteData(Object obj) {
+         // A HashMap is used to upload information to firebase, the String is the location in
+         // firebase and the Object is the Object to be put in firebase
+         HashMap<String, Object> map = new HashMap<>();
+@@ -290,10 +292,10 @@
+                     @Override
+                     public void onComplete(@NonNull Task<Void> task) {
+                         if (task.isSuccessful()) {
+-                            MainActivity.pullData( 'u', user.getDisplayName(), new DataCallback() {
++                            MainActivity.pullData('u', user.getDisplayName(), new DataCallback() {
+                                 @Override
+                                 public void onCallback(Object usr) {
+-                                    if(usr== null){
++                                    if (usr == null) {
+                                         User newUser = new User(user.getDisplayName());
+                                         MainActivity.pushData(newUser);
+                                     }
+@@ -306,117 +308,69 @@
+                 });
+     }
+ 
+-    // This is a method to asynchronously call our API, Entertainment Data Hub on RapidAPI,
+-    // https://rapidapi.com/IVALLC/api/entertainment-data-hub and wait for a response
+-    // To implement this method, I need to use a callback function
+-    public static void apiCallSearch(String progTypes, String genres, String providers, final ApiCallback acb) throws IOException {
+-
+-        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
+-        //Log.d("search", "Title: " + title );
+-        genres = genres.replaceAll("\\s+", "");
+-        providers = providers.replaceAll("\\s+", "");
+-
+-
+-        Log.d("search", "genres: " + genres);
+-        Log.d("search", "providers: " + providers);
+-        Log.d("search", "progTypes: " + progTypes);
+-
+-        Request request = new Request.Builder()
+-                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/")
+-                .get()
+-                .addHeader("content-type", "application/json")
+-                .addHeader("x-rapidapi-key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
+-                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+-                .addHeader("Genres", genres)
+-                .addHeader("ProgramTypes", progTypes)
+-                .addHeader("Providers", providers)
+-                .addHeader("SortBy", "Relevance")
+-                .addHeader("Includes", "Descriptions,Images,Genres,Contributors")
+-                .build();
+-
+-        Log.d("search", request.toString());
+-
+-        client.newCall(request).enqueue(new Callback() {
+-            @Override
+-            public void onFailure(Call call, IOException e) {
+-                e.printStackTrace();
+-            }
+-
+-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+-            @Override
+-            public void onResponse(Call call, Response response) throws IOException {
+-                //Call
+-                Log.d("search", "call from response: " + call.request().toString());
+-
+-                //A Response has a headers and a body
+-                //Headers just contain info or metadata about the response like number of calls left for the free trial
+-                // or the Access control methods allowed like GET, POST, PUT, etc
++    public static void apiCallImage( String path, final ApiCallback acb) throws IOException, JSONException {
++        if(path != null && path.length() > 0) {
++            OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
++            //Log.d("search", "Title: " + title );
+ 
+-                //The body has all of the data about the shows and movies found, if any..
+-                try (ResponseBody responseBody = response.body()) {
+-                    if (!response.isSuccessful()) {
+-                        throw new IOException("Unexpected code " + response);
+-                    }
+-                    String results = responseBody.string();
+-                    try {
+-                        acb.onCallback(results);
+-                    } catch (JSONException e) {
+-                        e.printStackTrace();
+-                    }
+-                } catch (IOException i) {
+-                    i.printStackTrace();
+-                }
+-            }
+-        });
+-    }
+-
+-    public static void apiCallImage(String path, final ApiCallback acb) throws IOException {
+-        OkHttpClient client = new OkHttpClient(); //A client for networking with the Api online
+-        //Log.d("search", "Title: " + title );
+-        Request request = new Request.Builder() // This is the query we build
+-                .url("https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/%7Bfilepath%7D/Redirect?Redirect=false")
+-                .get()
+-                .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
+-                .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
+-                .addHeader("accept", "application/json")
+-                .addHeader("filepath", path) //String title
+-                .addHeader("providers", "Netflix,Hulu,AmazonPrimeVideo,HBO,GooglePlay,iTunes")
+-                .addHeader("expirationminutes", "Relevance") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
+-                .build();
++            String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/Images/" + path + "/Redirect?Redirect=True";
++            Request request = new Request.Builder() // This is the query we build
++                    .url(address)
++                    .get()
++                    .addHeader("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
++                    .addHeader("x-rapidapi-key", "0781c4e67fmsh14845fdab783a92p1a799ejsna0098cb737dd")
++                    .addHeader("accept", "application/json")
++                    .addHeader("filepath", path) //String title
++                    .addHeader("expirationminutes", "60") //Options: Relevance, Timestamp, IvaRating, ReleaseDate
++                    .build();
+ 
+-        Log.d("search", request.toString());
+-        client.newCall(request).enqueue(new Callback() {
+-            @Override
+-            public void onFailure(Call call, IOException e) {
+-                e.printStackTrace();
+-            }
++
++            Log.d("search", request.toString());
++
++            client.newCall(request).enqueue(new Callback() {
++                @Override
++                public void onFailure(Call call, IOException e) {
++                    e.printStackTrace();
++                }
+ 
+-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+-            @Override
+-            public void onResponse(Call call, Response response) throws IOException {
+-                //A Response has a headers and a body
+-                //Headers just contain info or metadata about the response like number of calls left for the free trial
+-                // or the Access control methods allowed like GET, POST, PUT, etc
++                @RequiresApi(api = Build.VERSION_CODES.KITKAT)
++                @Override
++                public void onResponse(Call call, Response response) throws IOException {
++                    //A Response has a headers and a body
++                    //Headers just contain info or metadata about the response like number of calls left for the free trial
++                    // or the Access control methods allowed like GET, POST, PUT, etc
+ 
+-                //The body has all of the data about the shows and movies found, if any..
+-                try (ResponseBody responseBody = response.body()) {
+-                    if (!response.isSuccessful()) {
+-                        throw new IOException("Unexpected code " + response);
+-                    }
+-//
+-                    //Here is where we get the query results
+-                    String results = responseBody.string();
+-                    try {
+-                        acb.onCallback(results);
+-                    } catch (JSONException e) {
+-                        e.printStackTrace();
+-                    }
+-                } catch (IOException i) {
+-                    i.printStackTrace();
+-                }
+-            }
+-        });
++                    //The body has all of the data about the shows and movies found, if any..
++                    try (ResponseBody responseBody = response.body()) {
++                        if (!response.isSuccessful()) {
++                            throw new IOException("Unexpected code " + response);
++                        }
++
++                        InputStream inputStream = responseBody.byteStream();
++                        Bitmap image = BitmapFactory.decodeStream(inputStream);
++
++                        try {
++                            acb.onCallback(image);
++
++                        } catch (JSONException e) {
++                            e.printStackTrace();
++                        }
++                    } catch (IOException i) {
++                        i.printStackTrace();
++                        try {
++                            acb.onCallback(null);
++                        } catch (JSONException e) {
++                            e.printStackTrace();
++                        }
++                    }
++                }
++            });
++        }else{
++            acb.onCallback(null);
++        }
++
+     }
++
+ 
+     static void checkProfileImg(final CheckCallBack ccb, final String username) {
+         Log.d("img", "In checkProfileImg");
+@@ -489,6 +443,6 @@
+             }
+         });
+     }
++}
+ 
+ 
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/whatdoyouwannawatch/ApiCallback.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport org.json.JSONException;\r\n\r\nimport java.io.IOException;\r\n\r\npublic interface ApiCallback {\r\n    //In this callback interface, the onCallback function will\r\n    //be called back and loaded with a parameter that I can set\r\n    void onCallback(String res) throws JSONException, IOException;\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/ApiCallback.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/ApiCallback.java	(date 1607558790957)
+@@ -1,5 +1,7 @@
+ package com.example.whatdoyouwannawatch;
+ 
++import android.graphics.Bitmap;
++
+ import org.json.JSONException;
+ 
+ import java.io.IOException;
+@@ -7,5 +9,5 @@
+ public interface ApiCallback {
+     //In this callback interface, the onCallback function will
+     //be called back and loaded with a parameter that I can set
+-    void onCallback(String res) throws JSONException, IOException;
++    void onCallback(Bitmap result) throws JSONException, IOException;
+ }
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_media_details.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MediaDetails\">\r\n\r\n    <ImageView\r\n        android:id=\"@+id/detail_poster\"\r\n        android:layout_width=\"135dp\"\r\n        android:layout_height=\"200dp\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"32dp\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:srcCompat=\"@drawable/logo\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_title\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"24dp\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:fontFamily=\"sans-serif-condensed-medium\"\r\n        android:text=\"Title\"\r\n        android:textColor=\"@color/colorText\"\r\n        android:textSize=\"24sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toEndOf=\"@+id/detail_poster\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_year_type\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:text=\"year and type\"\r\n        android:textColor=\"@color/colorText\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/detail_title\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_title\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_directed_by\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:text=\"Directed By\"\r\n        android:textColor=\"@color/colorText\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/detail_title\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_language\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_director\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:text=\"director\"\r\n        android:textColor=\"@color/colorText\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/detail_title\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_directed_by\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_length\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:text=\"length\"\r\n        android:textColor=\"@color/colorText\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/detail_title\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_year_type\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_language\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:text=\"language\"\r\n        android:textColor=\"@color/colorText\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/detail_title\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_length\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/detail_description\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"32dp\"\r\n        android:layout_marginTop=\"32dp\"\r\n        android:layout_marginEnd=\"32dp\"\r\n        android:text=\"Descriptions\"\r\n        android:textColor=\"@color/colorText\"\r\n        android:textSize=\"18sp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/detail_director\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_media_details.xml	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/res/layout/activity_media_details.xml	(date 1607562795358)
+@@ -49,19 +49,19 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="32dp"
+-        android:text="Directed By"
++        android:text="Cast"
+         android:textColor="@color/colorText"
+         android:textStyle="bold"
+         app:layout_constraintStart_toStartOf="@+id/detail_title"
+         app:layout_constraintTop_toBottomOf="@+id/detail_language" />
+ 
+     <TextView
+-        android:id="@+id/detail_director"
++        android:id="@+id/detail_cast"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="8dp"
+         android:layout_marginEnd="32dp"
+-        android:text="director"
++        android:text="Cast"
+         android:textColor="@color/colorText"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="@+id/detail_title"
+@@ -104,5 +104,5 @@
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.0"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/detail_director" />
++        app:layout_constraintTop_toBottomOf="@+id/detail_cast" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/whatdoyouwannawatch/MediaDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.os.Bundle;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.gson.Gson;\r\n\r\npublic class MediaDetails extends AppCompatActivity {\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_media_details);\r\n\r\n        String json = getIntent().getStringExtra(\"data\");\r\n        Toast.makeText(this, json, Toast.LENGTH_LONG);\r\n\r\n        Media data = new Gson().fromJson(json, Media.class);\r\n\r\n        ImageView poster = findViewById(R.id.detail_poster);\r\n        TextView title = findViewById(R.id.detail_title);\r\n        TextView year = findViewById(R.id.detail_year_type);\r\n        TextView length = findViewById(R.id.detail_length);\r\n        TextView lang = findViewById(R.id.detail_language);\r\n        TextView by = findViewById(R.id.detail_directed_by);\r\n        TextView director = findViewById(R.id.detail_director);\r\n        TextView description = findViewById(R.id.detail_description);\r\n\r\n        title.setText(data.getTitle());\r\n//        year.setText(data.getYear() + \" \" + getType());\r\n        length.setText(Integer.toString(data.getLength()));\r\n//        lang.setText(data.getLanguage());\r\n        if (data.getDirector().equals(\"no Director available\")){\r\n            by.setText(\"\");\r\n            director.setText(\"\");\r\n        } else\r\n            director.setText(data.getDirector());\r\n\r\n        description.setText(data.getDescription());\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/MediaDetails.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/MediaDetails.java	(date 1607563912964)
+@@ -2,15 +2,22 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import android.app.ProgressDialog;
++import android.graphics.Bitmap;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.widget.ImageView;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
+ import com.google.gson.Gson;
+ 
++import org.json.JSONException;
++
++import java.io.IOException;
++
+ public class MediaDetails extends AppCompatActivity {
+-
++    ProgressDialog p;
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -21,24 +28,60 @@
+ 
+         Media data = new Gson().fromJson(json, Media.class);
+ 
+-        ImageView poster = findViewById(R.id.detail_poster);
++        final ImageView poster = findViewById(R.id.detail_poster);
+         TextView title = findViewById(R.id.detail_title);
+         TextView year = findViewById(R.id.detail_year_type);
+         TextView length = findViewById(R.id.detail_length);
+         TextView lang = findViewById(R.id.detail_language);
+         TextView by = findViewById(R.id.detail_directed_by);
+-        TextView director = findViewById(R.id.detail_director);
++        TextView cast = findViewById(R.id.detail_cast);
+         TextView description = findViewById(R.id.detail_description);
++        p = new ProgressDialog(MediaDetails.this);
++        p.setMessage("Getting Media details...");
++        p.setCancelable(false);
++        p.show();
++
++        try {
++            MainActivity.apiCallImage(data.getPoster(), new ApiCallback() {
++                @Override
++                public void onCallback(final Bitmap result) throws JSONException, IOException {
++                    if (result != null) {
++                        Log.d("search", "Image found, downloading from API");
++                        runOnUiThread(new Runnable() {
++                            @Override
++                            public void run() {
++                                poster.setImageBitmap(result);
++                                p.dismiss();
++                            }
++                        });
++                    } else {
++                        Log.d("search", "No image downloaded");
++                        p.dismiss();
++                    }
++                }
++            });
++        } catch (IOException | JSONException e) {
++            e.printStackTrace();
++        }
+ 
+         title.setText(data.getTitle());
+-//        year.setText(data.getYear() + " " + getType());
+-        length.setText(Integer.toString(data.getLength()));
+-//        lang.setText(data.getLanguage());
+-        if (data.getDirector().equals("no Director available")){
+-            by.setText("");
+-            director.setText("");
+-        } else
+-            director.setText(data.getDirector());
++        year.setText(data.getYear() + " " + data.getType() );
++
++
++        if(data.getLength() == 0)
++            length.setText("No duration found");
++        else
++                length.setText(Integer.toString(data.getLength()) + " minutes");
++
++        lang.setText(data.getLanguage());
++
++        String c = "";
++        for (String ca: data.getCast()) {
++            if (!c.contains(ca))
++                c = c.concat(ca + "\n");
++        }
++
++        cast.setText(c);
+ 
+         description.setText(data.getDescription());
+     }
+Index: app/src/main/java/com/example/whatdoyouwannawatch/ChooseStreamingServicesActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.util.SparseBooleanArray;\r\nimport android.view.View;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.ListView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class ChooseStreamingServicesActivity extends AppCompatActivity {\r\n    private String streamingServices[] = {\"Google Play\",\r\n            \"HBO\", \"Hulu\", \"Amazon Prime Video\", \"Netflix\"};\r\n    private ArrayAdapter<String> arrayAdapter;\r\n    private ListView listView;\r\n    String genreList = null;\r\n    String theatreID;\r\n    private List<String> existingServices;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_choose_streaming_services);\r\n        //Sorting the streamingServices\r\n        for (int i = 0; i < streamingServices.length; i++) {\r\n            for (int j = i + 1; j < streamingServices.length; j++) {\r\n                if (streamingServices[i].compareTo(streamingServices[j]) > 0) {\r\n                    String temp = streamingServices[i];\r\n                    streamingServices[i] = streamingServices[j];\r\n                    streamingServices[j] = temp;\r\n                }\r\n            }\r\n        }\r\n        Bundle extras = getIntent().getExtras();\r\n\r\n        if (extras != null) { //extra passed into this\r\n            genreList = extras.getString(\"genreList\");\r\n            theatreID = extras.getString(\"theatreID\");\r\n        }\r\n        Log.d(\"search\", genreList);\r\n\r\n        arrayAdapter = new ArrayAdapter<String>(this,\r\n                android.R.layout.simple_list_item_multiple_choice, streamingServices);\r\n        listView = findViewById(R.id.listView_displayStreamingServices);\r\n        listView.setAdapter(arrayAdapter);\r\n        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);\r\n\r\n        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();\r\n        String username = fbUser.getDisplayName();\r\n        MainActivity.pullData('u', username, new DataCallback() {\r\n            @Override\r\n            public void onCallback(Object obj) {\r\n                final User user = (User) obj;\r\n                if(!user.isGuest()) {\r\n                    AlertDialog.Builder builder1 = new AlertDialog.Builder(ChooseStreamingServicesActivity.this);\r\n                    builder1.setMessage(\"Would you like to use your saved streaming services?\");\r\n                    builder1.setPositiveButton(\"Yes\", new DialogInterface.OnClickListener() {\r\n                        @Override\r\n                        public void onClick(DialogInterface dialog, int id) {\r\n                            existingServices = user.getServices();\r\n                            for(int i = 0; i < arrayAdapter.getCount(); i++) {\r\n                                if(existingServices!= null && existingServices.contains(listView.getItemAtPosition(i))) {\r\n                                    listView.setItemChecked(i, true);\r\n                                }\r\n                            }\r\n                            Button button = findViewById(R.id.button_selectStreamingServices);\r\n                            button.performClick();\r\n                            existingServices = user.getServices();\r\n                            dialog.cancel();\r\n                        }\r\n                    });\r\n\r\n                    builder1.setNegativeButton(\"No\", new DialogInterface.OnClickListener() {\r\n                        @Override\r\n                        public void onClick(DialogInterface dialog, int id) {\r\n                            dialog.cancel();\r\n                        }\r\n                    });\r\n\r\n                    AlertDialog alert11 = builder1.create();\r\n                    alert11.show();\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    public void onClickSelectStreamingServices(View v) {\r\n        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();\r\n        SparseBooleanArray checked = listView.getCheckedItemPositions();\r\n        ArrayList<String> selectedStreamingServices = new ArrayList<String>();\r\n        for (int i = 0; i < checked.size(); i++) {\r\n            int position = checked.keyAt(i);\r\n            // add genre if checked\r\n            if (checked.valueAt(i)) {\r\n                selectedStreamingServices.add(arrayAdapter.getItem(position));\r\n            }\r\n        }\r\n        final ArrayList<String> userServices = selectedStreamingServices;\r\n\r\n        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {\r\n            @Override\r\n            public void onCallback(Object obj) {\r\n                if (obj != null) {\r\n                    User u = (User) obj;\r\n                    u.setServices(userServices);\r\n                    MainActivity.pushData(u);\r\n                }\r\n            }\r\n        });\r\n\r\n        String streamingServiceList = \"\";\r\n        for (String genre : selectedStreamingServices) {\r\n            streamingServiceList += genre + \", \";\r\n        }\r\n        streamingServiceList = streamingServiceList.trim();\r\n        if (streamingServiceList.length() > 0) {\r\n            if (streamingServiceList.substring(streamingServiceList.length() - 1).equals(\",\")) {\r\n                streamingServiceList = streamingServiceList.substring(0, streamingServiceList.length() - 1);\r\n            }\r\n        }\r\n        // Toast.makeText(this, streamingServiceList, Toast.LENGTH_SHORT).show();\r\n        Intent intent = new Intent(this, DurationSelection.class);\r\n        intent.putExtra(\"genreList\", genreList);\r\n        intent.putExtra(\"streamingServiceList\", streamingServiceList);\r\n        intent.putExtra(\"theatreID\", theatreID);\r\n        startActivity(intent);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/ChooseStreamingServicesActivity.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/ChooseStreamingServicesActivity.java	(date 1607566040760)
+@@ -21,8 +21,7 @@
+ import java.util.List;
+ 
+ public class ChooseStreamingServicesActivity extends AppCompatActivity {
+-    private String streamingServices[] = {"Google Play",
+-            "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
++    private String streamingServices[] = {"HBO", "Hulu", "Amazon Prime Video", "Netflix"};
+     private ArrayAdapter<String> arrayAdapter;
+     private ListView listView;
+     String genreList = null;
+Index: app/src/main/java/com/example/whatdoyouwannawatch/Media.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\n\r\n\r\nimport android.media.Image;\r\n\r\nimport java.io.Serializable;\r\nimport java.net.URL;\r\nimport java.time.LocalTime;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class Media implements Comparable<Media>, Serializable {\r\n    private String id;\r\n    private String title;\r\n    private List<String> genres;\r\n    private List<String> cast;\r\n    private List<User> currentVoters;\r\n    private int length;\r\n    private String director;\r\n    private String writer;\r\n    private String description;\r\n    private URL poster;\r\n    private Double rating;\r\n    private String year;\r\n    private String type;\r\n    private String language;\r\n\r\n\r\n    public Media(){\r\n        this.currentVoters = new ArrayList<User>();\r\n    }\r\n\r\n    //constructor\r\n    public Media(String s) {\r\n        this.id = s;\r\n        this.currentVoters = new ArrayList<User>();\r\n    }\r\n\r\n    //constructor1\r\n    public Media(String title, List<String> genres, int length, URL poster) {\r\n        this.title = title;\r\n        this.genres = genres;\r\n        this.length = length;\r\n        this.poster = poster;\r\n        this.currentVoters = new ArrayList<User>();\r\n    }\r\n\r\n    //constructor2, TODO make some parameters optional depends on what info we can get from stream service\r\n    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, URL poster, Double rating) {\r\n        this.id = id;\r\n        this.title = title;\r\n        this.genres = genres;\r\n        this.cast = cast;\r\n        this.length = length;\r\n        this.director = director;\r\n        this.writer = writer;\r\n        this.description = description;\r\n        this.poster = poster;\r\n        this.rating = rating;\r\n        this.currentVoters = new ArrayList<User>();\r\n    }\r\n\r\n    public String getId() {\r\n        return id;\r\n    }\r\n\r\n    public void setId(String id) {\r\n        this.id = id;\r\n    }\r\n\r\n    public String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public List<String> getGenres() {\r\n        return genres;\r\n    }\r\n\r\n    public void setGenres(List<String> genres) {\r\n        this.genres = genres;\r\n    }\r\n\r\n    public List<String> getCast() {\r\n        return cast;\r\n    }\r\n\r\n    public void setCast(List<String> cast) {\r\n        this.cast = cast;\r\n    }\r\n\r\n    public int getLength() {\r\n        return length;\r\n    }\r\n\r\n    public void setLength(int length) {\r\n        this.length = length;\r\n    }\r\n\r\n    public String getDirector() {\r\n        return director;\r\n    }\r\n\r\n    public void setDirector(String director) {\r\n        this.director = director;\r\n    }\r\n\r\n    public String getWriter() {\r\n        return writer;\r\n    }\r\n\r\n    public void setWriter(String writer) {\r\n        this.writer = writer;\r\n    }\r\n\r\n    public String getDescription() {\r\n        return description;\r\n    }\r\n\r\n    public void setDescription(String description) {\r\n        this.description = description;\r\n    }\r\n\r\n    public URL getPoster() {\r\n        return poster;\r\n    }\r\n\r\n    public void setPoster(URL poster) {\r\n        this.poster = poster;\r\n    }\r\n\r\n    public Double getRating() {\r\n        return rating;\r\n    }\r\n\r\n    public void setRating(Double rating) {\r\n        this.rating = rating;\r\n    }\r\n\r\n    public List<User> getCurrentVoters() {\r\n        return currentVoters;\r\n    }\r\n\r\n    public void setCurrentVoters(List<User> currentVoters) {\r\n        this.currentVoters = currentVoters;\r\n    }\r\n\r\n    public void addVoter(User u){\r\n        this.currentVoters.add(u);\r\n    }\r\n    public void removeVoter(User u){\r\n        this.currentVoters.remove(u);\r\n    }\r\n\r\n    public int getNumVoters(){\r\n        return this.currentVoters.size();\r\n    }\r\n\r\n    public void setNumVoters(int i){\r\n        while(this.currentVoters.size() > i ){\r\n            this.currentVoters.remove(this.currentVoters.size()-1);\r\n        }\r\n    }\r\n\r\n    public String getLanguage() {  return language;  }\r\n\r\n    public void setLanguage(String language) { this.language = language; }\r\n\r\n    public String getType() { return type; }\r\n\r\n    public void setType(String type) { this.type = type; }\r\n\r\n    public String getYear() { return year; }\r\n\r\n    public void setYear(String year) { this.year = year; }\r\n\r\n    public boolean equalTo(Media m){ return this.title == m.title; }\r\n\r\n    @Override\r\n    public int compareTo(Media m) {\r\n        return this.currentVoters.size() - m.currentVoters.size();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/Media.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/Media.java	(date 1607558722872)
+@@ -2,11 +2,7 @@
+ 
+ 
+ 
+-import android.media.Image;
+-
+ import java.io.Serializable;
+-import java.net.URL;
+-import java.time.LocalTime;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+@@ -20,7 +16,7 @@
+     private String director;
+     private String writer;
+     private String description;
+-    private URL poster;
++    private String poster;
+     private Double rating;
+     private String year;
+     private String type;
+@@ -38,7 +34,7 @@
+     }
+ 
+     //constructor1
+-    public Media(String title, List<String> genres, int length, URL poster) {
++    public Media(String title, List<String> genres, int length, String poster) {
+         this.title = title;
+         this.genres = genres;
+         this.length = length;
+@@ -47,7 +43,7 @@
+     }
+ 
+     //constructor2, TODO make some parameters optional depends on what info we can get from stream service
+-    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, URL poster, Double rating) {
++    public Media(String id, String title, ArrayList<String> genres, ArrayList<String> cast, int length, String director, String writer, String description, String poster, Double rating) {
+         this.id = id;
+         this.title = title;
+         this.genres = genres;
+@@ -125,11 +121,11 @@
+         this.description = description;
+     }
+ 
+-    public URL getPoster() {
++    public String getPoster() {
+         return poster;
+     }
+ 
+-    public void setPoster(URL poster) {
++    public void setPoster(String poster) {
+         this.poster = poster;
+     }
+ 
+Index: app/src/main/java/com/example/whatdoyouwannawatch/ResultActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport android.os.Bundle;\r\nimport android.content.Intent;\r\nimport android.util.Log;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.database.DataSnapshot;\r\nimport com.google.firebase.database.DatabaseError;\r\nimport com.google.firebase.database.DatabaseReference;\r\nimport com.google.firebase.database.FirebaseDatabase;\r\nimport com.google.firebase.database.ValueEventListener;\r\n\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.net.HttpURLConnection;\r\nimport java.net.MalformedURLException;\r\nimport java.net.URL;\r\nimport java.util.ArrayList;\r\n\r\npublic class ResultActivity extends AppCompatActivity {\r\n    FirebaseUser fbUser;\r\n    String theatreID;\r\n    private static ArrayList<Media> mediaList = new ArrayList<Media>(5);\r\n    public static FirebaseDatabase database = FirebaseDatabase.getInstance();\r\n    public static DatabaseReference myRef = database.getReference();\r\n    ImageView resultImg;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_result);\r\n        resultImg = findViewById(R.id.result_poster);\r\n        fbUser = FirebaseAuth.getInstance().getCurrentUser();\r\n\r\n        Bundle extras = getIntent().getExtras();\r\n        if (extras != null) { //extra passed into this\r\n            mediaList = (ArrayList<Media>) extras.getSerializable(\"mediaList\");\r\n            theatreID = extras.getString(\"theatreID\");\r\n        }\r\n        if(theatreID!= null && !theatreID.equalsIgnoreCase(fbUser.getDisplayName())){\r\n            Button button = (Button) findViewById(R.id.calcResultButton);\r\n            button.setVisibility(View.GONE);\r\n            TextView displayTitle = findViewById(R.id.textView19);\r\n            displayTitle.setText(\"Please wait for the result to be calculated\");\r\n        }\r\n         waitForResult();\r\n    }\r\n\r\n    private void waitForResult() {\r\n        myRef = database.getReference();\r\n        DatabaseReference tRef =myRef.child(\"theatres\").child(theatreID).child(\"result\");\r\n\r\n        myRef.addValueEventListener(new ValueEventListener() {\r\n            @Override\r\n            public void onDataChange(DataSnapshot dataSnapshot) {\r\n                DataSnapshot dataSnapshotRes = dataSnapshot.child(\"result\");\r\n\r\n                for (DataSnapshot valueRes : dataSnapshotRes.getChildren()){\r\n                    Result r =dataSnapshot.getValue(Result.class);\r\n                    TextView displayTitle = findViewById(R.id.textView19);\r\n\r\n                    displayTitle.setText(r.getFinalDecision().getTitle());\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onCancelled(DatabaseError databaseError) {\r\n                System.out.println(\"The read failed: \" + databaseError.getCode());\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    public void onClickDone(View v){\r\n        FirebaseAuth mAuth = FirebaseAuth.getInstance();\r\n        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {\r\n            @Override\r\n            public void onCallback(Object obj) {\r\n                if (obj != null) {\r\n                    User u = (User) obj;\r\n                    Log.i(\"Guest\", u.getUsername());\r\n                    Log.i(\"Guest\", Boolean.toString(u.isGuest()));\r\n                    if (u.isGuest()) {\r\n                        // delete user\r\n                        /*\r\n                        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {\r\n                            @Override\r\n                            public void onCallback(Object obj) {\r\n                                if (obj != null) {\r\n                                    User u = (User) obj;\r\n                                    MainActivity.deleteData(u);\r\n                                }\r\n                            }\r\n                        });\r\n                        //Delete guest in FB Auth\r\n                        FirebaseAuth.getInstance().getCurrentUser().delete();\r\n                        */\r\n                        Intent intent = new Intent(ResultActivity.this, MainActivity.class);\r\n                        startActivity(intent);\r\n                    } else {\r\n                        Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);\r\n                        startActivity(intent);\r\n                    }\r\n                }\r\n                else{\r\n                    Log.i(\"Guest\", \"Guest is null\");\r\n                }\r\n            }\r\n        });\r\n\r\n\r\n\r\n\r\n        // TODO add result to history\r\n    }\r\n\r\n    public void onClickCalcResult(View v){\r\n        if(fbUser.getDisplayName().equals(theatreID)) {\r\n            MainActivity.pullData('t', theatreID, new DataCallback() {\r\n                @Override\r\n                public void onCallback(Object obj) {\r\n                    if(obj!= null){\r\n                        Theatre t = (Theatre)obj;\r\n                        BackStage b = new BackStage(t);\r\n                        b.calcResult(mediaList);\r\n                        MainActivity.pushData(t);\r\n                        Log.i(\"User\", \"About to update\");\r\n                        updateWatchHistories(t);\r\n\r\n                        TextView displayTitle = findViewById(R.id.textView19);\r\n                        displayTitle.setText(t.getResult().getFinalDecision().getTitle());\r\n\r\n                        URL url = null;\r\n                        if(t.getResult().getFinalDecision().getPoster() != null) {\r\n                            try {\r\n                                url = new URL(t.getResult().getFinalDecision().getPoster().toString());\r\n                                if (url != null) {\r\n                                    HttpURLConnection connection = null;\r\n                                    connection = (HttpURLConnection) url.openConnection();\r\n                                    connection.setDoInput(true);\r\n                                    connection.connect();\r\n                                    InputStream input = connection.getInputStream();\r\n                                    Bitmap poster = BitmapFactory.decodeStream(input);\r\n                                    resultImg.setImageBitmap(poster);\r\n                                } else {\r\n                                    Log.d(\"result\", \"No poster available for this result.\");\r\n                                }\r\n                            } catch (IOException e) {\r\n                                e.printStackTrace();\r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n\r\n    private void updateWatchHistories(Theatre theatre){\r\n        final Result result = theatre.getResult();\r\n        ArrayList<User> users = (ArrayList<User>) theatre.getUsers();\r\n        for (User u : users) {\r\n            MainActivity.pullData('u', u.getUsername(), new DataCallback() {\r\n                @Override\r\n                public void onCallback(Object obj) {\r\n                    if (obj != null) {\r\n                        User us = (User)obj;\r\n                        if (us.getHistory() == null || us.getHistory().size() < 1) {\r\n                            ArrayList<String> history = new ArrayList<String>();\r\n                            history.add(result.getFinalDecision().getTitle());\r\n                            us.setHistory(history);\r\n                        } else {\r\n                            us.addHistory(result.getFinalDecision().getTitle());\r\n                        }\r\n                        MainActivity.pushData(us);\r\n                    }\r\n                }\r\n            });\r\n            //Toast.makeText(ResultActivity.this,\"User History: \" + u.getHistory().toString(), Toast.LENGTH_SHORT).show();\r\n\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/ResultActivity.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/ResultActivity.java	(date 1607564275247)
+@@ -2,6 +2,7 @@
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ 
++import android.app.ProgressDialog;
+ import android.graphics.Bitmap;
+ import android.graphics.BitmapFactory;
+ import android.os.Bundle;
+@@ -11,7 +12,6 @@
+ import android.widget.Button;
+ import android.widget.ImageView;
+ import android.widget.TextView;
+-import android.widget.Toast;
+ 
+ import com.google.firebase.auth.FirebaseAuth;
+ import com.google.firebase.auth.FirebaseUser;
+@@ -21,10 +21,11 @@
+ import com.google.firebase.database.FirebaseDatabase;
+ import com.google.firebase.database.ValueEventListener;
+ 
++import org.json.JSONException;
++
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.net.HttpURLConnection;
+-import java.net.MalformedURLException;
+ import java.net.URL;
+ import java.util.ArrayList;
+ 
+@@ -35,6 +36,7 @@
+     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+     public static DatabaseReference myRef = database.getReference();
+     ImageView resultImg;
++    ProgressDialog p;
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+@@ -126,6 +128,10 @@
+     }
+ 
+     public void onClickCalcResult(View v){
++        p = new ProgressDialog(ResultActivity.this);
++        p.setMessage("Getting Media details...");
++        p.setCancelable(false);
++        p.show();
+         if(fbUser.getDisplayName().equals(theatreID)) {
+             MainActivity.pullData('t', theatreID, new DataCallback() {
+                 @Override
+@@ -141,24 +147,28 @@
+                         TextView displayTitle = findViewById(R.id.textView19);
+                         displayTitle.setText(t.getResult().getFinalDecision().getTitle());
+ 
+-                        URL url = null;
+-                        if(t.getResult().getFinalDecision().getPoster() != null) {
+-                            try {
+-                                url = new URL(t.getResult().getFinalDecision().getPoster().toString());
+-                                if (url != null) {
+-                                    HttpURLConnection connection = null;
+-                                    connection = (HttpURLConnection) url.openConnection();
+-                                    connection.setDoInput(true);
+-                                    connection.connect();
+-                                    InputStream input = connection.getInputStream();
+-                                    Bitmap poster = BitmapFactory.decodeStream(input);
+-                                    resultImg.setImageBitmap(poster);
+-                                } else {
+-                                    Log.d("result", "No poster available for this result.");
++                        Media m = t.getResult().getFinalDecision();
++                        try {
++                            MainActivity.apiCallImage(m.getPoster(), new ApiCallback() {
++                                @Override
++                                public void onCallback(final Bitmap result) throws JSONException, IOException {
++                                    if (result != null) {
++                                        Log.d("search", "Image found, downloading from API");
++                                        runOnUiThread(new Runnable() {
++                                            @Override
++                                            public void run() {
++                                                resultImg.setImageBitmap(result);
++                                                p.dismiss();
++                                            }
++                                        });
++                                    } else {
++                                        Log.d("search", "No image downloaded");
++                                        p.dismiss();
++                                    }
+                                 }
+-                            } catch (IOException e) {
+-                                e.printStackTrace();
+-                            }
++                            });
++                        } catch (IOException | JSONException e) {
++                            e.printStackTrace();
+                         }
+                     }
+                 }
+Index: app/src/main/java/com/example/whatdoyouwannawatch/AsyncResponse.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/AsyncResponse.java	(date 1607527328740)
++++ app/src/main/java/com/example/whatdoyouwannawatch/AsyncResponse.java	(date 1607527328740)
+@@ -0,0 +1,5 @@
++package com.example.whatdoyouwannawatch;
++
++public interface AsyncResponse {
++    void processFinish(String result) throws InterruptedException;
++}
+Index: app/src/main/java/com/example/whatdoyouwannawatch/MediaRanking.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.content.ContextCompat;\r\nimport androidx.recyclerview.widget.ItemTouchHelper;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.GestureDetector;\r\nimport android.view.LayoutInflater;\r\nimport android.view.MotionEvent;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.RelativeLayout;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.gson.Gson;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\n\r\nimport java.io.IOException;\r\nimport java.io.Serializable;\r\nimport java.net.MalformedURLException;\r\nimport java.net.URL;\r\nimport java.util.ArrayList;\r\nimport java.util.Iterator;\r\nimport java.util.List;\r\n\r\npublic class MediaRanking extends AppCompatActivity {\r\n\r\n    private static ArrayList<Media> mediaList = new ArrayList<Media>(5);\r\n    private String genreList = null;\r\n    private String streamingServiceList = null;\r\n    private String theatreID;\r\n    public static ArrayList<URL> im = new ArrayList<>();\r\n\r\n    FirebaseUser fbUser;\r\n\r\n    private static final String TAG = \"MediaRanking\";\r\n    String progTypes;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_media_ranking);\r\n        fbUser = FirebaseAuth.getInstance().getCurrentUser();\r\n\r\n        Bundle extras = getIntent().getExtras();\r\n\r\n        if (extras != null) { //extra passed into this\r\n            genreList = extras.getString(\"genreList\");\r\n            streamingServiceList = extras.getString(\"streamingServiceList\");\r\n            theatreID = extras.getString(\"theatreID\");\r\n            progTypes = extras.getString(\"progType\");\r\n        }\r\n        extras.clear();\r\n\r\n        retrieveData();\r\n    }\r\n\r\n    private void initRecyclerView() {\r\n\r\n        RecyclerView recyclerView = findViewById(R.id.ranking_recycler);\r\n        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);\r\n\r\n        ItemTouchHelper.Callback callback = new MediaRankingTouchHelper(mediaRankingAdapter);\r\n        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);\r\n        mediaRankingAdapter.setTouchHelper(itemTouchHelper);\r\n        itemTouchHelper.attachToRecyclerView(recyclerView);\r\n\r\n        recyclerView.setAdapter(mediaRankingAdapter);\r\n        recyclerView.setLayoutManager(new LinearLayoutManager(this));\r\n\r\n    }\r\n\r\n    private void retrieveData() {\r\n        getMediaList(progTypes, genreList, streamingServiceList, new MediaCallback() {\r\n            @Override\r\n            public void onCallback(final ArrayList<Media> m) {\r\n                runOnUiThread(new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n\r\n                        initRecyclerView();\r\n                    }\r\n                });\r\n            }\r\n        });\r\n    }\r\n\r\n    public void onClickRanking(View v) {\r\n        // TODO for testing purposes\r\n        ArrayList<String> toasts = new ArrayList<String>();\r\n        for (Media e : mediaList) {\r\n            toasts.add(e.getTitle());\r\n        }\r\n       // Toast.makeText(MediaRanking.this, \"\" + toasts.toString(), Toast.LENGTH_SHORT).show();\r\n\r\n        MainActivity.pullData('t', theatreID, new DataCallback() {\r\n            @Override\r\n            public void onCallback(Object obj) {\r\n                if (obj != null) {\r\n                    Theatre t = (Theatre) obj;\r\n                    List<User> users = t.getUsers();\r\n                    for (int i = 0; i < users.size(); i++) {\r\n                        if (users.get(i).getUsername().equals(fbUser.getDisplayName())) {\r\n                            users.get(i).setRankings(mediaList);\r\n                        }\r\n                    }\r\n                    MainActivity.pushData(t);\r\n                }\r\n            }\r\n        });\r\n\r\n        Intent intent = new Intent(this, ResultActivity.class);\r\n        intent.putExtra(\"theatreID\", theatreID);\r\n        intent.putExtra(\"mediaList\", (Serializable) mediaList);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public static void getMediaList(String progTypes, String genreList, String streamingServiceList, final MediaCallback mcb) {\r\n        ArrayList<Media> mediaList = new ArrayList<Media>();\r\n\r\n        try {\r\n            MainActivity.apiCallSearch(progTypes, genreList, streamingServiceList, new ApiCallback() {\r\n                @Override\r\n                public void onCallback(String res) throws JSONException, IOException {\r\n                    //Here is where we will update the view\r\n                    // res is a JSON string containing the search results\r\n\r\n                    JSONObject obj = new JSONObject(res); //make it a JSON object\r\n                    JSONArray hits = obj.getJSONArray(\"Hits\"); //The hits are the actual result listings\r\n                    //Log.d(\"search\", hits.toString(2));\r\n\r\n                    //public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {\r\n                    final int len = hits.length();\r\n                    Log.d(\"search\", \"number of results: \" + len);\r\n\r\n                    for (int i = 0; i < 5; i = i + 1) {\r\n                        Log.d(\"search\", \"Result #\" + (i + 1));\r\n                        String iden = \"\";\r\n                        String tit = \"\";\r\n                        ArrayList<String> gens = new ArrayList<String>();\r\n                        ArrayList<String> cas = new ArrayList<String>();\r\n                        int dur = 0;\r\n                        String director = \"\";\r\n                        String writer = \"\";\r\n                        String desc = \"\";\r\n\r\n                        Double rat = 0.0;\r\n\r\n                        JSONObject result_info = hits.getJSONObject(i).getJSONObject(\"Source\"); //all the info for this listing\r\n\r\n                        String[] info = {\"Id\", \"Title\", \"Cast\", \"Runtime\", \"Director\", \"Description\", \"Image\", \"IvaRating\"};\r\n                        final int siz = info.length;\r\n\r\n                        for (int j = 0; j < siz; j = j + 1) { //each piece of info we want about current listing\r\n                            Log.d(\"search\", info[j]);\r\n                            if (\"Id\".equals(info[j])) {  //Id\r\n                                if (result_info.has(info[j])) {\r\n                                    iden = ((String) result_info.getString(info[j]));\r\n                                } else {\r\n                                    iden = (\"No \" + info[j] + \" available\");\r\n                                }\r\n                                Log.d(\"search\", info[j] + \": \" + iden);\r\n                            } else if (\"Title\".equals(info[j])) { //Title\r\n                                if (result_info.has(info[j])) {\r\n                                    tit = (String) result_info.getString(info[j]);\r\n                                } else {\r\n                                    tit = (\"No \" + info[j] + \" available\");\r\n                                }\r\n                                Log.d(\"search\", info[j] + \": \" + tit);\r\n                            } else if (\"IvaRating\".equals(info[j])) { //Rating\r\n                                if (result_info.has(info[j])) {\r\n                                    rat = ((double) Integer.parseInt(result_info.getString(info[j])));\r\n                                } else {\r\n                                    rat = (0.0);\r\n                                }\r\n                                Log.d(\"search\", info[j] + \": \" + rat);\r\n                            } else if (\"Description\".equals(info[j])) { // Description\r\n                                if (result_info.has(\"Descriptions\") && result_info.getJSONArray(\"Descriptions\").length() > 0) {\r\n                                    desc = ((String) result_info.getJSONArray(\"Descriptions\").getJSONObject(0).getString(info[j]));\r\n                                } else {\r\n                                    desc = (\"No \" + info[j] + \" available\");\r\n                                }\r\n                                Log.d(\"search\", info[j] + \": \" + desc);\r\n                            } else if (\"Cast\".equals(info[j]) || \"Director\".equals(info[j])) { //Director, Cast\r\n                                if (result_info.has(\"Contributors\") && result_info.getJSONArray(\"Contributors\").length() > 0) {\r\n                                    JSONArray temp = result_info.getJSONArray(\"Contributors\");\r\n                                    for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satisfies condition\r\n                                        if (temp.getJSONObject(k).getString(\"Job\").equals(\"Director\")) {\r\n                                            director.concat(temp.getJSONObject(k).getString(\"PersonName\") + \",\");\r\n                                            Log.d(\"search\", info[j] + \": \" + director);\r\n                                        } else if (temp.getJSONObject(k).getString(\"Job\").equals(\"Actor\")) {\r\n                                            cas.add(temp.getJSONObject(k).getString(\"PersonName\"));\r\n                                            Log.d(\"search\", info[j] + \": \" + cas);\r\n                                        }\r\n                                    }\r\n                                } else {\r\n                                    director = \"No Director information available\";\r\n                                    cas.add(\"No Cast information available\");\r\n                                }\r\n                            }\r\n                        }\r\n\r\n                        String img = null;\r\n                        if (result_info.has(\"Images\") && result_info.getJSONArray(\"Images\").length() > 0) {\r\n                            JSONArray temp = result_info.getJSONArray(\"Images\");\r\n                            if (temp.getJSONObject(0) != null)\r\n                                img = temp.getJSONObject(0).getString(\"FilePath\");\r\n\r\n                            if (img != null) {\r\n                                Log.d(\"search\", \"Poster found\");\r\n                                MainActivity.apiCallImage(img, new ApiCallback() {\r\n                                    @Override\r\n                                    public void onCallback(String res) throws JSONException, MalformedURLException {\r\n                                        Log.d(\"img\", res);\r\n                                        //res gets the image URL\r\n                                        JSONObject obj = new JSONObject(res); //make it a JSON object\r\n                                        String addr = obj.getString(\"Url\");\r\n                                        Log.d(\"img\", \"addr: \" + addr);\r\n                                        im.add(new URL(addr));\r\n                                        Log.d(\"search\", \"Poster\" + \": \" + im.get(im.size()-1));\r\n                                        Log.d(\"img\", \"im[0]: \" + im.get(im.size()-1));\r\n                                    }\r\n                                });\r\n                            } else{\r\n                                Log.d(\"search\", \"No poster found\");\r\n                            }\r\n                        }\r\n\r\n                        Log.d(\"img\", \"im[0] after downloading: \");\r\n                        if(im != null && im.size() > 0) {\r\n                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im.get(im.size() - 1), rat);\r\n                            Log.d(\"search\", \"m.Title = \" + m.getTitle());\r\n                            MediaRanking.mediaList.add(m);\r\n\r\n                            Log.d(\"search\", \" returned Medias: \" + MediaRanking.mediaList.size());\r\n                            mcb.onCallback(MediaRanking.mediaList);\r\n                        }else{\r\n                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);\r\n                            Log.d(\"search\", \"m.Title = \" + m.getTitle());\r\n                            MediaRanking.mediaList.add(m);\r\n\r\n                            Log.d(\"search\", \" returned Medias: \" + MediaRanking.mediaList.size());\r\n                            mcb.onCallback(MediaRanking.mediaList);\r\n                        }\r\n\r\n                    }\r\n                }\r\n            });\r\n        } catch (\r\n                IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n}\r\n\r\n\r\nclass MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewHolder> implements ItemTouchHelperAdapter {\r\n\r\n    private static final String TAG = \"RankingAdapter\";\r\n\r\n    private ArrayList<Media> mediaList;\r\n    private Context context;\r\n    private ItemTouchHelper itemTouchHelper;\r\n\r\n\r\n    public MediaRankingAdapter(ArrayList<Media> list, Context con) {\r\n        mediaList = list;\r\n        context = con;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_media_ranking_item, parent, false);\r\n        ViewHolder holder = new ViewHolder(view);\r\n        return holder;\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {\r\n        Log.d(TAG, \"onBindViewHolder called\");\r\n\r\n        holder.text.setText(mediaList.get(position).getTitle());\r\n\r\n        holder.layout.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                Log.d(TAG, \"onClick: \" + mediaList.get(position));\r\n            }\r\n        });\r\n\r\n        holder.media = mediaList.get(position);\r\n\r\n    }\r\n\r\n    public ArrayList<Media> getMediaList() {\r\n        return mediaList;\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return mediaList.size();\r\n    }\r\n\r\n    @Override\r\n    public void onItemMove(int fromPosition, int toPosition) {\r\n        Media media = mediaList.get(fromPosition);\r\n        mediaList.remove(fromPosition);\r\n        mediaList.add(toPosition, media);\r\n        notifyItemMoved(fromPosition, toPosition);\r\n\r\n        String list = \"\";\r\n        for (Media m : mediaList) {\r\n            list += m.getTitle();\r\n        }\r\n        Toast.makeText(context, list, Toast.LENGTH_SHORT).show();\r\n    }\r\n\r\n    public void setTouchHelper(ItemTouchHelper helper) {\r\n        this.itemTouchHelper = helper;\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {\r\n        TextView text;\r\n        Button btn;\r\n        RelativeLayout layout;\r\n        GestureDetector gestureDetector;\r\n        Media media;\r\n\r\n        public ViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n\r\n            text = itemView.findViewById(R.id.text_candidate_media);\r\n            layout = itemView.findViewById(R.id.media_ranking_layout);\r\n\r\n\r\n            btn = itemView.findViewById(R.id.btn_media_details);\r\n            btn.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View v) {\r\n                    Intent intent = new Intent(context, MediaDetails.class);\r\n                    Gson gson = new Gson();\r\n                    String json = gson.toJson(media);\r\n                    intent.putExtra(\"data\", json);\r\n                    context.startActivity(intent);\r\n                }\r\n            });\r\n\r\n            gestureDetector = new GestureDetector(itemView.getContext(), this);\r\n            itemView.setOnTouchListener(this);\r\n        }\r\n\r\n        @Override\r\n        public boolean onDown(MotionEvent motionEvent) {\r\n            return false;\r\n        }\r\n\r\n        @Override\r\n        public void onShowPress(MotionEvent motionEvent) {\r\n\r\n        }\r\n\r\n        @Override\r\n        public boolean onSingleTapUp(MotionEvent motionEvent) {\r\n            return false;\r\n        }\r\n\r\n        @Override\r\n        public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {\r\n            return false;\r\n        }\r\n\r\n        @Override\r\n        public void onLongPress(MotionEvent motionEvent) {\r\n            itemTouchHelper.startDrag(this);\r\n        }\r\n\r\n        @Override\r\n        public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {\r\n            return false;\r\n        }\r\n\r\n        @Override\r\n        public boolean onTouch(View view, MotionEvent motionEvent) {\r\n            gestureDetector.onTouchEvent(motionEvent);\r\n            return true;\r\n        }\r\n    }\r\n}\r\n\r\nclass MediaRankingTouchHelper extends ItemTouchHelper.Callback {\r\n\r\n    private final ItemTouchHelperAdapter adapter;\r\n\r\n    public MediaRankingTouchHelper(ItemTouchHelperAdapter adapter) {\r\n        this.adapter = adapter;\r\n    }\r\n\r\n    @Override\r\n    public boolean isLongPressDragEnabled() {\r\n        return false;\r\n    }\r\n\r\n    @Override\r\n    public boolean isItemViewSwipeEnabled() {\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {\r\n        super.clearView(recyclerView, viewHolder);\r\n        viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.cardview_shadow_end_color));\r\n    }\r\n\r\n    @Override\r\n    public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {\r\n        super.onSelectedChanged(viewHolder, actionState);\r\n        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {\r\n            viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.colorAccent));\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {\r\n//        final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;\r\n        return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.UP | ItemTouchHelper.DOWN);\r\n    }\r\n\r\n    @Override\r\n    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {\r\n        adapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/MediaRanking.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/java/com/example/whatdoyouwannawatch/MediaRanking.java	(date 1607566850288)
+@@ -8,8 +8,13 @@
+ import androidx.recyclerview.widget.LinearLayoutManager;
+ import androidx.recyclerview.widget.RecyclerView;
+ 
++
++import android.app.ProgressDialog;
+ import android.content.Context;
++import android.content.DialogInterface;
+ import android.content.Intent;
++import android.graphics.Bitmap;
++import android.os.AsyncTask;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.view.GestureDetector;
+@@ -33,33 +38,58 @@
+ 
+ import java.io.IOException;
+ import java.io.Serializable;
+-import java.net.MalformedURLException;
+ import java.net.URL;
+ import java.util.ArrayList;
+-import java.util.Iterator;
+ import java.util.List;
++import java.util.Random;
+ 
+-public class MediaRanking extends AppCompatActivity {
++import okhttp3.Call;
++import okhttp3.Interceptor;
++import okhttp3.OkHttpClient;
++import okhttp3.Request;
++import okhttp3.Response;
++import okhttp3.ResponseBody;
+ 
+-    private static ArrayList<Media> mediaList = new ArrayList<Media>(5);
++public class MediaRanking extends AppCompatActivity implements AsyncResponse {
++
++    public static ArrayList<Media> mediaList = new ArrayList<Media>(5);
+     private String genreList = null;
+     private String streamingServiceList = null;
+     private String theatreID;
+     public static ArrayList<URL> im = new ArrayList<>();
+-
++    ProgressDialog p;
++    MediaApiAsyncTask aTask;
+     FirebaseUser fbUser;
++    private static String r;
++    private static String i;
++    AsyncResponse asyncResponse1;
++    mCallBack mcb;
++
+ 
+     private static final String TAG = "MediaRanking";
+     String progTypes;
+ 
++    class mCallBack implements MediaCallback {
++
++        @Override
++        public void onCallback(ArrayList<Media> m) {
++            runOnUiThread(new Runnable() {
++                @Override
++                public void run() {
++                    initRecyclerView();
++                }
++            });
++        }
++    }
++
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_media_ranking);
+         fbUser = FirebaseAuth.getInstance().getCurrentUser();
+-
+         Bundle extras = getIntent().getExtras();
+-
++        mcb = new mCallBack();
+         if (extras != null) { //extra passed into this
+             genreList = extras.getString("genreList");
+             streamingServiceList = extras.getString("streamingServiceList");
+@@ -68,207 +98,428 @@
+         }
+         extras.clear();
+ 
+-        retrieveData();
+-    }
+-
+-    private void initRecyclerView() {
+-
+-        RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
+-        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
+-
+-        ItemTouchHelper.Callback callback = new MediaRankingTouchHelper(mediaRankingAdapter);
+-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+-        mediaRankingAdapter.setTouchHelper(itemTouchHelper);
+-        itemTouchHelper.attachToRecyclerView(recyclerView);
++        asyncResponse1 = new AsyncResponse() {
+ 
+-        recyclerView.setAdapter(mediaRankingAdapter);
+-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+ 
+-    }
+-
+-    private void retrieveData() {
+-        getMediaList(progTypes, genreList, streamingServiceList, new MediaCallback() {
+             @Override
+-            public void onCallback(final ArrayList<Media> m) {
+-                runOnUiThread(new Runnable() {
+-                    @Override
+-                    public void run() {
+-
+-                        initRecyclerView();
+-                    }
+-                });
+-            }
+-        });
+-    }
+-
+-    public void onClickRanking(View v) {
+-        // TODO for testing purposes
+-        ArrayList<String> toasts = new ArrayList<String>();
+-        for (Media e : mediaList) {
+-            toasts.add(e.getTitle());
+-        }
+-       // Toast.makeText(MediaRanking.this, "" + toasts.toString(), Toast.LENGTH_SHORT).show();
+-
+-        MainActivity.pullData('t', theatreID, new DataCallback() {
+-            @Override
+-            public void onCallback(Object obj) {
+-                if (obj != null) {
+-                    Theatre t = (Theatre) obj;
+-                    List<User> users = t.getUsers();
+-                    for (int i = 0; i < users.size(); i++) {
+-                        if (users.get(i).getUsername().equals(fbUser.getDisplayName())) {
+-                            users.get(i).setRankings(mediaList);
+-                        }
+-                    }
+-                    MainActivity.pushData(t);
+-                }
+-            }
+-        });
+-
+-        Intent intent = new Intent(this, ResultActivity.class);
+-        intent.putExtra("theatreID", theatreID);
+-        intent.putExtra("mediaList", (Serializable) mediaList);
+-        startActivity(intent);
+-    }
+-
+-    public static void getMediaList(String progTypes, String genreList, String streamingServiceList, final MediaCallback mcb) {
+-        ArrayList<Media> mediaList = new ArrayList<Media>();
+-
+-        try {
+-            MainActivity.apiCallSearch(progTypes, genreList, streamingServiceList, new ApiCallback() {
+-                @Override
+-                public void onCallback(String res) throws JSONException, IOException {
+-                    //Here is where we will update the view
+-                    // res is a JSON string containing the search results
++            public void processFinish(String result) throws InterruptedException {
++                p.cancel();
++                if (result == null){
++                    Toast.makeText(MediaRanking.this, "No results found from this query", Toast.LENGTH_SHORT).show();
++                }else {
++                    //Here you will receive the result fired from async class
++                    //of onPostExecute(result) method.
++                    Toast.makeText(MediaRanking.this, "Your titles finished downloading.", Toast.LENGTH_LONG).show();
++                    Log.d("search", "Your titles finished downloading.");
++                    try {
+ 
+-                    JSONObject obj = new JSONObject(res); //make it a JSON object
+-                    JSONArray hits = obj.getJSONArray("Hits"); //The hits are the actual result listings
+-                    //Log.d("search", hits.toString(2));
++                        JSONObject obj = new JSONObject(result); //make it a JSON object
++                        JSONArray hits = obj.getJSONArray("Hits"); //The hits are the actual result listings
++                        //Log.d("search", hits.toString(2));
+ 
+-                    //public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
+-                    final int len = hits.length();
+-                    Log.d("search", "number of results: " + len);
++                        //public Media(String id, String title, List<String> genres, List<String> cast, LocalTime length, String director, String writer, String description, Image poster, Double rating) {
++                        final int len = hits.length();
++                        Log.d("search", "number of results: " + len);
+ 
+-                    for (int i = 0; i < 5; i = i + 1) {
+-                        Log.d("search", "Result #" + (i + 1));
+-                        String iden = "";
+-                        String tit = "";
+-                        ArrayList<String> gens = new ArrayList<String>();
+-                        ArrayList<String> cas = new ArrayList<String>();
+-                        int dur = 0;
+-                        String director = "";
+-                        String writer = "";
+-                        String desc = "";
++                        for (int i = 0; i < Math.min(5, hits.length()); i = i + 1) {
++                            Log.d("search", "Result #" + (i + 1));
++
++                            String imgPath = "";
++                            String identity = "";
++                            String title = "";
++                            String year = "";
++                            ArrayList<String> genres = new ArrayList<String>();
++                            ArrayList<String> cast = new ArrayList<String>();
++                            int duration = 0;
++                            String language = "";
++                            String director = "";
++                            String writer = "";
++                            String desc = "";
++                            Double rating = 0.0;
++                            Media m = new Media(identity, title, genres, cast, duration, director, writer, desc, imgPath, rating);
+ 
+-                        Double rat = 0.0;
++                            final JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this listing
+ 
+-                        JSONObject result_info = hits.getJSONObject(i).getJSONObject("Source"); //all the info for this listing
+-
+-                        String[] info = {"Id", "Title", "Cast", "Runtime", "Director", "Description", "Image", "IvaRating"};
+-                        final int siz = info.length;
++                            String[] info = {"Id", "Title", "Year", "IvaRating", "Runtime", "OriginalLanguage", "Description", "Director", "Cast", "Genres", "Poster"};
++                            final int siz = info.length;
+ 
+-                        for (int j = 0; j < siz; j = j + 1) { //each piece of info we want about current listing
+-                            Log.d("search", info[j]);
+-                            if ("Id".equals(info[j])) {  //Id
+-                                if (result_info.has(info[j])) {
+-                                    iden = ((String) result_info.getString(info[j]));
+-                                } else {
+-                                    iden = ("No " + info[j] + " available");
+-                                }
+-                                Log.d("search", info[j] + ": " + iden);
+-                            } else if ("Title".equals(info[j])) { //Title
+-                                if (result_info.has(info[j])) {
+-                                    tit = (String) result_info.getString(info[j]);
+-                                } else {
+-                                    tit = ("No " + info[j] + " available");
+-                                }
+-                                Log.d("search", info[j] + ": " + tit);
+-                            } else if ("IvaRating".equals(info[j])) { //Rating
+-                                if (result_info.has(info[j])) {
+-                                    rat = ((double) Integer.parseInt(result_info.getString(info[j])));
+-                                } else {
+-                                    rat = (0.0);
+-                                }
+-                                Log.d("search", info[j] + ": " + rat);
+-                            } else if ("Description".equals(info[j])) { // Description
+-                                if (result_info.has("Descriptions") && result_info.getJSONArray("Descriptions").length() > 0) {
+-                                    desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
+-                                } else {
+-                                    desc = ("No " + info[j] + " available");
+-                                }
+-                                Log.d("search", info[j] + ": " + desc);
+-                            } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
+-                                if (result_info.has("Contributors") && result_info.getJSONArray("Contributors").length() > 0) {
+-                                    JSONArray temp = result_info.getJSONArray("Contributors");
+-                                    for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satisfies condition
+-                                        if (temp.getJSONObject(k).getString("Job").equals("Director")) {
+-                                            director.concat(temp.getJSONObject(k).getString("PersonName") + ",");
+-                                            Log.d("search", info[j] + ": " + director);
+-                                        } else if (temp.getJSONObject(k).getString("Job").equals("Actor")) {
+-                                            cas.add(temp.getJSONObject(k).getString("PersonName"));
+-                                            Log.d("search", info[j] + ": " + cas);
++                            for (int j = 0; j < siz; j = j + 1) { //each piece of info we want about the current listing
++                                if ("Id".equals(info[j])) {  //Id
++                                    if (result_info.has(info[j])) {
++                                        identity = ((String) result_info.getString(info[j]));
++                                    } else {
++                                        identity = ("No " + info[j] + " available");
++                                    }
++                                    String type;
++                                    if (identity.contains("Movie"))
++                                        type = "Movie";
++                                    else if (identity.contains("Show"))
++                                        type = "Show";
++                                    else
++                                        type = "Type unavailable";
++                                    m.setType(type);
++                                    m.setId(identity);
++                                    Log.d("search", info[j] + ": " + identity);
++                                } else if ("Title".equals(info[j])) { //Title
++                                    if (result_info.has(info[j])) {
++                                        title = (String) result_info.getString(info[j]);
++                                    } else {
++                                        title = ("No " + info[j] + " available");
++                                    }
++                                    m.setTitle(title);
++                                    Log.d("search", info[j] + ": " + title);
++
++                                } else if ("Year".equals(info[j])) {
++                                    if (result_info.has(info[j])) {
++                                        year = ((Integer) result_info.getInt(info[j])).toString();
++                                    } else {
++                                        year = ("No " + info[j] + " available");
++                                    }
++                                    m.setYear(year);
++                                    Log.d("search", info[j] + ": " + year);
++
++                                } else if ("IvaRating".equals(info[j])) { //Rating
++                                    if (result_info.has(info[j])) {
++                                        rating = (double) result_info.getInt(info[j]);
++                                        Log.d("search", info[j] + ": " + rating);
++                                    } else {
++                                        rating = (0.0);
++
++                                        Log.d("search", info[j] + ": No Rating information available");
++                                    }
++                                    m.setRating(rating);
++
++                                } else if ("Runtime".equals(info[j])) { //Runtime
++                                    if (result_info.has(info[j])) {
++                                        duration = result_info.getInt(info[j]);
++                                        Log.d("search", info[j] + ": " + duration);
++                                    } else {
++                                        duration = 0;
++
++                                        Log.d("search", info[j] + ": No Runtime information available");
++                                    }
++                                    m.setLength(duration);
++
++                                } else if ("Language".equals(info[j])) { //Language
++                                    if (result_info.has(info[j])) {
++                                        language = result_info.getString("OriginalLanguage");
++                                    } else {
++                                        language = "No " + info[j] + " available";
++                                    }
++                                    Log.d("search", info[j] + ": " + language);
++                                    m.setLanguage(language);
++
++                                } else if ("Description".equals(info[j])) { // Description
++                                    if (result_info.has("Descriptions")) {
++                                        JSONArray temp = result_info.getJSONArray("Descriptions");
++                                        if (temp.length() > 0) {
++                                            desc = ((String) result_info.getJSONArray("Descriptions").getJSONObject(0).getString(info[j]));
++                                        } else {
++                                            desc = ("No " + info[j] + " available");
++                                        }
++
++                                    } else {
++                                        desc = ("No " + info[j] + " available");
++                                    }
++                                    m.setDescription(desc);
++                                    Log.d("search", info[j] + ": " + desc);
++                                } else if ("Cast".equals(info[j]) || "Director".equals(info[j])) { //Director, Cast
++                                    if (result_info.has("Contributors")) {
++                                        JSONArray temp = result_info.getJSONArray("Contributors");
++                                        if (temp.length() > 0) {
++                                            for (int k = 0; k < temp.length(); k++) { // for each contributor listed, add its PersonName if it satisfies condition
++                                                if (temp.getJSONObject(k).getString("Job").equals("Director")) {
++                                                    director.concat(temp.getJSONObject(k).getString("PersonName") + ",");
++                                                    Log.d("search", info[j] + ": " + director);
++                                                } else if (temp.getJSONObject(k).getString("Job").equals("Actor")) {
++                                                    cast.add(temp.getJSONObject(k).getString("PersonName"));
++                                                    Log.d("search", info[j] + ": " + cast);
++                                                }
++                                            }
+                                         }
++                                    } else {
++                                        director = "No director information available";
++                                        cast.add("No Cast information available");
+                                     }
+-                                } else {
+-                                    director = "No Director information available";
+-                                    cas.add("No Cast information available");
+-                                }
+-                            }
+-                        }
+-
+-                        String img = null;
+-                        if (result_info.has("Images") && result_info.getJSONArray("Images").length() > 0) {
+-                            JSONArray temp = result_info.getJSONArray("Images");
+-                            if (temp.getJSONObject(0) != null)
+-                                img = temp.getJSONObject(0).getString("FilePath");
++                                    m.setDirector(director);
++                                    m.setCast(cast);
++                                } else if ("Genres".equals(info[j])) { // Description
++                                    if (result_info.has(info[j])) {
++                                        JSONArray temp = result_info.getJSONArray(info[j]);
++                                        if (temp.length() > 0) {
++                                            for (int k = 0; k < temp.length(); k++) {
++                                                genres.add(temp.getString(k));
++                                            }
++                                        } else {
++                                            genres.add("No " + info[j] + " information available");
++                                        }
++                                    } else {
++                                        genres.add("No " + info[j] + " information available");
++                                    }
++                                    m.setGenres(genres);
++                                    Log.d("search", info[j] + ": " + genres.toString());
++                                } else if ("Poster".equals(info[j])) {
++                                    if (result_info.has("Images") && result_info.getJSONArray("Images").length() > 0) {
++                                        JSONArray temp = result_info.getJSONArray("Images");
++                                        imgPath = temp.getJSONObject(0).getString("FilePath");
+ 
+-                            if (img != null) {
+-                                Log.d("search", "Poster found");
+-                                MainActivity.apiCallImage(img, new ApiCallback() {
+-                                    @Override
+-                                    public void onCallback(String res) throws JSONException, MalformedURLException {
+-                                        Log.d("img", res);
+-                                        //res gets the image URL
+-                                        JSONObject obj = new JSONObject(res); //make it a JSON object
+-                                        String addr = obj.getString("Url");
+-                                        Log.d("img", "addr: " + addr);
+-                                        im.add(new URL(addr));
+-                                        Log.d("search", "Poster" + ": " + im.get(im.size()-1));
+-                                        Log.d("img", "im[0]: " + im.get(im.size()-1));
+-                                    }
+-                                });
+-                            } else{
+-                                Log.d("search", "No poster found");
++                                        m.setPoster(imgPath);
++
++                                    } else {
++                                        imgPath = "No poster found";
++                                    }
++                                    Log.d("search", info[j] + ": " + imgPath);
++                                }
+                             }
++
++
++                            mediaList.add(m);
++
+                         }
++                        Log.d("search", "List of media retrieved: " + mediaList.toString());
++                        mcb.onCallback(mediaList);
+ 
+-                        Log.d("img", "im[0] after downloading: ");
+-                        if(im != null && im.size() > 0) {
+-                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, im.get(im.size() - 1), rat);
+-                            Log.d("search", "m.Title = " + m.getTitle());
+-                            MediaRanking.mediaList.add(m);
++                    } catch (JSONException e) {
++                        e.printStackTrace();
++                    }
++                }
++            }
++        };
+ 
+-                            Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+-                            mcb.onCallback(MediaRanking.mediaList);
+-                        }else{
+-                            Media m = new Media(iden, tit, gens, cas, dur, director, writer, desc, null, rat);
+-                            Log.d("search", "m.Title = " + m.getTitle());
+-                            MediaRanking.mediaList.add(m);
+-
+-                            Log.d("search", " returned Medias: " + MediaRanking.mediaList.size());
+-                            mcb.onCallback(MediaRanking.mediaList);
+-                        }
+-
+-                    }
+-                }
+-            });
+-        } catch (
+-                IOException e) {
+-            e.printStackTrace();
++        retrieveData();
++    }
++
++
++    private void initRecyclerView() {
++
++        RecyclerView recyclerView = findViewById(R.id.ranking_recycler);
++        MediaRankingAdapter mediaRankingAdapter = new MediaRankingAdapter(mediaList, this);
++
++        ItemTouchHelper.Callback callback = new MediaRankingTouchHelper(mediaRankingAdapter);
++        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
++        mediaRankingAdapter.setTouchHelper(itemTouchHelper);
++        itemTouchHelper.attachToRecyclerView(recyclerView);
++
++        recyclerView.setAdapter(mediaRankingAdapter);
++        recyclerView.setLayoutManager(new LinearLayoutManager(this));
++
++    }
++
++    private void retrieveData() {
++        getMediaList(progTypes, genreList, streamingServiceList, mcb);
++    }
++
++    public void onClickRanking(View v) {
++        // TODO for testing purposes
++        ArrayList<String> toasts = new ArrayList<String>();
++        for (Media e : mediaList) {
++            toasts.add(e.getTitle());
++        }
++        // Toast.makeText(MediaRanking.this, "" + toasts.toString(), Toast.LENGTH_SHORT).show();
++
++        MainActivity.pullData('t', theatreID, new DataCallback() {
++            @Override
++            public void onCallback(Object obj) {
++                if (obj != null) {
++                    Theatre t = (Theatre) obj;
++                    List<User> users = t.getUsers();
++                    for (int i = 0; i < users.size(); i++) {
++                        if (users.get(i).getUsername().equals(fbUser.getDisplayName())) {
++                            users.get(i).setRankings(mediaList);
++                        }
++                    }
++                    MainActivity.pushData(t);
++                }
++            }
++        });
++
++        Intent intent = new Intent(this, ResultActivity.class);
++        intent.putExtra("theatreID", theatreID);
++        intent.putExtra("mediaList", (Serializable) mediaList);
++        startActivity(intent);
++    }
++
++    @Override
++    public void processFinish(String result) throws InterruptedException {
++
++    }
++
++    private class RequestTokenInterceptor implements Interceptor {
++        @Override
++        public Response intercept(Interceptor.Chain chain) throws IOException {
++            Request request = chain.request();
++            Log.d("search", "Request info before refresh: " + request.headers());
++
++            String newA = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?Includes=Runtime%2CImages%2CContributors%2CYear%2CGenres%2CDescriptions%2CIvaRating%2COriginalLanguage&OfferTypes=Subscription";
++            if (progTypes != null && progTypes.length() > 2){
++                String pt = "&ProgramTypes=" + progTypes.replaceAll(",", "%2C");
++                newA = newA.concat(pt.replaceAll("\\s+",""));
++            }
++            if(genreList.length()> 0 ){
++                String g = "&Genres=" + genreList.replaceAll(",", "%2C");
++                newA = newA.concat(g.replaceAll("\\s+",""));
++            }
++            if(streamingServiceList != null && streamingServiceList.length() > 0){
++                String pr = "&Providers=" + streamingServiceList.replaceAll(",", "%2C");
++                newA = newA.concat(pr.replaceAll("\\s+",""));
++            }
++
++            Request newRequest = request.newBuilder()
++                    .url( newA)
++                    .header("content-type", "application/json")
++                    .header("x-rapidapi-key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
++                    .header("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
++                    .header("Genres", request.headers().get("Genres"))
++                    .header("ProgramTypes", request.headers().get("ProgramTypes"))
++                    .header("Providers", request.headers().get("Providers"))
++                    .get()
++                    .build();
++
++            Log.d("search", "Request info after refresh: " + newRequest.headers());
++            long t1 = System.nanoTime();
++            Log.d("search", String.format("Sending request %s on %s%n%s",
++                    newRequest.url(), chain.connection(), newRequest.headers()));
++
++            Response response = chain.proceed(newRequest);
++
++            long t2 = System.nanoTime();
++            Log.d("search", String.format("Received response for %s in %.1fms%n%s",
++                    response.request().url(), (t2 - t1) / 1e6d, response.headers()));
++            return response;
++        }
++    }
++
++
++    private class MediaApiAsyncTask extends AsyncTask<String, Void, String> {
++        String r;
++        public AsyncResponse delegate = null;
++        // you may separate this or combined to caller class.
++
++        public MediaApiAsyncTask(AsyncResponse delegate) {
++            this.delegate = delegate;
++        }
++
++        @Override
++        protected void onPreExecute() {
++            super.onPreExecute();
++            p = new ProgressDialog(MediaRanking.this);
++            p.setMessage("Please Wait, fetching titles...");
++            p.setCancelable(false);
++            p.show();
++        }
++
++        @Override
++        protected String doInBackground(String... strings) {
++            String address = strings[0].replaceAll("\\s+","");
++            String progTypes = strings[1].replaceAll("\\s+","");
++            String genres = strings[2].replaceAll("\\s+","");
++            String providers = strings[3].replaceAll("\\s+","");
++
++            OkHttpClient client = new OkHttpClient.Builder()
++                    .addNetworkInterceptor(new RequestTokenInterceptor())
++                    .build();
++            //A client for networking with the Api online
++
++            Request.Builder builder = new Request.Builder()
++                    .url(address)
++                    .get();
++            builder
++                    .header("content-type", "application/json")
++                    .header("x-rapidapi-key", "4a8ffa13admsh40c5848568afe5ap104e50jsne0c10b5828d5")
++                    .header("x-rapidapi-host", "ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com")
++                    .header("Genres", genres)
++                    .header("ProgramTypes", progTypes)
++                    .header("Providers", providers)
++                    .header("SortBy", "Relevance")
++                    .header("Includes", "Runtime,Images,Contributors,Year,Genres,Descriptions,IvaRating,OriginalLanguage");
++            Request request = builder.build();
++
++            Response response = null;
++            try {
++                Call call = client.newCall(request);
++                response = call.execute();
++
++                if (response.isSuccessful()) {
++                    //Log.d("search", response.body().toString());
++                    try (ResponseBody responseBody = response.body()) {
++
++                        String results = responseBody.string();
++                        Log.d("search", String.format("Received response for %s%n%s",
++                                response.request().url(), results));
++                        r = results;
++                        if (r != null && r.length() > 0) {
++                            return r;
++                        }
++
++                    } catch (IOException i) {
++                        i.printStackTrace();
++                    }
++
++                } else {
++                    Log.d("search", "Response not successful");
++                    ResponseBody bod = response.body();
++                    Log.d("search", bod.string());
++                    throw new IOException("Unexpected code " + response);
++                }
++                Log.d("search", request.toString());
++                String r = response.body().string();
++                response.body().close();
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++            return null;
++        }
++
++        @Override
++        protected void onPostExecute(String s) {
++            super.onPostExecute(s);
++            Log.d("search", "Post execute String: " + s);
++            
++            try {
++                p.dismiss();
++                delegate.processFinish(s);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
+         }
+-    }
+-}
++
++        @Override
++        protected void onCancelled() {
++            super.onCancelled();
++            MediaRanking.r = r;
++            Log.d("search", "Canceled, returned: " + r);
++            p.cancel();
++            Toast.makeText(MediaRanking.this, "AsyncTask is stopped", Toast.LENGTH_LONG).show();
++            this.cancel(true);
++
++        }
++    }
+ 
++    public interface AsyncResponse {
++        void processFinish(String output) throws InterruptedException;
++    }
++
++    public void getMediaList(String progTypes, String genreList, String streamingServiceList, final MediaCallback mcb) {
++        ArrayList<Media> mediaList = new ArrayList<Media>();
++        if (genreList != null)
++            genreList = genreList.replaceAll("\\s+", "");
++        if (streamingServiceList != null)
++            streamingServiceList = streamingServiceList.replaceAll("\\s+", "");
++
++
++        Log.d("search", "genres: " + genreList);
++        Log.d("search", "providers: " + streamingServiceList);
++        Log.d("search", "progTypes: " + progTypes);
++
++        String address = "https://ivaee-internet-video-archive-entertainment-v1.p.rapidapi.com/entertainment/search/?SortBy=Relevance&Includes=Runtime%2CImages%2CContributors%2CYear%2CGenres%2CDescriptions%2CIvaRating%2COriginalLanguage&ProgramTypes=Movie%2CShow";
++
++        aTask = new MediaApiAsyncTask(MediaRanking.this.asyncResponse1);
++        aTask.execute(address, progTypes, genreList, streamingServiceList);
++
++        Log.d("search", "Api Search Results: " + r);
++
++    }
++}
+ 
+ class MediaRankingAdapter extends RecyclerView.Adapter<MediaRankingAdapter.ViewHolder> implements ItemTouchHelperAdapter {
+ 
+@@ -337,9 +588,6 @@
+     }
+ 
+ 
+-
+-
+-
+     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener {
+         TextView text;
+         Button btn;
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'com.google.gms.google-services'\r\n\r\nandroid {\r\n    compileSdkVersion 29\r\n\r\n    buildToolsVersion \"29.0.3\"\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.whatdoyouwannawatch\"\r\n        minSdkVersion 25\r\n        targetSdkVersion 29\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n        multiDexEnabled true\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables.useSupportLibrary = true\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    // avoid method is not mocked error\r\n    testOptions {\r\n        unitTests.returnDefaultValues = true\r\n    }\r\n}\r\n\r\ndependencies {\r\n    // for v4.x :\r\n    implementation 'com.squareup.okhttp3:okhttp:4.9.0'\r\n    implementation 'org.conscrypt:conscrypt-android:2.5.1'\r\n    implementation 'com.android.support:multidex:1.0.3'\r\n    implementation platform('com.google.firebase:firebase-bom:25.12.0')\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.firebase:firebase-database'\r\n    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'\r\n    implementation 'com.google.firebase:firebase-auth:20.0.0'\r\n    implementation 'com.google.firebase:firebase-storage'\r\n    implementation 'com.google.firebase:firebase-messaging:20.2.3'\r\n\r\n    implementation fileTree(dir: \"libs\", include: [\"*.jar\"])\r\n    implementation 'androidx.appcompat:appcompat:1.2.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'\r\n    implementation 'androidx.recyclerview:recyclerview:1.1.0'\r\n    implementation files('libs\\\\unirest-java-1.4.9.jar')\r\n    implementation files('libs\\\\commons-codec-1.6.jar')\r\n    implementation files('libs\\\\commons-logging-1.1.3.jar')\r\n    implementation 'androidx.cardview:cardview:1.0.0'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    testImplementation 'junit:junit:4.13.1'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.2'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'\r\n\r\n    // firebase login UI dependencies\r\n    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'\r\n    implementation 'com.google.firebase:firebase-auth:20.0.0'\r\n\r\n    // RangeSeekBar\r\n    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'\r\n\r\n    // Convert object to JSON\r\n    implementation 'com.google.code.gson:gson:2.8.6'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/build.gradle	(date 1607476159895)
+@@ -31,6 +31,7 @@
+ 
+ dependencies {
+     // for v4.x :
++    implementation 'org.conscrypt:conscrypt-android:2.2.1'
+     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+     implementation 'org.conscrypt:conscrypt-android:2.5.1'
+     implementation 'com.android.support:multidex:1.0.3'
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.whatdoyouwannawatch\">\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/AppTheme\">\r\n        <activity android:name=\".ServicePreferencesActivity\"></activity>\r\n        <activity android:name=\".FAQActivity\" />\r\n        <activity android:name=\".FriendProfileActivity\" />\r\n        <activity android:name=\".AddFriendActivity\" />\r\n        <activity android:name=\".WatchPreferencesActivity\" />\r\n        <activity android:name=\".ContactUsActivity\" />\r\n        <activity android:name=\".ChooseStreamingServicesActivity\" />\r\n        <activity android:name=\".TheatreUserLandingPage\" />\r\n        <activity android:name=\".ChooseGenresActivity\" />\r\n        <activity android:name=\".LoginActivity\" />\r\n        <activity android:name=\".SignUpActivity\" />\r\n        <activity android:name=\".WatchHistoryActivity\" />\r\n        <activity android:name=\".SettingsActivity\" />\r\n        <activity android:name=\".ResultActivity\" />\r\n        <activity android:name=\".MediaRanking\" />\r\n        <activity android:name=\".MediaDetails\" />\r\n        <activity android:name=\".DurationSelection\" />\r\n        <activity android:name=\".UserProfileActivity\" />\r\n        <activity android:name=\".FriendListActivity\" />\r\n        <activity android:name=\".UserHomeActivity\" />\r\n        <activity android:name=\".JoinTheatre\" />\r\n        <activity android:name=\".TheatreHostLandingPage\" />\r\n        <activity android:name=\".CreateJoinTheatre\" />\r\n        <activity android:name=\".MainActivity\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n\r\n        <meta-data\r\n            android:name=\"preloaded_fonts\"\r\n            android:resource=\"@array/preloaded_fonts\" />\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/main/AndroidManifest.xml	(date 1607555183986)
+@@ -1,8 +1,10 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="com.example.whatdoyouwannawatch">
+-
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
++    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+     <application
++
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+         android:label="@string/app_name"
+Index: app/src/test/java/com/example/whatdoyouwannawatch/MediaUnitTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.whatdoyouwannawatch;\r\n\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport java.net.URL;\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\nimport static org.junit.Assert.assertEquals;\r\n\r\npublic class MediaUnitTest {\r\n\r\n    Media m;\r\n    String id;\r\n    String title;\r\n    ArrayList<String> genres;\r\n    ArrayList<String> cast;\r\n    List<User> currentVoters;\r\n    User u1;\r\n    User u2;\r\n    User u3;\r\n    int length;\r\n    String director;\r\n    String writer;\r\n    String description;\r\n    URL poster;\r\n    Double rating;\r\n\r\n    @Before\r\n    public void setUp() throws Exception {\r\n        id = \"000\";\r\n        title = \"some movie\";\r\n        genres = new ArrayList<>();\r\n        genres.add(\"g1\");\r\n        genres.add(\"g2\");\r\n        genres.add(\"g3\");\r\n        length = 120;\r\n        cast = new ArrayList<>();\r\n        cast.add(\"sb1\");\r\n        cast.add(\"sb2\");\r\n        cast.add(\"sb3\");\r\n        writer = \"sb00\";\r\n        director = \"sb11\";\r\n        description = \"bad movie\";\r\n        rating = 1.0;\r\n        m = new Media(id, title, genres, cast, length, director, writer, description, poster, rating);\r\n        currentVoters = new ArrayList<>();\r\n        currentVoters.add(u1);\r\n        currentVoters.add(u2);\r\n        m.setCurrentVoters(currentVoters);\r\n\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetID() {\r\n        assertEquals(m.getId(), \"000\");\r\n        m.setId(\"110\");\r\n        assertEquals(m.getId(), \"110\");\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetTitle() {\r\n        assertEquals(m.getTitle(), \"some movie\");\r\n        m.setTitle(\"another movie\");\r\n        assertEquals(m.getTitle(), \"another movie\");\r\n    }\r\n\r\n    @Test\r\n    public void TestGetGenres() {\r\n        assertEquals(m.getGenres().get(0), \"g1\");\r\n        assertEquals(m.getGenres().get(1), \"g2\");\r\n        assertEquals(m.getGenres().get(2), \"g3\");\r\n    }\r\n\r\n    @Test\r\n    public void TestGetCast() {\r\n        assertEquals(m.getCast().get(0), \"sb1\");\r\n        assertEquals(m.getCast().get(1), \"sb2\");\r\n        assertEquals(m.getCast().get(2), \"sb3\");\r\n    }\r\n\r\n    @Test\r\n    public void TestGetLength() {\r\n        assertEquals(m.getLength(), 120);\r\n        m.setLength(150);\r\n        assertEquals(m.getLength(), 150);\r\n        m.setLength(-150);\r\n        assertEquals(m.getLength(), -150);//TODO make sure the app only accept legit input, no negative number for time\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetWriter() {\r\n        assertEquals(m.getWriter(), \"sb00\");\r\n        m.setWriter(\"sb00a\");\r\n        assertEquals(m.getWriter(), \"sb00a\");\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetDirector() {\r\n        assertEquals(m.getDirector(), \"sb11\");\r\n        m.setDirector(\"sb11a\");\r\n        assertEquals(m.getDirector(), \"sb11a\");\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetDes() {\r\n        assertEquals(m.getDescription(), \"bad movie\");\r\n        m.setDescription(\"good now\");\r\n        assertEquals(m.getDescription(), \"good now\");\r\n    }\r\n\r\n    @Test\r\n    public void TestSetGetRate() {\r\n        assertEquals(m.getRating(), 1.0, 0.0001);\r\n        m.setRating(5.0);\r\n        assertEquals(m.getRating(), 5.0, 0.0001);\r\n    }\r\n\r\n    @Test\r\n    public void TestCurrentVoter() {\r\n        assertEquals(m.getCurrentVoters().size(), 2);\r\n        assertEquals(m.getCurrentVoters().get(0), u1);\r\n        assertEquals(m.getCurrentVoters().get(1), u2);\r\n        m.getCurrentVoters().add(u3);\r\n        assertEquals(m.getCurrentVoters().size(), 3);\r\n        assertEquals(m.getCurrentVoters().get(2), u3);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/com/example/whatdoyouwannawatch/MediaUnitTest.java	(revision 83ec95d8f52b75d22c9182a46014244dbdcad5e4)
++++ app/src/test/java/com/example/whatdoyouwannawatch/MediaUnitTest.java	(date 1607558722815)
+@@ -3,7 +3,6 @@
+ import org.junit.Before;
+ import org.junit.Test;
+ 
+-import java.net.URL;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+@@ -24,7 +23,7 @@
+     String director;
+     String writer;
+     String description;
+-    URL poster;
++    String poster;
+     Double rating;
+ 
+     @Before
+Index: app/src/main/java/com/example/whatdoyouwannawatch/ApiCallBack2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/whatdoyouwannawatch/ApiCallBack2.java	(date 1607557108948)
++++ app/src/main/java/com/example/whatdoyouwannawatch/ApiCallBack2.java	(date 1607557108948)
+@@ -0,0 +1,14 @@
++package com.example.whatdoyouwannawatch;
++
++import android.graphics.Bitmap;
++
++import org.json.JSONException;
++
++import java.io.IOException;
++
++public class ApiCallBack2 {
++    //In this callback interface, the onCallback function will
++    //be called back and loaded with a parameter that I can set
++    private void onCallback(Bitmap result) throws JSONException, IOException {
++    }
++}

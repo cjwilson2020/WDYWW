@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class MediaDetails extends AppCompatActivity {
         TextView by = findViewById(R.id.detail_directed_by);
         TextView cast = findViewById(R.id.detail_cast);
         TextView description = findViewById(R.id.detail_description);
+        description.setMovementMethod(new ScrollingMovementMethod());
         p = new ProgressDialog(MediaDetails.this);
         p.setMessage("Getting Media details...");
         p.setCancelable(false);

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -25,14 +26,18 @@ public class TheatreUserLandingPage extends AppCompatActivity {
     String theatreCode = "-111";
     FirebaseUser fbUser;
 
+    private void refresh(int miliseconds){
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                content();
+            }
+        };
+        handler.postDelayed(runnable, miliseconds);
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_theatre_user_landing_page);
-        Intent intent = getIntent();
-        theatreCode = (intent.getStringExtra("theatreCode"));
-        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+    public void content(){
         MainActivity.pullData('t', theatreCode, new DataCallback() {
             @Override
             public void onCallback(Object obj) {
@@ -64,6 +69,18 @@ public class TheatreUserLandingPage extends AppCompatActivity {
         });
         TextView youAreNowInTheatre= findViewById(R.id.textView_youAreNowInTheatre);
         youAreNowInTheatre.setText("You are in "   + getTheatreId() + "'s theatre" );
+
+        refresh(1000);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_theatre_user_landing_page);
+        Intent intent = getIntent();
+        theatreCode = (intent.getStringExtra("theatreCode"));
+        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        content();
     }
 
     private void onClickFriend(List<User> uList, int i) {
