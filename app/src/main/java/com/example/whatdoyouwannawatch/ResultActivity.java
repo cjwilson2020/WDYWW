@@ -114,8 +114,7 @@ public class ResultActivity extends AppCompatActivity {
 
                             // Updates media poster and title
                             if (t.getResult() != null) {
-                                if (resBtn.getVisibility() == View.GONE)
-                                    resBtn.setVisibility(View.VISIBLE);
+
                                 titleDisplay.setText(t.getResult().getFinalDecision().getTitle());
                                 Media m = t.getResult().getFinalDecision();
                                 try {
@@ -226,6 +225,8 @@ public class ResultActivity extends AppCompatActivity {
         p.setMessage("Getting Media details...");
         p.setCancelable(false);
         p.show();
+        if (resBtn.getVisibility() == View.GONE)
+            resBtn.setVisibility(View.VISIBLE);
         if (btn.getVisibility() == View.VISIBLE)
             btn.setVisibility(View.GONE);
         if (fbUser.getDisplayName().equals(theatreID)) {
