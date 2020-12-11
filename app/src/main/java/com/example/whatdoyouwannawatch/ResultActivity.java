@@ -48,6 +48,7 @@ public class ResultActivity extends AppCompatActivity {
     Button resBtn;
     Boolean allResult;
     static int cntRanked;
+    static ArrayList<String> rankedUsers;
 
 
     private void refresh(int miliseconds) {
@@ -79,9 +80,12 @@ public class ResultActivity extends AppCompatActivity {
 
                                 for (int i = 0; i < cntTheatre; i++) {
                                     if (!list.get(i).getRankings().isEmpty()) {
-                                        cntRanked = cntRanked + 1;
+                                        if (!rankedUsers.contains(list.get(i).getUsername())) {
+                                            rankedUsers.add(list.get(i).getUsername());
+                                        }
                                     }
                                 }
+                                cntRanked = rankedUsers.size();
                                 Log.d("Result", "Users ranked: " + cntRanked + "/" + cntTheatre);
                                 if ( cntRanked == cntTheatre) { //All users finished ranking
                                     allResult = true;
@@ -149,7 +153,8 @@ public class ResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        cntRanked = 1;
+        cntRanked = 0;
+        rankedUsers = new ArrayList<String>();
         allResult = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
