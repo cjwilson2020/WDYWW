@@ -78,7 +78,7 @@ public class ResultActivity extends AppCompatActivity {
                                 Log.d("Display", "Number of users in theatre: " + cntTheatre);
 
                                 for (int i = 0; i < cntTheatre; i++) {
-                                    if (list.get(i).getRankings().isEmpty()) {
+                                    if (!list.get(i).getRankings().isEmpty()) {
                                         cntRanked = cntRanked + 1;
                                     }
                                 }
@@ -160,7 +160,7 @@ public class ResultActivity extends AppCompatActivity {
         text = findViewById(R.id.textView15);
         text.setText("Waiting for others...");
         resBtn = findViewById(R.id.ResultButton);
-        resBtn.setVisibility(View.VISIBLE);
+        resBtn.setVisibility(View.GONE);
         btn = findViewById(R.id.calcResultButton);
         btn.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
