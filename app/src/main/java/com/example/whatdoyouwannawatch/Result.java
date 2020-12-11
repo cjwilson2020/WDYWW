@@ -26,18 +26,8 @@ public class Result {
         this.users = users;
         this.options = options;
         this.decisionMade = decisionMade;
-//        generateUID();
     }
 
-//    public void display(){}
-
-//    public void setRecommendation(Media recommendation) {
-//        this.recommendation = recommendation;
-//    }
-//
-//    public Media getRecommendation(){
-//        return this.recommendation;
-//    }
 
     //add the media to history
     public void addToHistory(List<User> users){
@@ -45,11 +35,6 @@ public class Result {
             u.addHistory(this.getFinalDecision().getTitle());
         }
     }
-
-    //Generate a random unique ID
-//    private void generateUID(){
-//        this.UID = UUID.randomUUID().toString();
-//    }
 
     //getters and setters
     public Media getFinalDecision() {
