@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/lato_black"
         android:textAlignment="center"
         android:textColor="@color/colorText"
@@ -56,7 +56,7 @@
         android:id="@+id/ResultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:layout_marginBottom="24dp"
         android:backgroundTint="@color/colorAccent"
         android:fontFamily="@font/lato_bold"
@@ -69,16 +69,17 @@
 
     <Button
         android:id="@+id/calcResultButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
         android:backgroundTint="@color/colorAzure"
         android:fontFamily="@font/lato_bold"
         android:letterSpacing=".1"
         android:onClick="onClickCalcResult"
         android:text="Calculate Result"
         android:textColor="@color/colorWhite"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
