@@ -4,34 +4,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
@@ -45,7 +35,11 @@ public class ResultActivity extends AppCompatActivity {
     TextView titleDisplay;
     TextView text;
     Button btn;
-    Boolean allResult;
+    Button resBtn;
+    Boolean allRanked;
+    static int cntRanked;
+    static ArrayList<String> rankedUsers;
+
 
     private void refresh(int miliseconds) {
         final Handler handler = new Handler();
@@ -66,42 +60,62 @@ public class ResultActivity extends AppCompatActivity {
                     final Theatre t = (Theatre) obj; //Theatre
                     runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
-                            if (!allResult) {
+                        public void run()
+                        {
+
+                            if (!allRanked)
+                            {
                                 List<User> list = t.getUsers();
                                 Log.d("Display", "List of users: " + list.toString());
-                                int cntRanked = 0;
+
                                 int cntTheatre = list.size();
-                                Log.d("Display", "Number of users in theatre: " + cntTheatre);
-                                User us = new User();
-                                for (int i = 0; i < cntTheatre; i++) {
-                                    us = list.get(i);
-                                    if (us.getRankings().size() > 0) {
-                                        cntRanked = cntRanked + 1;
+                                Log.d("Result", "Num users: " + cntTheatre);
+
+                                for (int i = 0; i < cntTheatre; i++)
+                                {
+                                    if (!list.get(i).getRankings().isEmpty()) {
+                                        Log.d("Result", "Rankings not empty");
+                                        if (!rankedUsers.contains(list.get(i).getUsername())) {
+                                            rankedUsers.add(list.get(i).getUsername());
+                                        }
                                     }
                                 }
-                                if (((double) cntRanked / (double) cntTheatre) == 1.00) { //All users finished ranking
-                                    allResult = true;
-                                    Log.d("Result", "allResult: " + allResult);
+                                cntRanked = rankedUsers.size();
+                                Log.d("Result", "Ranked Users: " + rankedUsers.toString());
+                                Log.d("Result", "Users ranked: " + cntRanked + "/" + cntTheatre);
+                                if ( cntRanked == cntTheatre)
+                                { //All users finished ranking
+                                    allRanked = true;
+                                    Log.d("Result", "allResult: " + allRanked);
 
                                     //If Host
                                     if (fbUser.getDisplayName().equals(t.getHostID())) {
                                         Log.d("Result", "Host Username: " + theatreID);
                                         btn.setVisibility(View.VISIBLE);
+                                        resBtn.setVisibility(View.VISIBLE);
                                         Log.d("Result", "btn Visibility: " + btn.getVisibility());
                                         text.setText("Ready to calculate result!");
                                     } else {
                                         text.setText("All members finished, waiting for Host to Calculate Result");
                                     }
-                                } else { //resets displays if they are visible
+                                }
+                                else
+                                { //resets displays if they are visible
                                     if (btn.getVisibility() == View.VISIBLE)
                                         btn.setVisibility(View.GONE);
+                                    if (resBtn.getVisibility() == View.VISIBLE)
+                                        resBtn.setVisibility(View.GONE);
                                     if (!text.getText().equals("Waiting for others..."))
                                         text.setText("Waiting for others...");
                                 }
                             }
+
+
+
                             // Updates media poster and title
                             if (t.getResult() != null) {
+                                if (resBtn.getVisibility() == View.GONE)
+                                    resBtn.setVisibility(View.VISIBLE);
                                 titleDisplay.setText(t.getResult().getFinalDecision().getTitle());
                                 Media m = t.getResult().getFinalDecision();
                                 try {
@@ -113,7 +127,7 @@ public class ResultActivity extends AppCompatActivity {
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        resultImg.setImageBitmap(result);
+                                                        resultImg.setImageBitmap(Bitmap.createScaledBitmap(result, resultImg.getWidth(), resultImg.getHeight(), false));
                                                         //   p.dismiss();
                                                     }
                                                 });
@@ -134,14 +148,15 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        while (allResult) {
-            refresh(1000);
-        }
+        refresh(1000);
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        allResult = false;
+        cntRanked = 0;
+        rankedUsers = new ArrayList<String>();
+        allRanked = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         resultImg = findViewById(R.id.result_poster);
@@ -150,6 +165,8 @@ public class ResultActivity extends AppCompatActivity {
         titleDisplay.setVisibility(View.GONE);
         text = findViewById(R.id.textView15);
         text.setText("Waiting for others...");
+        resBtn = findViewById(R.id.ResultButton);
+        resBtn.setVisibility(View.GONE);
         btn = findViewById(R.id.calcResultButton);
         btn.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
