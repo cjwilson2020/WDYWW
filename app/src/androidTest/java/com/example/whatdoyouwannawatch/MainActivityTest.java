@@ -96,29 +96,32 @@ public class MainActivityTest {
     }
 
 
-//    //TODO some times work
-//    @Test
-//    public void onClickContinueAsGuest() {
-//        onView(withId(R.id.button_continueAsGuest)).perform(click());
-//        mAuth = FirebaseAuth.getInstance();
-//        currentUser = mAuth.getCurrentUser();
-//
-//        if (currentUser != null) {
-//            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
-//                @Override
-//                public void onCallback(Object obj) {
-//                    User u = (User) obj;
-//                    if (u != null){
-//                        assertTrue(u.isGuest());
-//                    }else{
-//                        assertEquals("Not currently signed in as anyone", currentUser, null);
+    //TODO some times work
+    @Test
+    public void onClickContinueAsGuest() {
+        onView(withId(R.id.button_continueAsGuest)).perform(click());
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            MainActivity.pullData('u', currentUser.getDisplayName(), new DataCallback() {
+                @Override
+                public void onCallback(Object obj) {
+                    User u = (User) obj;
+                    if (u != null){
+                        assertTrue(u.isGuest());
+                    }
+//                    else{
+////                        assertEquals("Not currently signed in as anyone", currentUser, null);
+//                        assertNull(currentUser);
 //                    }
-//                }
-//            });
-//        }else{
+                }
+            });
+        }else{
 //            assertEquals("Not currently signed in as anyone", currentUser, null);
-//        }
-//    }
+            assertNull(currentUser);
+        }
+    }
 
     @Test
     public void onResume() {
