@@ -149,7 +149,7 @@ public class ResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        cntRanked = 0;
+        cntRanked = 1;
         allResult = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
