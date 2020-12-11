@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ResultActivity extends AppCompatActivity {
@@ -41,8 +42,12 @@ public class ResultActivity extends AppCompatActivity {
     public static DatabaseReference myRef = database.getReference();
     ImageView resultImg;
     ProgressDialog p;
+    TextView titleDisplay;
+    TextView text;
+    Button btn;
+    Boolean allResult;
 
-    private void refresh(int miliseconds){
+    private void refresh(int miliseconds) {
         final Handler handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override
@@ -56,38 +61,72 @@ public class ResultActivity extends AppCompatActivity {
     public void content() {
         MainActivity.pullData('t', theatreID, new DataCallback() {
             @Override
-            public void onCallback(Object obj) {
+            public void onCallback(final Object obj) {
                 if (obj != null) {
-                //    Log.i("Null", "Not null");
-                    Theatre t = (Theatre) obj;
-                    TextView displayTitle = findViewById(R.id.textView19);
-                    displayTitle.setText(t.getResult().getFinalDecision().getTitle());
-                    if (t.getResult() != null) {
-                        Media m = t.getResult().getFinalDecision();
-                        try {
-                            MainActivity.apiCallImage(m.getPoster(), new ApiCallback() {
-                                @Override
-                                public void onCallback(final Bitmap result) throws JSONException, IOException {
-                                    if (result != null) {
-                               //         Log.d("search", "Image found, downloading from API");
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                resultImg.setImageBitmap(result);
-                                             //   p.dismiss();
-                                            }
-                                        });
-                                    } else {
-                                     //   Log.d("search", "No image downloaded");
-
-                                        // p.dismiss();
+                    final Theatre t = (Theatre) obj; //Theatre
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!allResult) {
+                                List<User> list = t.getUsers();
+                                Log.d("Display", "List of users: " + list.toString());
+                                int cntRanked = 0;
+                                int cntTheatre = list.size();
+                                Log.d("Display", "Number of users in theatre: " + cntTheatre);
+                                User us = new User();
+                                for (int i = 0; i < cntTheatre; i++) {
+                                    us = list.get(i);
+                                    if (us.getRankings().size() > 0) {
+                                        cntRanked = cntRanked + 1;
                                     }
                                 }
-                            });
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
+                                if (((double) cntRanked / (double) cntTheatre) == 1.00) { //All users finished ranking
+                                    allResult = true;
+                                    Log.d("Result", "allResult: " + allResult);
+
+                                    //If Host
+                                    if (fbUser.getDisplayName().equals(t.getHostID())) {
+                                        Log.d("Result", "Host Username: " + theatreID);
+                                        btn.setVisibility(View.VISIBLE);
+                                        Log.d("Result", "btn Visibility: " + btn.getVisibility());
+                                        text.setText("Ready to calculate result!");
+                                    } else {
+                                        text.setText("All members finished, waiting for Host to Calculate Result");
+                                    }
+                                } else { //resets displays if they are visible
+                                    if (btn.getVisibility() == View.VISIBLE)
+                                        btn.setVisibility(View.GONE);
+                                    if (!text.getText().equals("Waiting for others..."))
+                                        text.setText("Waiting for others...");
+                                }
+                            }
+                            // Updates media poster and title
+                            if (t.getResult() != null) {
+                                titleDisplay.setText(t.getResult().getFinalDecision().getTitle());
+                                Media m = t.getResult().getFinalDecision();
+                                try {
+                                    MainActivity.apiCallImage(m.getPoster(), new ApiCallback() {
+                                        @Override
+                                        public void onCallback(final Bitmap result) throws JSONException, IOException {
+                                            if (result != null) {
+                                                //         Log.d("search", "Image found, downloading from API");
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        resultImg.setImageBitmap(result);
+                                                        //   p.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                } catch (IOException | JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                    }
+                    });
+
                 } else {
                     Log.i("Null", "Null");
                 }
@@ -95,46 +134,37 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        refresh(1000);
+        while (allResult) {
+            refresh(1000);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        allResult = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         resultImg = findViewById(R.id.result_poster);
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
-
+        titleDisplay = findViewById(R.id.textView19);
+        titleDisplay.setVisibility(View.GONE);
+        text = findViewById(R.id.textView15);
+        text.setText("Waiting for others...");
+        btn = findViewById(R.id.calcResultButton);
+        btn.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
         if (extras != null) { //extra passed into this
             mediaList = (ArrayList<Media>) extras.getSerializable("mediaList");
             theatreID = extras.getString("theatreID");
         }
-        if(theatreID!= null && !theatreID.equalsIgnoreCase(fbUser.getDisplayName())){
-            Button button = (Button) findViewById(R.id.calcResultButton);
-            button.setVisibility(View.GONE);
-            TextView displayTitle = findViewById(R.id.textView19);
-            displayTitle.setText("Please wait for the result to be calculated");
-        }
 
-        MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
-            @Override
-            public void onCallback(Object obj) {
-                User u = (User) obj;
-                if (u != null){
-                    if(!u.getUsername().equals(theatreID)){
-                        //If current user is not the host,
-                        // Start checking firebase to update screen
-                        content();
-                    }
-                }
-            }
-        });
+
         content();
+
     }
 
 
-    public void onClickDone(View v){
+    public void onClickDone(View v) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         MainActivity.pullData('u', fbUser.getDisplayName(), new DataCallback() {
             @Override
@@ -164,30 +194,29 @@ public class ResultActivity extends AppCompatActivity {
                         Intent intent = new Intent(ResultActivity.this, UserHomeActivity.class);
                         startActivity(intent);
                     }
-                }
-                else{
+                } else {
                     Log.i("Guest", "Guest is null");
                 }
             }
         });
 
 
-
-
         // TODO add result to history
     }
 
-    public void onClickCalcResult(View v){
+    public void onClickCalcResult(View v) {
         p = new ProgressDialog(ResultActivity.this);
         p.setMessage("Getting Media details...");
         p.setCancelable(false);
         p.show();
-        if(fbUser.getDisplayName().equals(theatreID)) {
+        if (btn.getVisibility() == View.VISIBLE)
+            btn.setVisibility(View.GONE);
+        if (fbUser.getDisplayName().equals(theatreID)) {
             MainActivity.pullData('t', theatreID, new DataCallback() {
                 @Override
                 public void onCallback(Object obj) {
-                    if(obj!= null){
-                        Theatre t = (Theatre)obj;
+                    if (obj != null) {
+                        Theatre t = (Theatre) obj;
                         BackStage b = new BackStage(t);
                         b.calcResult(mediaList);
                         MainActivity.pushData(t);
@@ -226,7 +255,7 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
-    private void updateWatchHistories(Theatre theatre){
+    private void updateWatchHistories(Theatre theatre) {
         final Result result = theatre.getResult();
         ArrayList<User> users = (ArrayList<User>) theatre.getUsers();
         for (User u : users) {
@@ -234,7 +263,7 @@ public class ResultActivity extends AppCompatActivity {
                 @Override
                 public void onCallback(Object obj) {
                     if (obj != null) {
-                        User us = (User)obj;
+                        User us = (User) obj;
                         if (us.getHistory() == null || us.getHistory().size() < 1) {
                             ArrayList<String> history = new ArrayList<String>();
                             history.add(result.getFinalDecision().getTitle());
