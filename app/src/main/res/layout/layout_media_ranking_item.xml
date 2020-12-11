@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:padding="15dp" android:id="@+id/media_ranking_layout">
+    android:id="@+id/media_ranking_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAzure"
+    android:padding="15dp">
+
+    <Button
+        android:id="@+id/btn_media_details"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:backgroundTint="@color/colorWhite"
+        android:fontFamily="@font/lato_bold"
+        android:letterSpacing=".1"
+        android:text="Details" />
 
     <TextView
         android:id="@+id/text_candidate_media"
@@ -12,18 +27,10 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/btn_media_details"
+        android:fontFamily="@font/lato_bold"
         android:text="TextView"
-        android:textColor="#000"
-        android:textSize="20dp" />
-
-    <Button
-        android:id="@+id/btn_media_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Details"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        />
+        android:textColor="@color/colorWhite"
+        android:textSize="24sp" />
 
 
 </RelativeLayout>

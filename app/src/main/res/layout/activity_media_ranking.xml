@@ -13,6 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:fontFamily="@font/lato_black"
         android:text="Hold and drag to rank the titles from most to least want to watch"
         android:textAlignment="textStart"
         android:textColor="@color/colorText"
@@ -37,10 +38,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorAccent"
+        android:fontFamily="@font/lato_bold"
+        android:letterSpacing=".1"
         android:onClick="onClickRanking"
         android:text="Next"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
