@@ -270,6 +270,8 @@ public class ResultActivity extends AppCompatActivity {
                 }
             });
         }
+        titleDisplay.setVisibility(View.VISIBLE);
+        text.setVisibility(View.GONE);
     }
 
     private void updateWatchHistories(Theatre theatre) {
