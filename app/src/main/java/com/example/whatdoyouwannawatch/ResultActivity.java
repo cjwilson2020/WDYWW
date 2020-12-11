@@ -127,7 +127,7 @@ public class ResultActivity extends AppCompatActivity {
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        resultImg.setImageBitmap(result);
+                                                        resultImg.setImageBitmap(Bitmap.createScaledBitmap(result, resultImg.getWidth(), resultImg.getHeight(), false));
                                                         //   p.dismiss();
                                                     }
                                                 });
