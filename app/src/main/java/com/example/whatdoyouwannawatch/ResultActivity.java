@@ -47,6 +47,7 @@ public class ResultActivity extends AppCompatActivity {
     Button btn;
     Button resBtn;
     Boolean allResult;
+    static int cntRanked;
 
 
     private void refresh(int miliseconds) {
@@ -72,13 +73,12 @@ public class ResultActivity extends AppCompatActivity {
                             if (!allResult) {
                                 List<User> list = t.getUsers();
                                 Log.d("Display", "List of users: " + list.toString());
-                                int cntRanked = 0;
+
                                 int cntTheatre = list.size();
                                 Log.d("Display", "Number of users in theatre: " + cntTheatre);
-                                User us = new User();
+
                                 for (int i = 0; i < cntTheatre; i++) {
-                                    us = list.get(i);
-                                    if (us.getRankings().size() > 0) {
+                                    if (list.get(i).getRankings().isEmpty()) {
                                         cntRanked = cntRanked + 1;
                                     }
                                 }
@@ -149,6 +149,7 @@ public class ResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        cntRanked = 0;
         allResult = false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
