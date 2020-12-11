@@ -45,7 +45,9 @@ public class ResultActivity extends AppCompatActivity {
     TextView titleDisplay;
     TextView text;
     Button btn;
+    Button resBtn;
     Boolean allResult;
+
 
     private void refresh(int miliseconds) {
         final Handler handler = new Handler();
@@ -80,7 +82,8 @@ public class ResultActivity extends AppCompatActivity {
                                         cntRanked = cntRanked + 1;
                                     }
                                 }
-                                if (((double) cntRanked / (double) cntTheatre) == 1.00) { //All users finished ranking
+                                Log.d("Result", "Users ranked: " + cntRanked + "/" + cntTheatre);
+                                if ( cntRanked == cntTheatre) { //All users finished ranking
                                     allResult = true;
                                     Log.d("Result", "allResult: " + allResult);
 
@@ -88,6 +91,7 @@ public class ResultActivity extends AppCompatActivity {
                                     if (fbUser.getDisplayName().equals(t.getHostID())) {
                                         Log.d("Result", "Host Username: " + theatreID);
                                         btn.setVisibility(View.VISIBLE);
+                                        resBtn.setVisibility(View.VISIBLE);
                                         Log.d("Result", "btn Visibility: " + btn.getVisibility());
                                         text.setText("Ready to calculate result!");
                                     } else {
@@ -96,12 +100,16 @@ public class ResultActivity extends AppCompatActivity {
                                 } else { //resets displays if they are visible
                                     if (btn.getVisibility() == View.VISIBLE)
                                         btn.setVisibility(View.GONE);
+                                    if (resBtn.getVisibility() == View.VISIBLE)
+                                        resBtn.setVisibility(View.GONE);
                                     if (!text.getText().equals("Waiting for others..."))
                                         text.setText("Waiting for others...");
                                 }
                             }
                             // Updates media poster and title
                             if (t.getResult() != null) {
+                                if (resBtn.getVisibility() == View.GONE)
+                                    resBtn.setVisibility(View.VISIBLE);
                                 titleDisplay.setText(t.getResult().getFinalDecision().getTitle());
                                 Media m = t.getResult().getFinalDecision();
                                 try {
@@ -150,6 +158,8 @@ public class ResultActivity extends AppCompatActivity {
         titleDisplay.setVisibility(View.GONE);
         text = findViewById(R.id.textView15);
         text.setText("Waiting for others...");
+        resBtn = findViewById(R.id.ResultButton);
+        resBtn.setVisibility(View.VISIBLE);
         btn = findViewById(R.id.calcResultButton);
         btn.setVisibility(View.GONE);
         Bundle extras = getIntent().getExtras();
