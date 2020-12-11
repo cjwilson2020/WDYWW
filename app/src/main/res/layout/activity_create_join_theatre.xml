@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="onClickCreateTheatreUtility"
     tools:context=".CreateJoinTheatre">
 
 
@@ -20,11 +19,13 @@
         <Button
             android:id="@+id/button_createTheatre"
             android:layout_width="300dp"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
             android:backgroundTint="@color/colorAzure"
             android:fontFamily="@font/lato_bold"
             android:letterSpacing=".1"
             android:onClick="onClickCreateTheatre"
+            android:drawableTop="@drawable/megaphone"
+            android:paddingTop="40dp"
             android:text="Create Theatre"
             android:textColor="@color/colorWhite"
             android:textSize="24sp"
@@ -35,9 +36,11 @@
         <Button
             android:id="@+id/button_joinTheatre"
             android:layout_width="300dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="100dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="64dp"
             android:backgroundTint="@color/colorAccent"
+            android:paddingTop="50dp"
+            android:drawableTop="@drawable/ticket"
             android:fontFamily="@font/lato_bold"
             android:letterSpacing=".1"
             android:onClick="onClickJoinTheatre"

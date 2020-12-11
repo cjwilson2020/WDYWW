@@ -49,22 +49,6 @@ public class CreateJoinTheatre extends AppCompatActivity {
         }
     }
 
-    public void onClickCreateTheatreUtility(View v){
-        String name;
-
-//        MainActivity.pullData('t', "0", new DataCallback() {
-//            @Override
-//            public void onCallback(Object obj) {
-//                Theatre theatre = (Theatre) obj;
-//
-//                Toast.makeText( CreateJoinTheatre.this, theatre.getHostID(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        Intent toRanking = new Intent(CreateJoinTheatre.this, DurationSelection.class);
-        startActivity(toRanking);
-
-    }
 
     public void onClickJoinTheatre(View v) {
         Intent intent = new Intent(CreateJoinTheatre.this, JoinTheatre.class);

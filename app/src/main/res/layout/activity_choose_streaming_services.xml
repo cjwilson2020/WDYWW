@@ -8,14 +8,16 @@
 
     <TextView
         android:id="@+id/textView_chooseYourStreamingServices"
-        android:layout_width="267dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
+        android:drawableLeft="@drawable/stream"
+        android:drawablePadding="20dp"
         android:fontFamily="@font/lato_black"
         android:text="Choose Your Streaming Services"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/colorText"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
