@@ -116,9 +116,9 @@ public class User {
 
     //set and get length
     public void setMinLength(int t) {this.minLength = t;}
-    public int getMinLength(){return this.minLength;}
+//    public int getMinLength(){return this.minLength;}
     public void setMaxLength(int t) {this.maxLength = t;}
-    public int getMaxLength(){return this.maxLength;}
+//    public int getMaxLength(){return this.maxLength;}
 
     //add, remove friend and get friend list
     public void addFriend(User f){
@@ -161,7 +161,7 @@ public class User {
     //Generate and return a random unique ID
     //private void generateUID(){this.UID = UUID.randomUUID().toString();    }
     //We generate UIDs from Firebase Auth, I will create a setUID method
-    private void setUID(String u){ UID = u; }
+//    private void setUID(String u){ UID = u; }
     public String getUID() {return UID;}
 
     //setters and getters of user information
@@ -169,33 +169,33 @@ public class User {
     public void setUsername(String username) {this.username = username;}
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email; }
-    public Image getUserAvatar() {return userAvatar;}
-    public void setUserAvatar(Image userAvatar) {this.userAvatar = userAvatar;}
+//    public Image getUserAvatar() {return userAvatar;}
+//    public void setUserAvatar(Image userAvatar) {this.userAvatar = userAvatar;}
 
     //distinguish if a user guest or registered
     public boolean isGuest() {return isGuest;}
-    public void setGuest(boolean bool){
-        this.isGuest = bool;
-    }
+//    public void setGuest(boolean bool){
+//        this.isGuest = bool;
+//    }
 
     public String toString(){
         return "User Name: " + username + "\nEmail: " + email + "\nUID: " + getUID();
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("uid", getUID());
-        result.put("username", getUsername());
-        result.put("email", getEmail());
-        result.put("friends", getFriends());
-        result.put("history", getHistory());
-        result.put("genres", getGenres());
-        result.put("rankings", getRankings());
-        result.put("preferences", getPreferences());
-        result.put("guest", isGuest());
-
-        return result;
-    }
+//    @Exclude
+//    public Map<String, Object> toMap() {
+//        HashMap<String, Object> result = new HashMap<>();
+//        result.put("uid", getUID());
+//        result.put("username", getUsername());
+//        result.put("email", getEmail());
+//        result.put("friends", getFriends());
+//        result.put("history", getHistory());
+//        result.put("genres", getGenres());
+//        result.put("rankings", getRankings());
+//        result.put("preferences", getPreferences());
+//        result.put("guest", isGuest());
+//
+//        return result;
+//    }
 
 }
