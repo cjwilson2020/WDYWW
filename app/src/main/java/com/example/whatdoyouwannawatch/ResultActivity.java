@@ -58,7 +58,7 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onCallback(Object obj) {
                 if (obj != null) {
-                    Log.i("Null", "Not null");
+                //    Log.i("Null", "Not null");
                     Theatre t = (Theatre) obj;
                     TextView displayTitle = findViewById(R.id.textView19);
                     displayTitle.setText(t.getResult().getFinalDecision().getTitle());
@@ -69,7 +69,7 @@ public class ResultActivity extends AppCompatActivity {
                                 @Override
                                 public void onCallback(final Bitmap result) throws JSONException, IOException {
                                     if (result != null) {
-                                        Log.d("search", "Image found, downloading from API");
+                               //         Log.d("search", "Image found, downloading from API");
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -78,7 +78,7 @@ public class ResultActivity extends AppCompatActivity {
                                             }
                                         });
                                     } else {
-                                        Log.d("search", "No image downloaded");
+                                     //   Log.d("search", "No image downloaded");
 
                                         // p.dismiss();
                                     }
