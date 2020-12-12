@@ -99,7 +99,11 @@ For iteration 1 and 2, we have implemented the following functionality:
 
 ## Run Tests
 
-Tests can be found by beginning in the java folder under app> src> com.example.whatdoyouwannawatch (Test)
+Tests are coded and performanced in the yuanTest branch
+
+Unit tests can be found in the java folder under app> src> test
+
+UI tests are not complete, but can be found in the java folder under app> src> androidTest 
 
 Run files by right-clicking on them and selecting "Run"
 
