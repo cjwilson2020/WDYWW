@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicePreferencesActivity extends AppCompatActivity {
-    private String streamingServices[] = {"Google Play",
-            "HBO", "Hulu", "Amazon Prime Video", "Netflix"};
+    private String streamingServices[] = {"HBO", "Hulu", "Amazon Prime Video", "Netflix"};
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private List<String> existingUserServices;
