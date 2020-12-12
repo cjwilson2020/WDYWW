@@ -2,7 +2,9 @@
 
 ## General Instructions
 
-After pulling the tagged branch from github, you may need to sync your project with the gradle files using File> Sync Project with Gradle Files
+After pulling the tagged branch from github, you may need to sync your project with the gradle files using File> Sync Project with Gradle Files.
+
+The final version of the app is in Iteration3 branch, and tests are in yuanTest branch.
 
 If you don't already have an emulator, you will need to make one. Instructions for doing so can be found here (please use API level >=25 and a device with a 16:9 aspect ratio): https://developer.android.com/studio/run/managing-avds
 
